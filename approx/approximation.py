@@ -10,15 +10,14 @@ import numpy as np
 from ortools.linear_solver import pywraplp
 
 from approx.constraints import (Constraint, IC_PREFIX, BORDER_PREFIX,
-                                 make_border_expr_from_name,
-                                 make_ic_expr_from_name)
+                                make_border_expr_from_name,
+                                make_ic_expr_from_name)
 from approx.oracle import separation_oracle, make_subsets
 from approx.discrete import discretize, f_hat
 from approx.util import symmetric_ix
 
 
 LOG_FMT = '%(asctime)s [%(levelname)s] %(message)s'
-VALID_PROBLEM_TYPES = ['multi_good', 'single_good']
 
 
 def _standardize_log_level(log_level):
@@ -86,10 +85,6 @@ class OptimalAuctionApproximation:
         Toggles consideration of only local incentive-compatibility constraints
         on each iteration.
 
-    problem_type : str, default='single_good'
-        Toggles whether the problem is one of (a) a single good with multiple
-        quality levels (default) or (b) multiple goods
-
     I_subset_prop : float, default=0.3
         The proportion of inactive constraints checked at each iteration
 
@@ -137,7 +132,6 @@ class OptimalAuctionApproximation:
             solver_type='GLOP',
             force_symmetric=True,
             check_local_ic=True,
-            problem_type='single_good',
             I_subset_prop=0.3,
             A_subset_prop=0.3,
             seed=12345,
@@ -164,9 +158,6 @@ class OptimalAuctionApproximation:
         self.f_hat = f_hat(self.f, self.V_T, self.corr, self.T, self.n_grades)
 
         self.check_local_ic = check_local_ic
-        assert problem_type in VALID_PROBLEM_TYPES, \
-            "problem type must be one of %s!" % VALID_PROBLEM_TYPES
-        self.problem_type = problem_type.lower()
         self.force_symmetric = force_symmetric
         if force_symmetric and self.n_grades > 2:
             raise NotImplementedError(
@@ -183,9 +174,9 @@ class OptimalAuctionApproximation:
                             level=self.log_level, stream=sys.stdout)
         problem_str = \
             ('PROBLEM SETUP: n_buyers=%s, n_grades=%s, V=%s, costs=%s, T=%s, '
-             'solver=%s, force_symmetric=%s, ic_local=%s, problem_type=%s') % \
+             'solver=%s, force_symmetric=%s, ic_local=%s') % \
             (n_buyers, self.n_grades, str(V), str(costs), T, solver_type,
-             force_symmetric, check_local_ic, problem_type)
+             force_symmetric, check_local_ic)
         logging.info(problem_str)
 
     def _create_or_warmstart_Q_U_vars(
@@ -204,8 +195,6 @@ class OptimalAuctionApproximation:
 
         self.max_utility = max([max(j) for j in self.V_T])
         # if we're in multiproduct setting we have different *objects*
-        if self.problem_type == 'multi_good':
-            self.max_utility *= self.n_grades
 
         U_vars = []
         for i, _ in enumerate(self.V_T):
@@ -240,7 +229,7 @@ class OptimalAuctionApproximation:
             obj *= self.n_buyers
         return obj
 
-    def _create_base_constraints(self, Q_vars, U_vars, problem_type):
+    def _create_base_constraints(self, Q_vars, U_vars):
         # NOTE here we define feasibility and IR constraints (IC come later)
         # NOTE 0 <= Q <= 1 (forall Q) is defined when we create variables!
         # NOTE 0 <= U <= U_max (forall U) is defined when we create variables!
@@ -251,40 +240,31 @@ class OptimalAuctionApproximation:
         # 2. Q is valid probability distribution
         prob_cons = []
         for i in range(len(self.V_T)):
-            if problem_type == 'single_good':
-                if not self.force_symmetric:
-                    Q_total_i = 0
-                    for j in self.grades:
-                        Q_total_i += Q_vars[j][i]
-                    prob_con = Constraint(
-                        'prob_%s_%s' % (i, j), Q_total_i <= 1, None)
-                    prob_cons.append(prob_con)
-                else:
-                    j = symmetric_ix(i, self.T)
-                    Q_total_i = \
-                        Q_vars[0][i] + Q_vars[0][j]
-                    prob_con = Constraint(
-                        'prob_%s_%s' % (i, j), Q_total_i <= 1, None)
-                    prob_cons.append(prob_con)
-            elif problem_type == 'multi_good':
-                grades = self.grades if not self.force_symmetric else [0]
-                for j in grades:
-                    # TODO remove this? is dupe? we already have NumVars(0,1)
-                    prob_con = Constraint(
-                        'prob_%s_%s' % (i, j), Q_vars[j][i] <= 1, None)
-                    prob_cons.append(prob_con)
+            if not self.force_symmetric:
+                Q_total_i = 0
+                for j in self.grades:
+                    Q_total_i += Q_vars[j][i]
+                prob_con = Constraint(
+                    'prob_%s_%s' % (i, j), Q_total_i <= 1, None)
+                prob_cons.append(prob_con)
+            else:
+                j = symmetric_ix(i, self.T)
+                Q_total_i = \
+                    Q_vars[0][i] + Q_vars[0][j]
+                prob_con = Constraint(
+                    'prob_%s_%s' % (i, j), Q_total_i <= 1, None)
+                prob_cons.append(prob_con)
 
         base_cons = [ir_con] + prob_cons
         return base_cons
 
-    def _setup_solver(
-            self, problem_type, S, A, Q_values=None, U_values=None):
+    def _setup_solver(self, S, A, Q_values=None, U_values=None):
         # 1. create solver, 2. create vars, 3. add base constraints
         solver = pywraplp.Solver.CreateSolver(self.solver_type)
 
         Q_vars, U_vars = self._create_or_warmstart_Q_U_vars(
             solver, Q_values, U_values)
-        base_cons = self._create_base_constraints(Q_vars, U_vars, problem_type)
+        base_cons = self._create_base_constraints(Q_vars, U_vars)
 
         for con in base_cons:
             solver.Add(con.expr)
@@ -348,7 +328,7 @@ class OptimalAuctionApproximation:
                 separation_oracle(
                     self._Q_values, self._U_values, self.V_T, self.T,
                     self.grades, self.n_buyers, self.f_hat, check_local,
-                    self.problem_type, self.net_size)
+                    self.net_size)
             self.A_ic = A_ic
             self.A_border = A_border
             n_A_ic, n_A_border = len(A_ic), len(A_border)
@@ -387,7 +367,7 @@ class OptimalAuctionApproximation:
     def _run(self, S, A_old, warm_start, max_iter):
         I = []
         A = A_old.copy()
-        solver, Q_vars, U_vars = self._setup_solver(self.problem_type, S, A)
+        solver, Q_vars, U_vars = self._setup_solver(S, A)
 
         while True:
             # first: run solver and get Q,U values
@@ -435,17 +415,17 @@ class OptimalAuctionApproximation:
             if warm_start:
                 # TODO verfy this code actually works...
                 _solver, _Q_vars, _U_vars = self._setup_solver(
-                    self.problem_type, S, A, self._Q_values, self._U_values)
+                    S, A, self._Q_values, self._U_values)
             else:
                 _solver, _Q_vars, _U_vars = self._setup_solver(
-                    self.problem_type, S, A, None, None)
+                    S, A, None, None)
 
             # fifth: run separation orcale
             I_ic, A_ic, B_ic, I_border, A_border, B_border = \
                 separation_oracle(
                     self._Q_values, self._U_values, self.V_T, self.T,
                     self.grades, self.n_buyers, self.f_hat,
-                    self.check_local_ic, self.problem_type, self.net_size)
+                    self.check_local_ic, self.net_size)
 
             # NOTE: we don't immediately exit here even if len(A) == 0
             # because we need to remake the constraints on the new solver!
@@ -510,7 +490,6 @@ class OptimalAuctionApproximation:
             'corr': self.corr,
             'force_symmetric': self.force_symmetric,
             'check_local_ic': self.check_local_ic,
-            'problem_type': self.problem_type,
             'I_subset_prop': self.I_subset_prop,
             'A_subset_prop': self.A_subset_prop,
             'solver_type': self.solver_type,

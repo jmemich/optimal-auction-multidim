@@ -119,49 +119,29 @@ def _check_one_ic(Q, U, grades, i, v_i, j, v_j):
     return con
 
 
-def _check_border(V_T, T, Q, grades, n_buyers, f_hat, problem_type):
+def _check_border(V_T, T, Q, grades, n_buyers, f_hat):
     start = time()
     border_cons = []
 
     # TODO how to break ties for `Q_hat_ix`?
-    if problem_type == 'single_good':
-        # add Qj's together for each point in V_T
-        Q_upperbar = np.array(Q).sum(axis=0)
+    # add Qj's together for each point in V_T
+    Q_upperbar = np.array(Q).sum(axis=0)
 
-        Q_hat_ix = np.argsort(Q_upperbar)[::-1]  # descending
+    Q_hat_ix = np.argsort(Q_upperbar)[::-1]  # descending
 
-        E_Qs = []
-        for i in range(len(V_T)):
-            subset_ix = list(range(0, i + 1))
-            subset = Q_hat_ix[subset_ix]
+    E_Qs = []
+    for i in range(len(V_T)):
+        subset_ix = list(range(0, i + 1))
+        subset = Q_hat_ix[subset_ix]
 
-            E_Qs.append(subset.tolist())
+        E_Qs.append(subset.tolist())
 
-        V_T_subsets = E_Qs
+    V_T_subsets = E_Qs
 
-        for V_T_subset in V_T_subsets:
-            con = _check_one_border(
-                T, V_T, V_T_subset, Q, n_buyers, grades, f_hat)
-            border_cons.append(con)
-
-    elif problem_type == 'multi_good':
-        # we use the belloni algorithm separately for each object (grade) j
-        for j in grades:
-            Q_hat_ix = np.argsort(Q[j])[::-1]  # to get descending
-
-            E_Qs = []
-            for i in range(len(V_T)):
-                subset_ix = list(range(0, i + 1))
-                subset = Q_hat_ix[subset_ix]
-
-                E_Qs.append(subset.tolist())
-
-            V_T_subsets = E_Qs
-
-            for V_T_subset in V_T_subsets:
-                con = _check_one_border(
-                    T, V_T, V_T_subset, Q, n_buyers, [j], f_hat)
-                border_cons.append(con)
+    for V_T_subset in V_T_subsets:
+        con = _check_one_border(
+            T, V_T, V_T_subset, Q, n_buyers, grades, f_hat)
+        border_cons.append(con)
 
     logger.debug('border constraint checks completed!')
     end = time()
@@ -205,8 +185,7 @@ def _check_one_border(T, V_T, V_T_subset, Q, n_buyers, grades, f_hat):
 
 
 def separation_oracle(
-        Q, U, V_T, T, grades, n_buyers, f_hat, check_local_ic, problem_type,
-        net_size):
+        Q, U, V_T, T, grades, n_buyers, f_hat, check_local_ic, net_size):
     # TODO multiprocess...
     logger.debug('starting separation oracle...')
     I_ic, A_ic, B_ic = [], [], []
@@ -223,8 +202,7 @@ def separation_oracle(
     I_border, A_border, B_border = [], [], []
     # if N=1 skip Border checks
     if n_buyers != 1:
-        border_cons = _check_border(
-            V_T, T, Q, grades, n_buyers, f_hat, problem_type)
+        border_cons = _check_border(V_T, T, Q, grades, n_buyers, f_hat)
         for border_con in border_cons:
             if border_con.status == 'INACTIVE':
                 I_border.append(border_con)
