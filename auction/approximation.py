@@ -241,6 +241,7 @@ class OptimalAuctionApproximation:
         return obj
 
     def _create_base_constraints(self, Q_vars, U_vars, problem_type):
+        # NOTE here we define feasibility and IR constraints (IC come later)
         # NOTE 0 <= Q <= 1 (forall Q) is defined when we create variables!
         # NOTE 0 <= U <= U_max (forall U) is defined when we create variables!
 
