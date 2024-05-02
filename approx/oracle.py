@@ -7,6 +7,9 @@ from approx.constraints import (ic_lhs_minus_rhs, border_lhs_minus_rhs,
                                 Constraint, BORDER_PREFIX, IC_PREFIX)
 
 
+BATCH_SIZE = 50_000
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -32,7 +35,7 @@ def _make_lower_left_quadrant(ix, T, net_size):
     return list(ixs)
 
 
-def _check_ic(Q, U, V_T, T, grades, check_local, net_size):
+def _check_ic(Q, U, V_T, T, grades, check_local, executor, net_size):
     # the way we check for local IC violations is as follows:
     #
     #         | x x x
@@ -53,10 +56,10 @@ def _check_ic(Q, U, V_T, T, grades, check_local, net_size):
         n_cons *= n_cons
     logger.debug('checking %s IC constraints...' % n_cons)
 
-    start = time()
     ic_cons = []
-    for i, v_i in enumerate(V_T):
-        if check_local:
+    start = time()
+    if check_local:
+        for i, v_i in enumerate(V_T):
             star_ix = [i + T,      # above-left
                        i + T + 1,  # above
                        i + T + 2,  # above-right
@@ -72,16 +75,31 @@ def _check_ic(Q, U, V_T, T, grades, check_local, net_size):
             all_ix = set(star_ix + quadrant_ix)  # get unique
             all_v_j = [V_T[ix] for ix in all_ix]
             inner_loop = zip(all_ix, all_v_j)
-        else:
+
+            for j, v_j in inner_loop:
+                con = _check_one_ic(Q, U, grades, i, v_i, j, v_j)
+                ic_cons.append(con)
+
+    else:
+        logger.debug('multiprocessing global separation oracle '
+                     'across %s workers...' % executor._max_workers)
+        args = []
+        for i, v_i in enumerate(V_T):
             inner_loop = enumerate(V_T)
+            for j, v_j in inner_loop:
+                args.append((Q, U, grades, i, v_i, j, v_j))
 
-        for j, v_j in inner_loop:
-            con = _check_one_ic(Q, U, grades, i, v_i, j, v_j)
-            ic_cons.append(con)
+        futures = []
+        for i in range(0, len(args), BATCH_SIZE):
+            f = executor.submit(_check_n_ic, args[i:i + BATCH_SIZE])
+            futures.append(f)
 
+        for f in futures:
+            ic_cons.extend(f.result())  # blocking
     logger.debug('ic constraint checks completed!')
     end = time()
     elapsed = (end - start)
+
     n_violated, n_binding, n_inactive = 0, 0, 0
     for c in ic_cons:
         if c.status == 'VIOLATED':
@@ -115,8 +133,15 @@ def _check_one_ic(Q, U, grades, i, v_i, j, v_j):
         con = Constraint(name, None, 'VIOLATED')
     else:  # lhs_minus_rhs > 0:
         con = Constraint(name, None, 'INACTIVE')
-
     return con
+
+
+def _check_n_ic(args):
+    # NOTE this is specifically used for multiprocessing batches of IC checks
+    res = []
+    for a in args:
+        res.append(_check_one_ic(*a))
+    return res
 
 
 def _check_border(V_T, T, Q, grades, n_buyers, f_hat):
@@ -185,12 +210,12 @@ def _check_one_border(T, V_T, V_T_subset, Q, n_buyers, grades, f_hat):
 
 
 def separation_oracle(
-        Q, U, V_T, T, grades, n_buyers, f_hat, check_local_ic, net_size):
-    # TODO multiprocess...
+        Q, U, V_T, T, grades, n_buyers, f_hat, check_local_ic, n_workers,
+        net_size):
     logger.debug('starting separation oracle...')
     I_ic, A_ic, B_ic = [], [], []
     ic_cons = _check_ic(
-        Q, U, V_T, T, grades, check_local_ic, net_size)
+        Q, U, V_T, T, grades, check_local_ic, n_workers, net_size)
     for ic_con in ic_cons:
         if ic_con.status == 'INACTIVE':
             I_ic.append(ic_con)

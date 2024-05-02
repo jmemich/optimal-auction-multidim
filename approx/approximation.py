@@ -4,6 +4,8 @@ import pickle
 import logging
 import itertools
 
+from concurrent.futures import ProcessPoolExecutor
+
 from scipy.stats import uniform
 import numpy as np
 
@@ -17,7 +19,7 @@ from approx.discrete import discretize, f_hat
 from approx.util import symmetric_ix
 
 
-LOG_FMT = '%(asctime)s [%(levelname)s] %(message)s'
+LOG_FMT = '(%(process)d) %(asctime)s [%(levelname)s] %(message)s'
 
 
 def _standardize_log_level(log_level):
@@ -85,6 +87,9 @@ class OptimalAuctionApproximation:
         Toggles consideration of only local incentive-compatibility constraints
         on each iteration.
 
+    executor : concurrent.futures.ProcessPoolExecutor, default=None
+        For multiprocessing.
+
     I_subset_prop : float, default=0.3
         The proportion of inactive constraints checked at each iteration
 
@@ -132,6 +137,7 @@ class OptimalAuctionApproximation:
             solver_type='GLOP',
             force_symmetric=True,
             check_local_ic=True,
+            executor=None,
             I_subset_prop=0.3,
             A_subset_prop=0.3,
             seed=12345,
@@ -158,6 +164,7 @@ class OptimalAuctionApproximation:
         self.f_hat = f_hat(self.f, self.V_T, self.corr, self.T, self.n_grades)
 
         self.check_local_ic = check_local_ic
+        self.executor = executor
         self.force_symmetric = force_symmetric
         if force_symmetric and self.n_grades > 2:
             raise NotImplementedError(
@@ -328,7 +335,7 @@ class OptimalAuctionApproximation:
                 separation_oracle(
                     self._Q_values, self._U_values, self.V_T, self.T,
                     self.grades, self.n_buyers, self.f_hat, check_local,
-                    self.net_size)
+                    self.executor, self.net_size)
             self.A_ic = A_ic
             self.A_border = A_border
             n_A_ic, n_A_border = len(A_ic), len(A_border)
@@ -425,7 +432,7 @@ class OptimalAuctionApproximation:
                 separation_oracle(
                     self._Q_values, self._U_values, self.V_T, self.T,
                     self.grades, self.n_buyers, self.f_hat,
-                    self.check_local_ic, self.net_size)
+                    self.check_local_ic, self.executor, self.net_size)
 
             # NOTE: we don't immediately exit here even if len(A) == 0
             # because we need to remake the constraints on the new solver!
@@ -490,6 +497,7 @@ class OptimalAuctionApproximation:
             'corr': self.corr,
             'force_symmetric': self.force_symmetric,
             'check_local_ic': self.check_local_ic,
+            'n_workers': self.executor._max_workers,
             'I_subset_prop': self.I_subset_prop,
             'A_subset_prop': self.A_subset_prop,
             'solver_type': self.solver_type,
@@ -515,6 +523,8 @@ class OptimalAuctionApproximation:
 
     def __setstate__(self, state):
         init_params = state['init_params']
+        n_workers = init_params.pop('n_workers')  # TODO no serialize pool?
+        init_params['executor'] = ProcessPoolExecutor(max_workers=n_workers)
         approx = OptimalAuctionApproximation(**init_params)
         run_params = state['run_params']
         for key in run_params:

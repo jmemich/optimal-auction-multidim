@@ -14,7 +14,7 @@ python setup.py install
 ## Examples
 
 ```python
-from auction import OptimalAuctionApproximation as Approximation
+from approx import OptimalAuctionApproximation as Approximation
 approx = Approximation(n_buyers=2, V=[[0,1],[0,1]], costs=[0,0], T=10)
 approx.run()
 ```
