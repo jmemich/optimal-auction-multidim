@@ -1,6 +1,6 @@
 import numpy as np
 
-from auction.util import symmetric_ix
+from approx.util import symmetric_ix
 
 
 BORDER_PREFIX = 'border'

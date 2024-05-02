@@ -8,7 +8,7 @@ def read(fname):
 
 
 setup(
-    name='auction',
+    name='approx',
     version='1.0',
     description='Approximating optimal auctions in multidimensional settings',
     author='James Michelson & Alexey Kushnir',

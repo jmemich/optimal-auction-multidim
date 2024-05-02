@@ -9,12 +9,12 @@ import numpy as np
 
 from ortools.linear_solver import pywraplp
 
-from auction.constraints import (Constraint, IC_PREFIX, BORDER_PREFIX,
+from approx.constraints import (Constraint, IC_PREFIX, BORDER_PREFIX,
                                  make_border_expr_from_name,
                                  make_ic_expr_from_name)
-from auction.oracle import separation_oracle, make_subsets
-from auction.discrete import discretize, f_hat
-from auction.util import symmetric_ix
+from approx.oracle import separation_oracle, make_subsets
+from approx.discrete import discretize, f_hat
+from approx.util import symmetric_ix
 
 
 LOG_FMT = '%(asctime)s [%(levelname)s] %(message)s'
@@ -161,7 +161,7 @@ class OptimalAuctionApproximation:
         if corr is None:  # assume independent
             corr = _independent
         self.corr = corr
-        self.f_hat = f_hat(self.f, self.V_T, self.corr)
+        self.f_hat = f_hat(self.f, self.V_T, self.corr, self.T, self.n_grades)
 
         self.check_local_ic = check_local_ic
         assert problem_type in VALID_PROBLEM_TYPES, \
@@ -516,16 +516,19 @@ class OptimalAuctionApproximation:
             'solver_type': self.solver_type,
             'log_level': self.log_level
         }
-        run_params = {
-            'i': self.i,
-            'opt': self.opt,
-            'converged': self.converged,
-            '_Q_values': self._Q_values,
-            '_U_values': self._U_values,
-            'S': self.S,
-            'A': self.A,
-            'I': self.I
-        }
+        if hasattr(self, "i"):  # this indiciates it has been run!
+            run_params = {
+                'i': self.i,
+                'opt': self.opt,
+                'converged': self.converged,
+                '_Q_values': self._Q_values,
+                '_U_values': self._U_values,
+                'S': self.S,
+                'A': self.A,
+                'I': self.I
+            }
+        else:
+            run_params = {}
         return {
             'init_params': init_params,
             'run_params': run_params

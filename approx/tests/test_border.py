@@ -2,8 +2,8 @@ import numpy as np
 
 from itertools import chain, combinations
 
-from auction import OptimalAuctionApproximation as Approximation
-from auction.constraints import border_lhs_minus_rhs
+from approx import OptimalAuctionApproximation as Approximation
+from approx.constraints import border_lhs_minus_rhs
 
 
 def _powerset(iterable):

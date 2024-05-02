@@ -2,8 +2,8 @@ import pytest
 
 import numpy as np
 
-from auction import OptimalAuctionApproximation as Approximation
-from auction.constraints import ic_lhs_minus_rhs
+from approx import OptimalAuctionApproximation as Approximation
+from approx.constraints import ic_lhs_minus_rhs
 
 
 @pytest.mark.parametrize("test_local", [True, False])

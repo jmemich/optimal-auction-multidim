@@ -3,8 +3,8 @@ import logging
 
 import numpy as np
 
-from auction.constraints import (ic_lhs_minus_rhs, border_lhs_minus_rhs,
-                                 Constraint, BORDER_PREFIX, IC_PREFIX)
+from approx.constraints import (ic_lhs_minus_rhs, border_lhs_minus_rhs,
+                                Constraint, BORDER_PREFIX, IC_PREFIX)
 
 
 logger = logging.getLogger(__name__)
