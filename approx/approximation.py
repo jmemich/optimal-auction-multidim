@@ -4,8 +4,6 @@ import pickle
 import logging
 import itertools
 
-from concurrent.futures import ProcessPoolExecutor
-
 from scipy.stats import uniform
 import numpy as np
 
@@ -497,7 +495,7 @@ class OptimalAuctionApproximation:
             'corr': self.corr,
             'force_symmetric': self.force_symmetric,
             'check_local_ic': self.check_local_ic,
-            'n_workers': self.executor._max_workers,
+            'executor': self.executor,
             'I_subset_prop': self.I_subset_prop,
             'A_subset_prop': self.A_subset_prop,
             'solver_type': self.solver_type,
@@ -523,8 +521,6 @@ class OptimalAuctionApproximation:
 
     def __setstate__(self, state):
         init_params = state['init_params']
-        n_workers = init_params.pop('n_workers')  # TODO no serialize pool?
-        init_params['executor'] = ProcessPoolExecutor(max_workers=n_workers)
         approx = OptimalAuctionApproximation(**init_params)
         run_params = state['run_params']
         for key in run_params:

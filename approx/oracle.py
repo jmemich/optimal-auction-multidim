@@ -81,21 +81,27 @@ def _check_ic(Q, U, V_T, T, grades, check_local, executor, net_size):
                 ic_cons.append(con)
 
     else:
-        logger.debug('multiprocessing global separation oracle '
-                     'across %s workers...' % executor._max_workers)
         args = []
         for i, v_i in enumerate(V_T):
             inner_loop = enumerate(V_T)
             for j, v_j in inner_loop:
                 args.append((Q, U, grades, i, v_i, j, v_j))
 
-        futures = []
-        for i in range(0, len(args), BATCH_SIZE):
-            f = executor.submit(_check_n_ic, args[i:i + BATCH_SIZE])
-            futures.append(f)
+        if executor is not None:
+            logger.debug('multiprocessing global separation oracle '
+                         'across %s workers...' % executor._max_workers)
 
-        for f in futures:
-            ic_cons.extend(f.result())  # blocking
+            futures = []
+            for i in range(0, len(args), BATCH_SIZE):
+                f = executor.submit(_check_n_ic, args[i:i + BATCH_SIZE])
+                futures.append(f)
+
+            for f in futures:
+                ic_cons.extend(f.result())  # blocking
+        else:
+            for a in args:
+                ic_cons.append(_check_one_ic(*a))
+
     logger.debug('ic constraint checks completed!')
     end = time()
     elapsed = (end - start)
