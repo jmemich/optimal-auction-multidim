@@ -35,7 +35,8 @@ def _make_lower_left_quadrant(ix, T, net_size):
     return list(ixs)
 
 
-def _check_ic(Q, U, V_T, T, grades, check_local, executor, net_size):
+def _check_ic(Q, U, V_T, T, grades, check_local, force_symmetric, executor,
+              net_size):
     # the way we check for local IC violations is as follows:
     #
     #         | x x x
@@ -54,6 +55,8 @@ def _check_ic(Q, U, V_T, T, grades, check_local, executor, net_size):
         n_cons *= 8  # NOTE `star` pattern above
     else:
         n_cons *= n_cons
+    if not force_symmetric:
+        n_cons *= len(grades)
     logger.debug('checking %s IC constraints...' % n_cons)
 
     ic_cons = []
@@ -160,18 +163,11 @@ def _check_border(V_T, T, Q, grades, n_buyers, f_hat):
 
     Q_hat_ix = np.argsort(Q_upperbar)[::-1]  # descending
 
-    E_Qs = []
     for i in range(len(V_T)):
         subset_ix = list(range(0, i + 1))
         subset = Q_hat_ix[subset_ix]
-
-        E_Qs.append(subset.tolist())
-
-    V_T_subsets = E_Qs
-
-    for V_T_subset in V_T_subsets:
         con = _check_one_border(
-            T, V_T, V_T_subset, Q, n_buyers, grades, f_hat)
+            T, V_T, subset.tolist(), Q, n_buyers, grades, f_hat)
         border_cons.append(con)
 
     logger.debug('border constraint checks completed!')
@@ -216,12 +212,13 @@ def _check_one_border(T, V_T, V_T_subset, Q, n_buyers, grades, f_hat):
 
 
 def separation_oracle(
-        Q, U, V_T, T, grades, n_buyers, f_hat, check_local_ic, n_workers,
-        net_size):
+        Q, U, V_T, T, grades, n_buyers, f_hat, force_symmetric, check_local_ic,
+        n_workers, net_size):
     logger.debug('starting separation oracle...')
     I_ic, A_ic, B_ic = [], [], []
     ic_cons = _check_ic(
-        Q, U, V_T, T, grades, check_local_ic, n_workers, net_size)
+        Q, U, V_T, T, grades, check_local_ic, force_symmetric, n_workers,
+        net_size)
     for ic_con in ic_cons:
         if ic_con.status == 'INACTIVE':
             I_ic.append(ic_con)

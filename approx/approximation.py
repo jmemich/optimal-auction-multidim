@@ -198,13 +198,12 @@ class OptimalAuctionApproximation:
                 solver.SetHint(Q_j, Q_values[j])
             Q_vars.append(Q_j)
 
-        self.max_utility = max([max(j) for j in self.V_T])
-        # if we're in multiproduct setting we have different *objects*
+        max_utility = max([max(j) for j in self.V_T])
 
         U_vars = []
         for i, _ in enumerate(self.V_T):
             var_name = 'U_%s' % i
-            var = solver.NumVar(0, self.max_utility, var_name)
+            var = solver.NumVar(0, max_utility, var_name)
             U_vars.append(var)
         if U_values is not None:
             solver.SetHint(U_vars, U_values)
@@ -289,7 +288,10 @@ class OptimalAuctionApproximation:
 
         return solver, Q_vars, U_vars
 
-    def run(self, warm_start=True, max_iter=None, skip_oracle_check=False):
+    def run(self,
+            warm_start=True,
+            max_iter=None,
+            skip_oracle_check=False):
         """Run the approximation algorithm.
 
         Parameters
@@ -332,8 +334,9 @@ class OptimalAuctionApproximation:
             _, A_ic, _, _, A_border, _ = \
                 separation_oracle(
                     self._Q_values, self._U_values, self.V_T, self.T,
-                    self.grades, self.n_buyers, self.f_hat, check_local,
-                    self.executor, self.net_size)
+                    self.grades, self.n_buyers, self.f_hat,
+                    self.force_symmetric, check_local, self.executor,
+                    self.net_size)
             self.A_ic = A_ic
             self.A_border = A_border
             n_A_ic, n_A_border = len(A_ic), len(A_border)
@@ -347,7 +350,8 @@ class OptimalAuctionApproximation:
                     ixs = [int(ix) for ix in ixs_str]
                     logging.info(
                         "FAILURE [IC]: v=%s (ix=%s), v'=%s (ix=%s)" %
-                        (self.V_T[ixs[0]], ixs[0], self.V_T[ixs[1]], ixs[1]))
+                        (np.round(self.V_T[ixs[0]], 4), ixs[0],
+                         np.round(self.V_T[ixs[1]], 4), ixs[1]))
 
                 self.net_size += self.net_size_inc
                 if self.net_size > self.T:
@@ -381,11 +385,18 @@ class OptimalAuctionApproximation:
             status = solver.Solve()
 
             # second: log, then raise error
-            solver_iterations = solver.iterations()
+            solver_i = solver.iterations()
             opt_new = solver.Objective().Value()
 
-            msg = '(i=%s, solver i=%s) obj=%s, S=%s, A=%s, I=%s' \
-                % (self.i, solver_iterations, opt_new, len(S), len(A), len(I))
+            n_A_ic, n_A_border = 0, 0
+            for con in A:
+                if con.name.startswith('ic'):
+                    n_A_ic += 1
+                if con.name.startswith('border'):
+                    n_A_border += 1
+
+            msg = '(i=%s, solver i=%s) obj=%s, S=%s, A_ic=%s, A_border=%s' \
+                % (self.i, solver_i, opt_new, len(S), n_A_ic, n_A_border)
             logging.info(msg)
 
             self.i += 1
@@ -430,7 +441,8 @@ class OptimalAuctionApproximation:
                 separation_oracle(
                     self._Q_values, self._U_values, self.V_T, self.T,
                     self.grades, self.n_buyers, self.f_hat,
-                    self.check_local_ic, self.executor, self.net_size)
+                    self.force_symmetric, self.check_local_ic, self.executor,
+                    self.net_size)
 
             # NOTE: we don't immediately exit here even if len(A) == 0
             # because we need to remake the constraints on the new solver!
@@ -471,8 +483,7 @@ class OptimalAuctionApproximation:
             self.A = A
             self.I = I
 
-            # final: check for active constriants; if none -> break
-            if len(A) == 0:
+            if len(A) == 0 or len(A_border) == 1:
                 break
 
             solver = _solver
@@ -504,6 +515,7 @@ class OptimalAuctionApproximation:
         if hasattr(self, "i"):  # this indiciates it has been run!
             run_params = {
                 'i': self.i,
+                'elapsed': self.elapsed,
                 'opt': self.opt,
                 'converged': self.converged,
                 '_Q_values': self._Q_values,
