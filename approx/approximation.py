@@ -12,7 +12,8 @@ from ortools.linear_solver import pywraplp
 from approx.constraints import (Constraint, IC_PREFIX, BORDER_PREFIX,
                                 make_border_expr_from_name,
                                 make_ic_expr_from_name)
-from approx.oracle import separation_oracle, make_subsets
+from approx.oracle import (separation_oracle, _check_border,
+                           _make_lower_left_quadrant)
 from approx.discrete import discretize, f_hat
 from approx.util import symmetric_ix
 
@@ -290,7 +291,6 @@ class OptimalAuctionApproximation:
 
     def run(self,
             warm_start=True,
-            max_iter=None,
             skip_oracle_check=False):
         """Run the approximation algorithm.
 
@@ -313,7 +313,7 @@ class OptimalAuctionApproximation:
         begin = time.time()
         self.opt = np.inf
         self.i = 1
-        S, A, = [], []
+        A = []
 
         # here we define a local region of the typespace which we check for
         # constraint violations. If we subsequently find violated constraints,
@@ -323,9 +323,9 @@ class OptimalAuctionApproximation:
 
         self.converged = False
         while not self.converged:
-            S, I = self._run(S, A, warm_start, max_iter)
+            self._run(A, warm_start, self.net_size)
 
-            if not self.check_local_ic or max_iter:
+            if not self.check_local_ic:  # TODO x2 check this with new logic
                 self.converged = True
                 break
 
@@ -362,8 +362,6 @@ class OptimalAuctionApproximation:
                     "`net_size`=%s" % self.net_size)
                 _A = A_ic + A_border
                 A = list(set(_A + A))  # always keep annoying failures...
-                # NOTE strip off inactive constraints when reusing S
-                S = list(set(S).difference(set(I)))
             else:
                 self.converged = True
 
@@ -373,128 +371,122 @@ class OptimalAuctionApproximation:
         minutes = np.round(self.elapsed / 60, 1)
         logging.info('finished! total time: %s (mins)' % minutes)
 
-    def _run(self, S, A_old, warm_start, max_iter):
-        I = []
+    @property
+    def border_con_names(self):
+        # NOTE we store names so as not to keep cons from old solvers around
+        if not hasattr(self, '_border_con_names'):
+            self._border_con_names = set()
+        return self._border_con_names
+
+    def _run(self, A_old, warm_start, net_size):
+        # 0. setup solver and variables; add old violated cons
+        S = []  # TODO remove this
         A = A_old.copy()
-        solver, Q_vars, U_vars = self._setup_solver(S, A)
+        self.solver, self.Q_vars, self.U_vars = self._setup_solver(S, A)
+
+        # 1. make + add local ic cons to solver
+        ic_con_names = set()
+        for i, v_i in enumerate(self.V_T):
+            # NOTE also this creates dupes! (we de-dupe below)
+            # TODO this is wrong but it overcounts by only a small amount
+            star_ix = [i + self.T,      # above-left
+                       i + self.T + 1,  # above
+                       i + self.T + 2,  # above-right
+                       i - 1,           # left
+                       i,
+                       i + 1,           # right
+                       i - self.T - 2,  # below-left
+                       i - self.T - 1,  # below
+                       i - self.T]      # below-right
+            # deal with corners/edges:
+            star_ix = [ix for ix in star_ix
+                       if ix >= 0 and ix < len(self.V_T)]
+            quadrant_ix = _make_lower_left_quadrant(i, self.T, net_size)
+            all_ix = set(star_ix + quadrant_ix)
+            all_v_j = [self.V_T[ix] for ix in all_ix]
+            inner_loop = zip(star_ix, all_v_j)
+            for j, v_j in inner_loop:
+                name = '%s_%s_%s' % (IC_PREFIX, i, j)
+                ic_con_names.add(name)
+
+        self._ic_cons = set()
+        for name in ic_con_names.difference(A):
+            expr = make_ic_expr_from_name(
+                name, self.Q_vars, self.U_vars, self.T, self.V_T,
+                self.grades, self.force_symmetric)
+            self.solver.Add(expr, name)
+            con = Constraint(name, expr, None)
+            self._ic_cons.add(con)
+
+        # 2. add old border con violations
+        for name in self.border_con_names:
+            expr = make_border_expr_from_name(
+                name, self.Q_vars, self.T, self.V_T, self.grades,
+                self.f_hat, self.force_symmetric)
+            self.solver.Add(expr, name)
+
+        # 3. define obj
+        obj = self._make_obj(self.Q_vars, self.U_vars)
+        self.solver.Maximize(obj)
 
         while True:
-            # first: run solver and get Q,U values
-            obj = self._make_obj(Q_vars, U_vars)
-            solver.Maximize(obj)
-            status = solver.Solve()
+            # 4. run solver
+            status = self.solver.Solve()
+            assert status == pywraplp.Solver.OPTIMAL, \
+                "optimal solution not found! status=%s" % status
 
-            # second: log, then raise error
-            solver_i = solver.iterations()
-            opt_new = solver.Objective().Value()
+            solver_i = self.solver.iterations()
+            self.opt = self.solver.Objective().Value()
 
-            n_A_ic, n_A_border = 0, 0
-            for con in A:
-                if con.name.startswith('ic'):
-                    n_A_ic += 1
-                if con.name.startswith('border'):
-                    n_A_border += 1
-
-            msg = '(i=%s, solver i=%s) obj=%s, S=%s, A_ic=%s, A_border=%s' \
-                % (self.i, solver_i, opt_new, len(S), n_A_ic, n_A_border)
+            msg = '(i=%s, solver i=%s) obj=%s, # IC=%s, # border=%s' \
+                % (self.i, solver_i, self.opt, len(self._ic_cons),
+                   len(self.border_con_names))
             logging.info(msg)
 
-            self.i += 1
+            # TODO max_iter
 
-            assert status == pywraplp.Solver.OPTIMAL, \
-                "optimal solution not found!"
-
-            if max_iter:
-                if self.i == max_iter:
-                    # for debugging
-                    logging.info('exiting after %s iterations' % max_iter)
-                    break
-
-            # third: convert solver variables to raw values
-            self._U_values = [U.solution_value() for U in U_vars]
+            # 5. convert solver vars to raw values
+            self._U_values = [U.solution_value() for U in self.U_vars]
             if not self.force_symmetric:
                 self._Q_values = []
                 for j in self.grades:
                     self._Q_values.append(
-                        [Q.solution_value() for Q in Q_vars[j]])
+                        [Q.solution_value() for Q in self.Q_vars[j]])
             else:
                 # TODO keep this the same as `self.Q`...
-                _Q1 = [Q.solution_value() for Q in Q_vars[0]]
+                _Q1 = [Q.solution_value() for Q in self.Q_vars[0]]
                 _Q2 = np.zeros(len(_Q1))
                 for i, _ in enumerate(_Q1):
                     symm_i = symmetric_ix(i, self.T)
                     _Q2[symm_i] = _Q1[i]
                 self._Q_values = [_Q1, list(_Q2)]
 
-            # fourth: remake solver (includes base constraints)
-            # NOTE this avoid segfaults when attempting to reuse the solver...
-            if warm_start:
-                # TODO verfy this code actually works...
-                _solver, _Q_vars, _U_vars = self._setup_solver(
-                    S, A, self._Q_values, self._U_values)
-            else:
-                _solver, _Q_vars, _U_vars = self._setup_solver(
-                    S, A, None, None)
+            # 6. check border + add violations
+            local_border_cons = _check_border(
+                self.V_T, self.T, self._Q_values, self.grades, self.n_buyers,
+                self.f_hat)
 
-            # fifth: run separation orcale
-            I_ic, A_ic, B_ic, I_border, A_border, B_border = \
-                separation_oracle(
-                    self._Q_values, self._U_values, self.V_T, self.T,
-                    self.grades, self.n_buyers, self.f_hat,
-                    self.force_symmetric, self.check_local_ic, self.executor,
-                    self.net_size)
+            to_add = set()
+            n_violated_border = 0
+            for con in local_border_cons:
+                if con.status == 'VIOLATED':
+                    to_add.add(con)
+                    self._border_con_names.add(con.name)
+                    n_violated_border += 1
 
-            # NOTE: we don't immediately exit here even if len(A) == 0
-            # because we need to remake the constraints on the new solver!
+            if n_violated_border == 0:
+                logging.info("success!")
+                break  # success!
 
-            I_subset, A_subset = \
-                make_subsets(
-                    I_ic, A_ic, I_border, A_border, self.I_subset_prop,
-                    self.A_subset_prop, self.rng, self.check_local_ic)
+            self.i += 1
 
-            # force previously failing constraints on every iteration:
-            A_subset.extend(A_old)
+            for con in to_add:
+                expr = make_border_expr_from_name(
+                    con.name, self.Q_vars, self.T, self.V_T, self.n_buyers,
+                    self.grades, self.f_hat, self.force_symmetric)
+                self.solver.Add(expr, con.name)
 
-            # sixth: remake constraint sets for next iter
-            if opt_new < self.opt:
-                S_new = set(S).difference(set(I_subset)).union(set(A_subset))
-                self.opt = opt_new
-            else:
-                S_new = set(S).union(set(A_subset))
-            S = list(S_new)
-
-            for con in S:
-                if con.name.startswith(IC_PREFIX):
-                    expr = make_ic_expr_from_name(
-                        con.name, _Q_vars, _U_vars, self.T, self.V_T,
-                        self.grades, self.force_symmetric)
-                elif con.name.startswith(BORDER_PREFIX):
-                    expr = make_border_expr_from_name(
-                        con.name, _Q_vars, self.T, self.V_T, self.n_buyers,
-                        self.grades, self.f_hat, self.force_symmetric)
-                else:
-                    raise RuntimeError("constraint prefix not recognised!")
-                _solver.Add(expr)
-
-            I = I_ic + I_border  # inactive
-            A = A_ic + A_border  # violated
-
-            self.S = S
-            self.A = A
-            self.I = I
-
-            if len(A) == 0 or len(A_border) == 1:
-                break
-
-            solver = _solver
-            Q_vars = _Q_vars
-            U_vars = _U_vars
-
-        self.solver = solver
-        self.Q_vars = Q_vars
-        self.U_vars = U_vars
-
-        return S, I
+            # self.solver.Clear()  # TODO this segfaults
 
     def __getstate__(self):
         init_params = {

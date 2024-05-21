@@ -21,14 +21,14 @@ def _make_lower_left_quadrant(ix, T, net_size):
 
     i = int(ix / (T + 1))  # row
     j = ix % (T + 1)       # col
+
+    low_i = np.max([i - net_size, 0])
+    low_j = np.max([j - net_size, 0])
+
     grid = np.zeros((T + 1, T + 1))
-    for offset_i in range(net_size + 1):
-        new_i = i + offset_i
-        if new_i >= 0 and new_i <= T:
-            for offset_j in range(net_size + 1):
-                new_j = j - offset_j
-                if new_j >= 0 and new_j <= T:
-                    grid[new_i, new_j] = 1
+    for x in range(low_i, i + 1):
+        for y in range(low_j, j + 1):
+            grid[x, y] = 1
 
     # convert matrix to 1D array and pull values where = 1
     ixs = np.where(grid.reshape((-1)) > 0.5)[0]

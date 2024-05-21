@@ -75,7 +75,8 @@ def make_ic_expr_from_name(name, Q, U, T, V_T, grades, force_symmetric):
 def make_border_expr_from_name(
         name, Q, T, V_T, n_buyers, grades, f_hat, force_symmetric):
     str_V_T_subset = name.lstrip(BORDER_PREFIX + '_').split('_')
-    V_T_subset = [int(v_t) for v_t in str_V_T_subset]
+    # sort indices to avoid adding dupes (e.g., [1,2,3] and [1,3,2])
+    V_T_subset = np.sort([int(v_t) for v_t in str_V_T_subset])
     val = border_lhs_minus_rhs(
         T, V_T, V_T_subset, Q, n_buyers, grades, f_hat, force_symmetric)
     return val <= 0
