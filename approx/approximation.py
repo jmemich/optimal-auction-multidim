@@ -278,7 +278,7 @@ class OptimalAuctionApproximation:
 
         return solver, Q_vars, U_vars
 
-    def run(self, warm_start=True):
+    def run(self, warm_start=True, solver_max_time=300):
         """Run the approximation algorithm.
 
         Parameters
@@ -287,10 +287,14 @@ class OptimalAuctionApproximation:
             Warm start the `ortools` solver with previous values at each
             iteration. Note, user needs to check `ortools` documentation
             for whether solver supports warmstarts.
+
+        solver_max_time : int, default=300
+            Solver time limit in seconds.
         """
         begin = time.time()
         self.opt = np.inf
         self.i = 1
+        self.js = []
 
         # here we define a local region of the typespace which we check for
         # constraint violations. If we subsequently find violated constraints,
@@ -302,6 +306,7 @@ class OptimalAuctionApproximation:
         self.converged = False
         while not self.converged:
 
+            # TODO cleanup this dupe code
             # define local region of typespace for IC constrait checks
             for i, v_i in enumerate(self.V_T):
                 # NOTE also this creates dupes! (we de-dupe below)
@@ -330,11 +335,12 @@ class OptimalAuctionApproximation:
             self.solver, self.Q_vars, self.U_vars = self._setup_solver(
                 self.con_names)
             self.solver.SetSolverSpecificParametersAsString(
-                "max_time_in_seconds:300")
+                "max_time_in_seconds:%s" % solver_max_time)
             obj = self._make_obj(self.Q_vars, self.U_vars)
             self.solver.Maximize(obj)
 
-            self.j = 1
+            j = 1
+            n_violated = 0
             self.border_failing = True
             n_consecutive_fails = 0
             while self.border_failing:
@@ -344,19 +350,19 @@ class OptimalAuctionApproximation:
                 self.solver_status = self.solver.Solve()
 
                 if self.solver_status != 0:
-                    if self.solver_status == 4 and n_consecutive_fails < 10:
+                    if self.solver_status == 4 and n_consecutive_fails < 5:
                         n_consecutive_fails += 1
                         logging.warning(
-                            "solver status = %s! remaking solver... (#%s/10)" %
+                            "solver status = %s! remaking solver... (#%s/5)" %
                             (self.solver_status, n_consecutive_fails))
                         self.solver, self.Q_vars, self.U_vars = \
                             self._setup_solver(self.con_names)
                         self.solver.SetSolverSpecificParametersAsString(
-                            "max_time_in_seconds:300")
+                            "max_time_in_seconds:%s" % solver_max_time)
                         obj = self._make_obj(self.Q_vars, self.U_vars)
                         self.solver.Maximize(obj)
                         continue
-                    raise RuntimeError("solver failed with status=%s (#%s/10)"
+                    raise RuntimeError("solver failed with status=%s (#%s/5)"
                                        % (self.solver_status,
                                           n_consecutive_fails))
                 n_consecutive_fails = 0
@@ -371,8 +377,9 @@ class OptimalAuctionApproximation:
                     if con.name().startswith(BORDER_PREFIX):
                         n_border += 1
 
-                msg = '(i=%s, j=%s, solver i=%s) obj=%s, # IC=%s, # border=%s'\
-                    % (self.i, self.j, solver_i, self.opt, n_ic, n_border)
+                msg = '(i=%s, j=%s, solver=%s) obj=%s, #IC=%s, #border=%s (%s)'\
+                    % (self.i, j, solver_i, self.opt, n_ic, n_border,
+                       n_violated)
                 logging.info(msg)
 
                 # convert solver vars to raw values
@@ -396,8 +403,8 @@ class OptimalAuctionApproximation:
                     self.V_T, self.T, self._Q_values, self.grades,
                     self.n_buyers, self.f_hat)
 
-                to_add = set()
                 n_violated = 0
+                to_add = set()
                 for con in border_cons:
                     if con.status == 'VIOLATED':
                         to_add.add(con)
@@ -411,7 +418,7 @@ class OptimalAuctionApproximation:
                                  self.net_size)
                     break
 
-                self.j += 1
+                j += 1
 
                 for con in to_add.difference(self.con_names):
                     self.con_names.add(con.name)
@@ -420,6 +427,7 @@ class OptimalAuctionApproximation:
                         self.grades, self.f_hat, self.force_symmetric)
                     self.solver.Add(expr, con.name)
 
+            self.js.append(j)
             check_local = False
             logging.info('checking full solution...')
             _, A_ic, _, _, A_border, _ = \
@@ -453,6 +461,7 @@ class OptimalAuctionApproximation:
                     "Running again with previous failures and "
                     "`net_size`=%s" % self.net_size)
                 self.i += 1
+                j = 1
             else:
                 self.converged = True
 
@@ -460,7 +469,8 @@ class OptimalAuctionApproximation:
             logging.warning("algorithm did not converge!")
         self.elapsed = time.time() - begin
         minutes = np.round(self.elapsed / 60, 1)
-        logging.info('finished! total time: %s (mins)' % minutes)
+        logging.info('finished! total time: %s (mins), total iterations: %s' %
+                     (minutes, np.sum(self.js)))
 
     def __getstate__(self):
         init_params = {
@@ -479,6 +489,7 @@ class OptimalAuctionApproximation:
         if hasattr(self, "i"):  # this indiciates it has been run!
             run_params = {
                 'i': self.i,
+                'js': self.js,
                 'elapsed': self.elapsed,
                 'opt': self.opt,
                 'converged': self.converged,

@@ -135,7 +135,7 @@ def _check_one_ic(Q, U, grades, i, v_i, j, v_j):
 
     # NOTE becase we are comparing floating point numbers we eval
     # `is_close` before we asses > / <
-    is_close = np.isclose(val, 0.0)
+    is_close = np.isclose(val, 0.0, rtol=0.0)
     if is_close:
         con = Constraint(name, None, 'BINDING')
     elif val < 0:
@@ -200,7 +200,7 @@ def _check_one_border(T, V_T, V_T_subset, Q, n_buyers, grades, f_hat):
 
     # NOTE becase we are comparing floating point numbers we eval
     # `is_close` before we asses > / <
-    is_close = np.isclose(val, 0.0)
+    is_close = np.isclose(val, 0.0, rtol=0.0)
     if is_close:
         con = Constraint(name, None, 'BINDING')
     elif val > 0:
