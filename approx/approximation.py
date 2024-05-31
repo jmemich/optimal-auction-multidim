@@ -329,6 +329,8 @@ class OptimalAuctionApproximation:
             # make solver
             self.solver, self.Q_vars, self.U_vars = self._setup_solver(
                 self.con_names)
+            self.solver.SetSolverSpecificParametersAsString(
+                "max_time_in_seconds:300")
             obj = self._make_obj(self.Q_vars, self.U_vars)
             self.solver.Maximize(obj)
 
@@ -349,6 +351,8 @@ class OptimalAuctionApproximation:
                             (self.solver_status, n_consecutive_fails))
                         self.solver, self.Q_vars, self.U_vars = \
                             self._setup_solver(self.con_names)
+                        self.solver.SetSolverSpecificParametersAsString(
+                            "max_time_in_seconds:300")
                         obj = self._make_obj(self.Q_vars, self.U_vars)
                         self.solver.Maximize(obj)
                         continue
@@ -393,11 +397,15 @@ class OptimalAuctionApproximation:
                     self.n_buyers, self.f_hat)
 
                 to_add = set()
+                n_violated = 0
                 for con in border_cons:
-                    if con.status == 'VIOLATED' or con.status == 'BINDING':
+                    if con.status == 'VIOLATED':
+                        to_add.add(con)
+                        n_violated += 1
+                    if con.status == 'BINDING':
                         to_add.add(con)
 
-                if len(to_add) == 0:
+                if n_violated == 0:
                     self.border_failing = False
                     logging.info("successfully run inner loop (net_size=%s)" %
                                  self.net_size)
