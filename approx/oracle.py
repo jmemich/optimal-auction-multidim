@@ -191,7 +191,7 @@ def _check_border(V_T, T, Q, grades, n_buyers, f_hat):
 
 def _check_one_border(T, V_T, V_T_subset, Q, n_buyers, grades, f_hat):
     name = '%s_%s' % (
-        BORDER_PREFIX, '_'.join([str(i) for i in V_T_subset]))
+        BORDER_PREFIX, '_'.join(np.sort([str(i) for i in V_T_subset])))
 
     # NOTE we `force_symmetric`=False here because we are using Q_vals so
     # the indexing switch has already been done!
