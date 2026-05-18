@@ -1,5 +1,5 @@
-from approx import OptimalAuctionApproximation as Approx
-from approx.constraints import Constraint   # NOQA
+from optimal_auctions import OptimalAuctionApproximation as Approx
+from optimal_auctions.constraints import Constraint   # NOQA
 
 from ortools.linear_solver import pywraplp   # NOQA
 

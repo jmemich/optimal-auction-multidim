@@ -1,6 +1,41 @@
-*/__pycache__
-*egg-info*
-*.ipynb_checkpoints*
-*.pyc
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+.eggs/
 
-*.DS_Store
+# uv / venv
+.venv/
+.python-version
+uv.lock.bak
+
+# Test / cache
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.pyright/
+.coverage
+htmlcov/
+*.cover
+
+# Notebooks
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*~
+
+# Build artifacts
+build/
+dist/
+*.whl

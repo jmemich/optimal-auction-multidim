@@ -3,7 +3,7 @@ import logging
 
 import numpy as np
 
-from approx.constraints import (ic_lhs_minus_rhs, border_lhs_minus_rhs,
+from optimal_auctions.constraints import (ic_lhs_minus_rhs, border_lhs_minus_rhs,
                                 Constraint, BORDER_PREFIX, IC_PREFIX)
 
 

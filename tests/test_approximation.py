@@ -1,6 +1,6 @@
 import pickle
 
-from approx import OptimalAuctionApproximation as Approximation
+from optimal_auctions import OptimalAuctionApproximation as Approximation
 
 
 def test_pickle_roundtrip():

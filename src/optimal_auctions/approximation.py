@@ -9,13 +9,13 @@ import numpy as np
 
 from ortools.linear_solver import pywraplp
 
-from approx.constraints import (Constraint, IC_PREFIX, BORDER_PREFIX,
+from optimal_auctions.constraints import (Constraint, IC_PREFIX, BORDER_PREFIX,
                                 make_border_expr_from_name,
                                 make_ic_expr_from_name)
-from approx.oracle import (separation_oracle, _check_border,
+from optimal_auctions.oracle import (separation_oracle, _check_border,
                            _make_lower_left_quadrant)
-from approx.discrete import discretize, f_hat
-from approx.util import symmetric_ix
+from optimal_auctions.discrete import discretize, f_hat
+from optimal_auctions.util import symmetric_ix
 
 
 LOG_FMT = '(%(process)d) %(asctime)s [%(levelname)s] %(message)s'
