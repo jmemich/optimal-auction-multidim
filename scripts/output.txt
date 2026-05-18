@@ -1,0 +1,1900 @@
+(16699) 15:05:26 [INFO] PROBLEM SETUP: n_buyers=2, n_grades=2, V=[[0, 1], [0, 1]], costs=[0, 0], T=12, solver=GLOP, force_symmetric=True, ic_local=True
+
+Initial problem: 1611 rows, 338 columns, 4710 entries with magnitude in [1.387779e-17, 2.000000e+00]
+Objective stats: 325 non-zeros, range [-1.388889e-02, 2.546296e-02]
+Bounds stats: 508 non-zeros, range [1.000000e-10, 1.000000e+00]
+Parameters: use_preprocessing: true log_search_progress: true
+
+Starting presolve...
+SingletonPreprocessor                        : 1597(-14) rows, 338(0) columns, 4696(-14) entries. (0.000130s)
+ImpliedFreePreprocessor                      : 1597(-14) rows, 338(0) columns, 4696(-14) entries. (0.000186s)
+UnconstrainedVariablePreprocessor            : 1597(-14) rows, 324(-14) columns, 4557(-153) entries. (0.000094s)
+SingletonPreprocessor                        : 1573(-38) rows, 324(-14) columns, 4533(-177) entries. (0.000027s)
+UnconstrainedVariablePreprocessor            : 1573(-38) rows, 323(-15) columns, 4524(-186) entries. (0.000076s)
+Reached fixed point after presolve pass #2
+EmptyConstraintPreprocessor                  : 1404(-207) rows, 323(-15) columns, 4524(-186) entries. (0.000032s)
+ProportionalRowPreprocessor                  : 1336(-275) rows, 323(-15) columns, 4388(-322) entries. (0.000191s)
+DualizerPreprocessor                         : 323(-1288) rows, 1732(1394) columns, 4786(76) entries. (0.000351s)
+SingletonPreprocessor                        : 323(-1288) rows, 1534(1196) columns, 4588(-122) entries. (0.000233s)
+FreeConstraintPreprocessor                   : 322(-1289) rows, 1534(1196) columns, 4580(-130) entries. (0.000016s)
+UnconstrainedVariablePreprocessor            : 322(-1289) rows, 1531(1193) columns, 4576(-134) entries. (0.000508s)
+ScalingPreprocessor                          : 322(-1289) rows, 1531(1193) columns, 4576(-134) entries. (0.000261s)
+
+Presolved problem: 322 rows, 1531 columns, 4576 entries with magnitude in [9.125060e-09, 1.000000e+00]
+Objective stats: 1357 non-zeros, range [-3.246670e+01, 3.014765e+01]
+Bounds stats: 448 non-zeros, range [-5.523817e+02, 1.805387e-01]
+
+Starting basis: create from scratch.
+Trying to remove 123 fixed variables from the initial basis.
+The matrix with slacks has 322 rows, 1853 columns, 4898 entries.
+Number of basic infeasible variables: 39
+Number of basic slack variables: 161
+Number of basic variables at bound: 0
+Number of basic fixed variables: 7
+Number of basic free variables: 0
+Number of super-basic variables: 0
+
+Primal feasibility phase, iteration # 0, sum_primal_infeasibilities = 7.876583443456469E-01 [norms]
+Primal feasibility phase, iteration # 47, sum_primal_infeasibilities = 0.000000000000000E+00 [check]
+Current status: PRIMAL_FEASIBLE
+Primal infeasibility (bounds) = 0
+Primal residual |A.x - b| = 2.77556e-16
+Dual infeasibility (reduced costs) = 21.1555
+Dual residual |c_B - y.B| = 8.88178e-16
+
+Primal optimization phase, iteration # 0, objective = -2.023148148147802E+00
+Primal optimization phase, iteration # 65, objective = -1.615451385436772E+00
+Primal optimization phase, iteration # 130, objective = -1.388310188559478E+00
+Primal optimization phase, iteration # 195, objective = -1.187355323353820E+00
+Primal optimization phase, iteration # 260, objective = -9.956595537444565E-01
+Primal optimization phase, iteration # 325, objective = -8.768989414506430E-01
+Primal optimization phase, iteration # 390, objective = -8.421583860283166E-01
+Primal optimization phase, iteration # 455, objective = -8.090639078117371E-01
+Primal optimization phase, iteration # 466, objective = -8.043421676356557E-01 [reduced costs]
+Primal optimization phase, iteration # 472, objective = -8.035300040405842E-01 [check]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 0
+Primal residual |A.x - b| = 4.16334e-16
+Dual infeasibility (reduced costs) = 2.28265e-11
+Dual residual |c_B - y.B| = 3.55271e-15
+
+Final unscaled solution:
+Primal objective (before moving primal/dual values) = 8.243634259259255E-01
+Dual objective (before moving primal/dual values) = 8.243634259259257E-01
+Max. primal values move = 2.62013e-14
+Max. dual values move = 0
+Primal objective (after moving primal/dual values) = 8.243634259259260E-01
+Max. rhs perturbation = 1.15463e-14
+Max. cost perturbation = 4.30211e-16
+Max. primal infeasibility = 1.15463e-14
+Max. dual infeasibility = 0
+Objective error <= 4e-06
+status: OPTIMAL
+objective: 0.824363
+iterations: 519
+time: 0.025219
+deterministic_time: 0.0162021
+
+(16699) 15:05:26 [INFO] (i=1, solver i=519) obj=0.824363425925926, # IC=1441, # border=0
+
+Initial problem: 1780 rows, 338 columns, 19892 entries with magnitude in [1.387779e-17, 2.000000e+00]
+Objective stats: 325 non-zeros, range [-1.388889e-02, 2.546296e-02]
+Bounds stats: 677 non-zeros, range [1.000000e-10, 1.000000e+00]
+Parameters: use_preprocessing: true log_search_progress: true
+
+Starting presolve...
+SingletonPreprocessor                        : 1766(-14) rows, 338(0) columns, 19878(-14) entries. (0.000355s)
+ImpliedFreePreprocessor                      : 1766(-14) rows, 338(0) columns, 19878(-14) entries. (0.000314s)
+UnconstrainedVariablePreprocessor            : 1766(-14) rows, 325(-13) columns, 18992(-900) entries. (0.000213s)
+SingletonPreprocessor                        : 1742(-38) rows, 325(-13) columns, 18968(-924) entries. (0.000054s)
+Reached fixed point after presolve pass #2
+EmptyConstraintPreprocessor                  : 1573(-207) rows, 325(-13) columns, 18968(-924) entries. (0.000060s)
+ProportionalRowPreprocessor                  : 1504(-276) rows, 325(-13) columns, 18676(-1216) entries. (0.000457s)
+DualizerPreprocessor                         : 325(-1455) rows, 1902(1564) columns, 19074(-818) entries. (0.000723s)
+SingletonPreprocessor                        : 325(-1455) rows, 1702(1364) columns, 18874(-1018) entries. (0.000437s)
+FreeConstraintPreprocessor                   : 324(-1456) rows, 1702(1364) columns, 18866(-1026) entries. (0.000037s)
+UnconstrainedVariablePreprocessor            : 324(-1456) rows, 1699(1361) columns, 18863(-1029) entries. (0.001140s)
+ScalingPreprocessor                          : 324(-1456) rows, 1699(1361) columns, 18863(-1029) entries. (0.000748s)
+
+Presolved problem: 324 rows, 1699 columns, 18863 entries with magnitude in [9.125060e-09, 1.000000e+00]
+Objective stats: 1525 non-zeros, range [-9.298434e+00, 9.298434e+00]
+Bounds stats: 450 non-zeros, range [-4.850608e+02, 1.511421e+00]
+
+The warm-start state contains 322 candidates for the basis (num_rows = 324).
+The initial basis did not use  BASIC columns from the initial state and used 226 slack variables that were not marked BASIC.
+224 of the FREE variables where moved to their bound.
+Starting basis: incremental solve.
+The matrix with slacks has 324 rows, 2023 columns, 19187 entries.
+Number of basic infeasible variables: 141
+Number of basic slack variables: 226
+Number of basic variables at bound: 4
+Number of basic fixed variables: 82
+Number of basic free variables: 0
+Number of super-basic variables: 0
+
+Primal feasibility phase, iteration # 0, sum_primal_infeasibilities = 1.948499837543829E+02 [norms]
+Primal feasibility phase, iteration # 65, sum_primal_infeasibilities = 3.801113122202952E+01
+Primal feasibility phase, iteration # 130, sum_primal_infeasibilities = 2.061163701998251E-01
+Primal feasibility phase, iteration # 148, sum_primal_infeasibilities = 2.752857078576476E-21 [check]
+Current status: PRIMAL_FEASIBLE
+Primal infeasibility (bounds) = 2.75286e-21
+Primal residual |A.x - b| = 1.42109e-14
+Dual infeasibility (reduced costs) = 1814.3
+Dual residual |c_B - y.B| = 1.38778e-17
+
+Primal optimization phase, iteration # 0, objective = -1.665823351698781E+00
+Primal optimization phase, iteration # 65, objective = -1.255522425749807E+00
+Primal optimization phase, iteration # 130, objective = -1.083249769500995E+00
+Primal optimization phase, iteration # 195, objective = -9.162036560085137E-01
+Primal optimization phase, iteration # 229, objective = -8.407715048689272E-01 [small pivot]
+Primal optimization phase, iteration # 230, objective = -8.394907257316090E-01 [small pivot]
+Primal optimization phase, iteration # 231, objective = -8.357419615051430E-01 [small pivot]
+Primal optimization phase, iteration # 296, objective = -7.658223122385281E-01
+Primal optimization phase, iteration # 361, objective = -7.288876844674320E-01
+Primal optimization phase, iteration # 411, objective = -7.126209826725769E-01 [small pivot]
+Primal optimization phase, iteration # 435, objective = -7.033130551569090E-01 [small pivot]
+Primal optimization phase, iteration # 500, objective = -6.851170568095606E-01
+Primal optimization phase, iteration # 556, objective = -6.674383488437060E-01 [reduced costs]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 5.61499e-15
+Primal residual |A.x - b| = 8.43769e-15
+Dual infeasibility (reduced costs) = 3.09374e-11
+Dual residual |c_B - y.B| = 5.55112e-16
+
+Final unscaled solution:
+Primal objective (before moving primal/dual values) = 6.674383488890880E-01
+Dual objective (before moving primal/dual values) = 6.674383488890877E-01
+Max. primal values move = 3.9746e-14
+Max. dual values move = 6.17137e-17
+Primal objective (after moving primal/dual values) = 6.674383488890889E-01
+Max. rhs perturbation = 1.40651e-14
+Max. cost perturbation = 7.56339e-16
+Max. primal infeasibility = 1.40651e-14
+Max. dual infeasibility = 0
+Objective error <= 4e-06
+status: OPTIMAL
+objective: 0.667438
+iterations: 704
+time: 0.052102
+deterministic_time: 0.0448123
+
+(16699) 15:05:26 [INFO] (i=2, solver i=704) obj=0.6674383488890889, # IC=1441, # border=169
+
+Initial problem: 1889 rows, 338 columns, 26328 entries with magnitude in [1.387779e-17, 2.000000e+00]
+Objective stats: 325 non-zeros, range [-1.388889e-02, 2.546296e-02]
+Bounds stats: 786 non-zeros, range [1.000000e-10, 1.000000e+00]
+Parameters: use_preprocessing: true log_search_progress: true
+
+Starting presolve...
+SingletonPreprocessor                        : 1875(-14) rows, 338(0) columns, 26314(-14) entries. (0.000328s)
+ImpliedFreePreprocessor                      : 1875(-14) rows, 338(0) columns, 26314(-14) entries. (0.000371s)
+UnconstrainedVariablePreprocessor            : 1875(-14) rows, 325(-13) columns, 25155(-1173) entries. (0.000276s)
+SingletonPreprocessor                        : 1851(-38) rows, 325(-13) columns, 25131(-1197) entries. (0.000066s)
+Reached fixed point after presolve pass #2
+EmptyConstraintPreprocessor                  : 1682(-207) rows, 325(-13) columns, 25131(-1197) entries. (0.000081s)
+ProportionalRowPreprocessor                  : 1611(-278) rows, 325(-13) columns, 24835(-1493) entries. (0.000582s)
+DualizerPreprocessor                         : 325(-1564) rows, 2009(1671) columns, 25233(-1095) entries. (0.001160s)
+SingletonPreprocessor                        : 325(-1564) rows, 1809(1471) columns, 25033(-1295) entries. (0.001044s)
+FreeConstraintPreprocessor                   : 324(-1565) rows, 1809(1471) columns, 25025(-1303) entries. (0.000082s)
+UnconstrainedVariablePreprocessor            : 324(-1565) rows, 1806(1468) columns, 25022(-1306) entries. (0.001693s)
+ScalingPreprocessor                          : 324(-1565) rows, 1806(1468) columns, 25022(-1306) entries. (0.000997s)
+
+Presolved problem: 324 rows, 1806 columns, 25022 entries with magnitude in [9.125060e-09, 1.000000e+00]
+Objective stats: 1632 non-zeros, range [-9.298434e+00, 9.298434e+00]
+Bounds stats: 450 non-zeros, range [-4.850608e+02, 1.577611e+00]
+
+The warm-start state contains 324 candidates for the basis (num_rows = 324).
+The initial basis did not use  BASIC columns from the initial state and used 261 slack variables that were not marked BASIC.
+261 of the FREE variables where moved to their bound.
+Starting basis: incremental solve.
+The matrix with slacks has 324 rows, 2130 columns, 25346 entries.
+Number of basic infeasible variables: 193
+Number of basic slack variables: 274
+Number of basic variables at bound: 1
+Number of basic fixed variables: 105
+Number of basic free variables: 0
+Number of super-basic variables: 0
+
+Primal feasibility phase, iteration # 0, sum_primal_infeasibilities = 5.082142912968181E+02 [norms]
+Primal feasibility phase, iteration # 65, sum_primal_infeasibilities = 3.164540559577283E+02
+Primal feasibility phase, iteration # 130, sum_primal_infeasibilities = 1.399558354459930E+01
+Primal feasibility phase, iteration # 195, sum_primal_infeasibilities = 6.772637844947972E-05
+Primal feasibility phase, iteration # 214, sum_primal_infeasibilities = 3.466463445136256E-13 [check]
+Current status: PRIMAL_FEASIBLE
+Primal infeasibility (bounds) = 3.41095e-13
+Primal residual |A.x - b| = 5.68434e-14
+Dual infeasibility (reduced costs) = 907.148
+Dual residual |c_B - y.B| = 1.11022e-16
+
+Primal optimization phase, iteration # 0, objective = -1.667786398051356E+00
+Primal optimization phase, iteration # 65, objective = -1.308411398022435E+00
+Primal optimization phase, iteration # 103, objective = -9.086878897810650E-01 [small pivot]
+Primal optimization phase, iteration # 134, objective = -8.603018301151155E-01 [small pivot]
+Primal optimization phase, iteration # 135, objective = -8.583728178028439E-01 [small pivot]
+Primal optimization phase, iteration # 200, objective = -7.463751767050255E-01
+Primal optimization phase, iteration # 231, objective = -7.336840306704346E-01 [small pivot]
+Primal optimization phase, iteration # 296, objective = -6.912487421655993E-01
+Primal optimization phase, iteration # 302, objective = -6.897812257911525E-01 [small pivot]
+Primal optimization phase, iteration # 305, objective = -6.879406999145834E-01 [small pivot]
+Primal optimization phase, iteration # 370, objective = -6.555399975134990E-01
+Primal optimization phase, iteration # 378, objective = -6.531793596967369E-01 [small pivot]
+Primal optimization phase, iteration # 385, objective = -6.497245162579013E-01 [small pivot]
+Primal optimization phase, iteration # 450, objective = -6.385755526693819E-01
+Primal optimization phase, iteration # 515, objective = -6.238389369309671E-01
+Primal optimization phase, iteration # 562, objective = -6.226016286980077E-01 [reduced costs]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 0.0396751
+Primal residual |A.x - b| = 5.68434e-14
+Dual infeasibility (reduced costs) = 8.15547e-12
+Dual residual |c_B - y.B| = 1.59595e-16
+
+Re-optimizing with dual simplex ... 
+Dual optimization phase, iteration # 562, objective = -6.226947228094242E-01 [norms]
+Dual optimization phase, iteration # 563, objective = -6.226960656837459E-01 [check]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 0
+Primal residual |A.x - b| = 5.68434e-14
+Dual infeasibility (reduced costs) = 9.97139e-12
+Dual residual |c_B - y.B| = 2.22045e-16
+
+Final unscaled solution:
+Primal objective (before moving primal/dual values) = 6.226960656840930E-01
+Dual objective (before moving primal/dual values) = 6.226960656840914E-01
+Max. primal values move = 1.33227e-13
+Max. dual values move = 0
+Primal objective (after moving primal/dual values) = 6.226960656840962E-01
+Max. rhs perturbation = 1.79093e-14
+Max. cost perturbation = 4.12864e-16
+Max. primal infeasibility = 1.79093e-14
+Max. dual infeasibility = 0
+Objective error <= 4e-06
+status: OPTIMAL
+objective: 0.622696
+iterations: 777
+time: 0.063612
+deterministic_time: 0.0524071
+
+(16699) 15:05:26 [INFO] (i=3, solver i=777) obj=0.6226960656840962, # IC=1441, # border=278
+
+Initial problem: 1977 rows, 338 columns, 30641 entries with magnitude in [1.387779e-17, 2.000000e+00]
+Objective stats: 325 non-zeros, range [-1.388889e-02, 2.546296e-02]
+Bounds stats: 874 non-zeros, range [1.000000e-10, 1.000000e+00]
+Parameters: use_preprocessing: true log_search_progress: true
+
+Starting presolve...
+SingletonPreprocessor                        : 1963(-14) rows, 338(0) columns, 30627(-14) entries. (0.000520s)
+ImpliedFreePreprocessor                      : 1963(-14) rows, 338(0) columns, 30627(-14) entries. (0.000366s)
+UnconstrainedVariablePreprocessor            : 1963(-14) rows, 325(-13) columns, 29285(-1356) entries. (0.000273s)
+SingletonPreprocessor                        : 1939(-38) rows, 325(-13) columns, 29261(-1380) entries. (0.000066s)
+Reached fixed point after presolve pass #2
+EmptyConstraintPreprocessor                  : 1770(-207) rows, 325(-13) columns, 29261(-1380) entries. (0.000140s)
+ProportionalRowPreprocessor                  : 1697(-280) rows, 325(-13) columns, 28961(-1680) entries. (0.000674s)
+DualizerPreprocessor                         : 325(-1652) rows, 2095(1757) columns, 29359(-1282) entries. (0.001349s)
+SingletonPreprocessor                        : 325(-1652) rows, 1895(1557) columns, 29159(-1482) entries. (0.000997s)
+FreeConstraintPreprocessor                   : 324(-1653) rows, 1895(1557) columns, 29151(-1490) entries. (0.000057s)
+UnconstrainedVariablePreprocessor            : 324(-1653) rows, 1892(1554) columns, 29148(-1493) entries. (0.001814s)
+ScalingPreprocessor                          : 324(-1653) rows, 1892(1554) columns, 29148(-1493) entries. (0.001089s)
+
+Presolved problem: 324 rows, 1892 columns, 29148 entries with magnitude in [9.125060e-09, 1.000000e+00]
+Objective stats: 1718 non-zeros, range [-9.298434e+00, 9.298434e+00]
+Bounds stats: 450 non-zeros, range [-4.850608e+02, 1.532022e+00]
+
+The warm-start state contains 324 candidates for the basis (num_rows = 324).
+The initial basis did not use  BASIC columns from the initial state and used 110 slack variables that were not marked BASIC.
+110 of the FREE variables where moved to their bound.
+The primal residual of the initial basis is above the tolerance, 0.0291588 vs. 1e-08
+Starting basis: incremental solve.
+The matrix with slacks has 324 rows, 2216 columns, 29472 entries.
+Number of basic infeasible variables: 143
+Number of basic slack variables: 123
+Number of basic variables at bound: 0
+Number of basic fixed variables: 28
+Number of basic free variables: 0
+Number of super-basic variables: 0
+
+Primal feasibility phase, iteration # 0, sum_primal_infeasibilities = 4.939431893701764E+14 [norms]
+Primal feasibility phase, iteration # 31, sum_primal_infeasibilities = 5.402666725501356E+02 [imprecise pivot]
+Primal feasibility phase, iteration # 96, sum_primal_infeasibilities = 1.105787739567064E+02
+Primal feasibility phase, iteration # 161, sum_primal_infeasibilities = 3.863366893161808E+01
+Primal feasibility phase, iteration # 215, sum_primal_infeasibilities = 0.000000000000000E+00 [check]
+Current status: PRIMAL_FEASIBLE
+Primal infeasibility (bounds) = 0
+Primal residual |A.x - b| = 1.13687e-13
+Dual infeasibility (reduced costs) = 34704.5
+Dual residual |c_B - y.B| = 9.09495e-13
+
+Primal optimization phase, iteration # 0, objective = -2.226252823365860E+00
+Primal optimization phase, iteration # 65, objective = -1.445138723789921E+00
+Primal optimization phase, iteration # 130, objective = -9.692661339195474E-01
+Primal optimization phase, iteration # 195, objective = -7.891757605402951E-01
+Primal optimization phase, iteration # 260, objective = -7.125777153215375E-01
+Primal optimization phase, iteration # 325, objective = -6.749703106016488E-01
+Primal optimization phase, iteration # 390, objective = -6.597202493737784E-01
+Primal optimization phase, iteration # 455, objective = -6.426828390570235E-01
+Primal optimization phase, iteration # 520, objective = -6.326153661985179E-01
+Primal optimization phase, iteration # 538, objective = -6.296253487856706E-01 [small pivot]
+Primal optimization phase, iteration # 539, objective = -6.294145495602326E-01 [small pivot]
+Primal optimization phase, iteration # 550, objective = -6.283862208927499E-01 [small pivot]
+Primal optimization phase, iteration # 561, objective = -6.248672421350093E-01 [reduced costs]
+Primal optimization phase, iteration # 626, objective = -6.201555660722348E-01
+Primal optimization phase, iteration # 640, objective = -6.197229753574200E-01 [reduced costs]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 2.4466e-14
+Primal residual |A.x - b| = 5.68434e-14
+Dual infeasibility (reduced costs) = 1.08465e-11
+Dual residual |c_B - y.B| = 1.11022e-16
+
+Final unscaled solution:
+Primal objective (before moving primal/dual values) = 6.197229751516753E-01
+Dual objective (before moving primal/dual values) = 6.197229751516751E-01
+Max. primal values move = 4.08562e-14
+Max. dual values move = 6.29328e-16
+Primal objective (after moving primal/dual values) = 6.197229751516774E-01
+Max. rhs perturbation = 2.7929e-15
+Max. cost perturbation = 2.39392e-16
+Max. primal infeasibility = 2.7929e-15
+Max. dual infeasibility = 0
+Objective error <= 4e-06
+status: OPTIMAL
+objective: 0.619723
+iterations: 855
+time: 0.090226
+deterministic_time: 0.0890643
+
+(16699) 15:05:27 [INFO] (i=4, solver i=855) obj=0.6197229751516774, # IC=1441, # border=366
+
+Initial problem: 2019 rows, 338 columns, 32176 entries with magnitude in [1.387779e-17, 2.000000e+00]
+Objective stats: 325 non-zeros, range [-1.388889e-02, 2.546296e-02]
+Bounds stats: 916 non-zeros, range [1.000000e-10, 1.000000e+00]
+Parameters: use_preprocessing: true log_search_progress: true
+
+Starting presolve...
+SingletonPreprocessor                        : 2004(-15) rows, 338(0) columns, 32161(-15) entries. (0.000529s)
+ImpliedFreePreprocessor                      : 2004(-15) rows, 338(0) columns, 32161(-15) entries. (0.000390s)
+UnconstrainedVariablePreprocessor            : 2004(-15) rows, 325(-13) columns, 30746(-1430) entries. (0.000306s)
+SingletonPreprocessor                        : 1980(-39) rows, 325(-13) columns, 30722(-1454) entries. (0.000070s)
+Reached fixed point after presolve pass #2
+EmptyConstraintPreprocessor                  : 1811(-208) rows, 325(-13) columns, 30722(-1454) entries. (0.000094s)
+ProportionalRowPreprocessor                  : 1738(-281) rows, 325(-13) columns, 30422(-1754) entries. (0.000629s)
+DualizerPreprocessor                         : 325(-1694) rows, 2136(1798) columns, 30820(-1356) entries. (0.000892s)
+SingletonPreprocessor                        : 325(-1694) rows, 1936(1598) columns, 30620(-1556) entries. (0.000662s)
+FreeConstraintPreprocessor                   : 324(-1695) rows, 1936(1598) columns, 30612(-1564) entries. (0.000058s)
+UnconstrainedVariablePreprocessor            : 324(-1695) rows, 1933(1595) columns, 30609(-1567) entries. (0.001854s)
+ScalingPreprocessor                          : 324(-1695) rows, 1933(1595) columns, 30609(-1567) entries. (0.001219s)
+
+Presolved problem: 324 rows, 1933 columns, 30609 entries with magnitude in [9.125060e-09, 1.000000e+00]
+Objective stats: 1759 non-zeros, range [-9.298434e+00, 9.298434e+00]
+Bounds stats: 450 non-zeros, range [-4.850608e+02, 1.532022e+00]
+
+The warm-start state contains 324 candidates for the basis (num_rows = 324).
+The initial basis did not use  BASIC columns from the initial state and used 219 slack variables that were not marked BASIC.
+219 of the FREE variables where moved to their bound.
+Starting basis: incremental solve.
+The matrix with slacks has 324 rows, 2257 columns, 30933 entries.
+Number of basic infeasible variables: 155
+Number of basic slack variables: 229
+Number of basic variables at bound: 0
+Number of basic fixed variables: 88
+Number of basic free variables: 0
+Number of super-basic variables: 0
+
+Primal feasibility phase, iteration # 0, sum_primal_infeasibilities = 2.813326343797401E+02 [norms]
+Primal feasibility phase, iteration # 65, sum_primal_infeasibilities = 1.011925672482941E+02
+Primal feasibility phase, iteration # 130, sum_primal_infeasibilities = 4.250866433671188E+00
+Primal feasibility phase, iteration # 177, sum_primal_infeasibilities = 2.220446049250313E-16 [check]
+Current status: PRIMAL_FEASIBLE
+Primal infeasibility (bounds) = 2.22045e-16
+Primal residual |A.x - b| = 3.66374e-15
+Dual infeasibility (reduced costs) = 1614.9
+Dual residual |c_B - y.B| = 1.11022e-16
+
+Primal optimization phase, iteration # 0, objective = -2.270990567933047E+00
+Primal optimization phase, iteration # 65, objective = -1.591610001913245E+00
+Primal optimization phase, iteration # 130, objective = -1.113402797819388E+00
+Primal optimization phase, iteration # 195, objective = -9.235237026990128E-01
+Primal optimization phase, iteration # 260, objective = -7.657599895727817E-01
+Primal optimization phase, iteration # 265, objective = -7.622897226979216E-01 [small pivot]
+Primal optimization phase, iteration # 330, objective = -7.130687004684397E-01
+Primal optimization phase, iteration # 332, objective = -7.126111955849019E-01 [small pivot]
+Primal optimization phase, iteration # 333, objective = -7.112913435288764E-01 [small pivot]
+Primal optimization phase, iteration # 334, objective = -7.102120704460539E-01 [small pivot]
+Primal optimization phase, iteration # 344, objective = -7.051231736829664E-01 [small pivot]
+Primal optimization phase, iteration # 409, objective = -6.664870281589991E-01
+Primal optimization phase, iteration # 474, objective = -6.525928731613091E-01
+Primal optimization phase, iteration # 539, objective = -6.430988611080722E-01
+Primal optimization phase, iteration # 582, objective = -6.301708362035455E-01 [small pivot]
+Primal optimization phase, iteration # 583, objective = -6.279657017387948E-01 [small pivot]
+Primal optimization phase, iteration # 584, objective = -6.274172999972508E-01 [small pivot]
+Primal optimization phase, iteration # 585, objective = -6.273067732862115E-01 [small pivot]
+Primal optimization phase, iteration # 635, objective = -6.191414802174556E-01 [reduced costs]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 5.13349e-15
+Primal residual |A.x - b| = 5.68434e-14
+Dual infeasibility (reduced costs) = 2.0048e-13
+Dual residual |c_B - y.B| = 1.249e-16
+
+Final unscaled solution:
+Primal objective (before moving primal/dual values) = 6.191663074885888E-01
+Dual objective (before moving primal/dual values) = 6.191663074885884E-01
+Max. primal values move = 1.37668e-14
+Max. dual values move = 2.99752e-16
+Primal objective (after moving primal/dual values) = 6.191663074885893E-01
+Max. rhs perturbation = 3.33067e-15
+Max. cost perturbation = 7.18176e-16
+Max. primal infeasibility = 3.33067e-15
+Max. dual infeasibility = 0
+Objective error <= 4e-06
+status: OPTIMAL
+objective: 0.619166
+iterations: 812
+time: 0.074255
+deterministic_time: 0.0692501
+
+(16699) 15:05:27 [INFO] (i=5, solver i=812) obj=0.6191663074885893, # IC=1441, # border=408
+
+Initial problem: 2045 rows, 338 columns, 32773 entries with magnitude in [1.387779e-17, 2.000000e+00]
+Objective stats: 325 non-zeros, range [-1.388889e-02, 2.546296e-02]
+Bounds stats: 942 non-zeros, range [1.000000e-10, 1.000000e+00]
+Parameters: use_preprocessing: true log_search_progress: true
+
+Starting presolve...
+SingletonPreprocessor                        : 2030(-15) rows, 338(0) columns, 32758(-15) entries. (0.000517s)
+ImpliedFreePreprocessor                      : 2030(-15) rows, 338(0) columns, 32758(-15) entries. (0.000395s)
+UnconstrainedVariablePreprocessor            : 2030(-15) rows, 325(-13) columns, 31329(-1444) entries. (0.000296s)
+SingletonPreprocessor                        : 2006(-39) rows, 325(-13) columns, 31305(-1468) entries. (0.000071s)
+Reached fixed point after presolve pass #2
+EmptyConstraintPreprocessor                  : 1837(-208) rows, 325(-13) columns, 31305(-1468) entries. (0.000092s)
+ProportionalRowPreprocessor                  : 1762(-283) rows, 325(-13) columns, 31001(-1772) entries. (0.000615s)
+DualizerPreprocessor                         : 325(-1720) rows, 2160(1822) columns, 31399(-1374) entries. (0.000837s)
+SingletonPreprocessor                        : 325(-1720) rows, 1960(1622) columns, 31199(-1574) entries. (0.000710s)
+FreeConstraintPreprocessor                   : 324(-1721) rows, 1960(1622) columns, 31191(-1582) entries. (0.000058s)
+UnconstrainedVariablePreprocessor            : 324(-1721) rows, 1957(1619) columns, 31188(-1585) entries. (0.001985s)
+ScalingPreprocessor                          : 324(-1721) rows, 1957(1619) columns, 31188(-1585) entries. (0.001166s)
+
+Presolved problem: 324 rows, 1957 columns, 31188 entries with magnitude in [9.125060e-09, 1.000000e+00]
+Objective stats: 1783 non-zeros, range [-9.298434e+00, 9.298434e+00]
+Bounds stats: 450 non-zeros, range [-4.850608e+02, 1.532022e+00]
+
+The warm-start state contains 324 candidates for the basis (num_rows = 324).
+The initial basis did not use  BASIC columns from the initial state and used 204 slack variables that were not marked BASIC.
+204 of the FREE variables where moved to their bound.
+Starting basis: incremental solve.
+The matrix with slacks has 324 rows, 2281 columns, 31512 entries.
+Number of basic infeasible variables: 175
+Number of basic slack variables: 209
+Number of basic variables at bound: 0
+Number of basic fixed variables: 79
+Number of basic free variables: 0
+Number of super-basic variables: 0
+
+Primal feasibility phase, iteration # 0, sum_primal_infeasibilities = 1.190625055171566E+03 [norms]
+Primal feasibility phase, iteration # 65, sum_primal_infeasibilities = 7.244822083599540E+01
+Primal feasibility phase, iteration # 130, sum_primal_infeasibilities = 2.228371907769474E+01
+Primal feasibility phase, iteration # 185, sum_primal_infeasibilities = 2.131628207280301E-14 [check]
+Current status: PRIMAL_FEASIBLE
+Primal infeasibility (bounds) = 2.13163e-14
+Primal residual |A.x - b| = 1.13687e-13
+Dual infeasibility (reduced costs) = 9645.56
+Dual residual |c_B - y.B| = 1.11022e-16
+
+Primal optimization phase, iteration # 0, objective = -2.415027436755606E+00
+Primal optimization phase, iteration # 65, objective = -1.628737721889761E+00
+Primal optimization phase, iteration # 130, objective = -1.103401089822461E+00
+Primal optimization phase, iteration # 195, objective = -7.994427025407285E-01
+Primal optimization phase, iteration # 260, objective = -7.137349153910615E-01
+Primal optimization phase, iteration # 325, objective = -6.793775901753238E-01
+Primal optimization phase, iteration # 390, objective = -6.571249118282315E-01
+Primal optimization phase, iteration # 455, objective = -6.443960096566712E-01
+Primal optimization phase, iteration # 520, objective = -6.207686441970078E-01
+Primal optimization phase, iteration # 538, objective = -6.189904232410027E-01 [reduced costs]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 1.44671e-14
+Primal residual |A.x - b| = 5.68434e-14
+Dual infeasibility (reduced costs) = 5.76101e-12
+Dual residual |c_B - y.B| = 1.11022e-16
+
+Final unscaled solution:
+Primal objective (before moving primal/dual values) = 6.189904232574611E-01
+Dual objective (before moving primal/dual values) = 6.189904232574606E-01
+Max. primal values move = 5.61773e-14
+Max. dual values move = 8.44757e-16
+Primal objective (after moving primal/dual values) = 6.189904232574628E-01
+Max. rhs perturbation = 4.9975e-15
+Max. cost perturbation = 3.95517e-16
+Max. primal infeasibility = 4.9975e-15
+Max. dual infeasibility = 0
+Objective error <= 4e-06
+status: OPTIMAL
+objective: 0.61899
+iterations: 723
+time: 0.065291
+deterministic_time: 0.0573831
+
+(16699) 15:05:27 [INFO] (i=6, solver i=723) obj=0.6189904232574628, # IC=1441, # border=434
+
+Initial problem: 2068 rows, 338 columns, 33086 entries with magnitude in [1.387779e-17, 2.000000e+00]
+Objective stats: 325 non-zeros, range [-1.388889e-02, 2.546296e-02]
+Bounds stats: 965 non-zeros, range [1.000000e-10, 1.000000e+00]
+Parameters: use_preprocessing: true log_search_progress: true
+
+Starting presolve...
+SingletonPreprocessor                        : 2053(-15) rows, 338(0) columns, 33071(-15) entries. (0.000390s)
+ImpliedFreePreprocessor                      : 2053(-15) rows, 338(0) columns, 33071(-15) entries. (0.000470s)
+UnconstrainedVariablePreprocessor            : 2053(-15) rows, 325(-13) columns, 31621(-1465) entries. (0.000397s)
+SingletonPreprocessor                        : 2029(-39) rows, 325(-13) columns, 31597(-1489) entries. (0.000079s)
+Reached fixed point after presolve pass #2
+EmptyConstraintPreprocessor                  : 1860(-208) rows, 325(-13) columns, 31597(-1489) entries. (0.000098s)
+ProportionalRowPreprocessor                  : 1784(-284) rows, 325(-13) columns, 31291(-1795) entries. (0.000657s)
+DualizerPreprocessor                         : 325(-1743) rows, 2182(1844) columns, 31689(-1397) entries. (0.000842s)
+SingletonPreprocessor                        : 325(-1743) rows, 1982(1644) columns, 31489(-1597) entries. (0.000723s)
+FreeConstraintPreprocessor                   : 324(-1744) rows, 1982(1644) columns, 31481(-1605) entries. (0.000066s)
+UnconstrainedVariablePreprocessor            : 324(-1744) rows, 1979(1641) columns, 31478(-1608) entries. (0.001625s)
+ScalingPreprocessor                          : 324(-1744) rows, 1979(1641) columns, 31478(-1608) entries. (0.001121s)
+
+Presolved problem: 324 rows, 1979 columns, 31478 entries with magnitude in [9.125060e-09, 1.000000e+00]
+Objective stats: 1805 non-zeros, range [-9.298434e+00, 9.298434e+00]
+Bounds stats: 450 non-zeros, range [-4.850608e+02, 1.531317e+00]
+
+The warm-start state contains 324 candidates for the basis (num_rows = 324).
+The initial basis did not use  BASIC columns from the initial state and used 175 slack variables that were not marked BASIC.
+175 of the FREE variables where moved to their bound.
+The primal residual of the initial basis is above the tolerance, 1.43341e-06 vs. 1e-08
+Starting basis: incremental solve.
+The matrix with slacks has 324 rows, 2303 columns, 31802 entries.
+Number of basic infeasible variables: 216
+Number of basic slack variables: 181
+Number of basic variables at bound: 2
+Number of basic fixed variables: 74
+Number of basic free variables: 0
+Number of super-basic variables: 0
+
+Primal feasibility phase, iteration # 0, sum_primal_infeasibilities = 3.592443214912000E+14 [norms]
+Primal feasibility phase, iteration # 65, sum_primal_infeasibilities = 2.167489731994349E+03
+Primal feasibility phase, iteration # 130, sum_primal_infeasibilities = 7.221211180214335E+01
+Primal feasibility phase, iteration # 195, sum_primal_infeasibilities = 5.947868671155617E+00
+Primal feasibility phase, iteration # 232, sum_primal_infeasibilities = 1.325597095013524E-14 [check]
+Current status: PRIMAL_FEASIBLE
+Primal infeasibility (bounds) = 6.04479e-15
+Primal residual |A.x - b| = 5.11591e-13
+Dual infeasibility (reduced costs) = 1360.72
+Dual residual |c_B - y.B| = 5.68434e-14
+
+Primal optimization phase, iteration # 0, objective = -1.327392578124662E+00
+Primal optimization phase, iteration # 65, objective = -8.400273368192588E-01
+Primal optimization phase, iteration # 130, objective = -7.730725449069896E-01
+Primal optimization phase, iteration # 152, objective = -7.616630561861883E-01 [small pivot]
+Primal optimization phase, iteration # 186, objective = -7.482641429969914E-01 [small pivot]
+Primal optimization phase, iteration # 251, objective = -7.248156639081752E-01
+Primal optimization phase, iteration # 266, objective = -7.175794709269568E-01 [small pivot]
+Primal optimization phase, iteration # 331, objective = -7.137517855559533E-01
+Primal optimization phase, iteration # 393, objective = -7.102573221866352E-01 [norms]
+Primal optimization phase, iteration # 458, objective = -6.706382947386721E-01
+Primal optimization phase, iteration # 461, objective = -6.686761732467650E-01 [small pivot]
+Primal optimization phase, iteration # 463, objective = -6.677319062238510E-01 [small pivot]
+Primal optimization phase, iteration # 528, objective = -6.541679808135171E-01
+Primal optimization phase, iteration # 575, objective = -6.316928646461378E-01 [small pivot]
+Primal optimization phase, iteration # 595, objective = -6.276220111901486E-01 [small pivot]
+Primal optimization phase, iteration # 660, objective = -6.200589179275031E-01
+Primal optimization phase, iteration # 682, objective = -6.189903925289791E-01 [reduced costs]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 8.63879e-15
+Primal residual |A.x - b| = 5.68434e-14
+Dual infeasibility (reduced costs) = 1.1501e-11
+Dual residual |c_B - y.B| = 1.30392e-16
+
+Final unscaled solution:
+Primal objective (before moving primal/dual values) = 6.189904232574607E-01
+Dual objective (before moving primal/dual values) = 6.189904232574605E-01
+Max. primal values move = 2.70894e-14
+Max. dual values move = 5.09846e-16
+Primal objective (after moving primal/dual values) = 6.189904232574621E-01
+Max. rhs perturbation = 4.89086e-15
+Max. cost perturbation = 5.6552e-16
+Max. primal infeasibility = 4.89086e-15
+Max. dual infeasibility = 0
+Objective error <= 4e-06
+status: OPTIMAL
+objective: 0.61899
+iterations: 914
+time: 0.090678
+deterministic_time: 0.0928492
+
+(16699) 15:05:27 [INFO] (i=7, solver i=914) obj=0.6189904232574621, # IC=1441, # border=457
+
+Initial problem: 2091 rows, 338 columns, 33383 entries with magnitude in [1.387779e-17, 2.000000e+00]
+Objective stats: 325 non-zeros, range [-1.388889e-02, 2.546296e-02]
+Bounds stats: 988 non-zeros, range [1.000000e-10, 1.000000e+00]
+Parameters: use_preprocessing: true log_search_progress: true
+
+Starting presolve...
+SingletonPreprocessor                        : 2076(-15) rows, 338(0) columns, 33368(-15) entries. (0.000381s)
+ImpliedFreePreprocessor                      : 2076(-15) rows, 338(0) columns, 33368(-15) entries. (0.000425s)
+UnconstrainedVariablePreprocessor            : 2076(-15) rows, 325(-13) columns, 31910(-1473) entries. (0.000295s)
+SingletonPreprocessor                        : 2052(-39) rows, 325(-13) columns, 31886(-1497) entries. (0.000068s)
+Reached fixed point after presolve pass #2
+EmptyConstraintPreprocessor                  : 1883(-208) rows, 325(-13) columns, 31886(-1497) entries. (0.000092s)
+ProportionalRowPreprocessor                  : 1806(-285) rows, 325(-13) columns, 31578(-1805) entries. (0.000711s)
+DualizerPreprocessor                         : 325(-1766) rows, 2204(1866) columns, 31976(-1407) entries. (0.000839s)
+SingletonPreprocessor                        : 325(-1766) rows, 2004(1666) columns, 31776(-1607) entries. (0.000693s)
+FreeConstraintPreprocessor                   : 324(-1767) rows, 2004(1666) columns, 31768(-1615) entries. (0.000099s)
+UnconstrainedVariablePreprocessor            : 324(-1767) rows, 2001(1663) columns, 31765(-1618) entries. (0.001778s)
+ScalingPreprocessor                          : 324(-1767) rows, 2001(1663) columns, 31765(-1618) entries. (0.001204s)
+
+Presolved problem: 324 rows, 2001 columns, 31765 entries with magnitude in [9.125060e-09, 1.000000e+00]
+Objective stats: 1827 non-zeros, range [-9.298434e+00, 9.298434e+00]
+Bounds stats: 450 non-zeros, range [-4.850608e+02, 1.511421e+00]
+
+The warm-start state contains 324 candidates for the basis (num_rows = 324).
+The initial basis did not use  BASIC columns from the initial state and used 243 slack variables that were not marked BASIC.
+243 of the FREE variables where moved to their bound.
+Starting basis: incremental solve.
+The matrix with slacks has 324 rows, 2325 columns, 32089 entries.
+Number of basic infeasible variables: 192
+Number of basic slack variables: 247
+Number of basic variables at bound: 0
+Number of basic fixed variables: 100
+Number of basic free variables: 0
+Number of super-basic variables: 0
+
+Primal feasibility phase, iteration # 0, sum_primal_infeasibilities = 1.038649084661117E+03 [norms]
+Primal feasibility phase, iteration # 65, sum_primal_infeasibilities = 5.109101602898918E+02
+Primal feasibility phase, iteration # 130, sum_primal_infeasibilities = 2.808018994509876E+01
+Primal feasibility phase, iteration # 195, sum_primal_infeasibilities = 8.737434203312064E-05
+Primal feasibility phase, iteration # 207, sum_primal_infeasibilities = 8.881784197001252E-16 [check]
+Current status: PRIMAL_FEASIBLE
+Primal infeasibility (bounds) = 8.88178e-16
+Primal residual |A.x - b| = 2.84217e-14
+Dual infeasibility (reduced costs) = 3024.54
+Dual residual |c_B - y.B| = 2.08167e-17
+
+Primal optimization phase, iteration # 0, objective = -2.001721040701823E+00
+Primal optimization phase, iteration # 65, objective = -1.476055531435849E+00
+Primal optimization phase, iteration # 130, objective = -9.215190872138269E-01
+Primal optimization phase, iteration # 195, objective = -7.929136687598686E-01
+Primal optimization phase, iteration # 260, objective = -7.230897972903815E-01
+Primal optimization phase, iteration # 325, objective = -6.851762400615622E-01
+Primal optimization phase, iteration # 390, objective = -6.730495985895598E-01
+Primal optimization phase, iteration # 455, objective = -6.647210688475942E-01
+Primal optimization phase, iteration # 493, objective = -6.524536503547086E-01 [small pivot]
+Primal optimization phase, iteration # 508, objective = -6.476430717082046E-01 [small pivot]
+Primal optimization phase, iteration # 515, objective = -6.447358083313199E-01 [small pivot]
+Primal optimization phase, iteration # 580, objective = -6.367031887496309E-01
+Primal optimization phase, iteration # 645, objective = -6.207836990450736E-01
+Primal optimization phase, iteration # 665, objective = -6.195930038684331E-01 [small pivot]
+Primal optimization phase, iteration # 679, objective = -6.189904232312322E-01 [reduced costs]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 3.23158e-15
+Primal residual |A.x - b| = 1.13687e-13
+Dual infeasibility (reduced costs) = 1.08397e-12
+Dual residual |c_B - y.B| = 1.52656e-16
+
+Final unscaled solution:
+Primal objective (before moving primal/dual values) = 6.189904232574613E-01
+Dual objective (before moving primal/dual values) = 6.189904232574603E-01
+Max. primal values move = 1.75415e-14
+Max. dual values move = 2.31748e-16
+Primal objective (after moving primal/dual values) = 6.189904232574623E-01
+Max. rhs perturbation = 3.10862e-15
+Max. cost perturbation = 5.37764e-16
+Max. primal infeasibility = 3.10862e-15
+Max. dual infeasibility = 0
+Objective error <= 4e-06
+status: OPTIMAL
+objective: 0.61899
+iterations: 886
+time: 0.087745
+deterministic_time: 0.079487
+
+(16699) 15:05:27 [INFO] (i=8, solver i=886) obj=0.6189904232574623, # IC=1441, # border=480
+
+Initial problem: 2115 rows, 338 columns, 33704 entries with magnitude in [1.387779e-17, 2.000000e+00]
+Objective stats: 325 non-zeros, range [-1.388889e-02, 2.546296e-02]
+Bounds stats: 1012 non-zeros, range [1.000000e-10, 1.000000e+00]
+Parameters: use_preprocessing: true log_search_progress: true
+
+Starting presolve...
+SingletonPreprocessor                        : 2100(-15) rows, 338(0) columns, 33689(-15) entries. (0.000985s)
+ImpliedFreePreprocessor                      : 2100(-15) rows, 338(0) columns, 33689(-15) entries. (0.000605s)
+UnconstrainedVariablePreprocessor            : 2100(-15) rows, 325(-13) columns, 32225(-1479) entries. (0.000371s)
+SingletonPreprocessor                        : 2076(-39) rows, 325(-13) columns, 32201(-1503) entries. (0.000107s)
+Reached fixed point after presolve pass #2
+EmptyConstraintPreprocessor                  : 1907(-208) rows, 325(-13) columns, 32201(-1503) entries. (0.000095s)
+ProportionalRowPreprocessor                  : 1829(-286) rows, 325(-13) columns, 31891(-1813) entries. (0.000800s)
+DualizerPreprocessor                         : 325(-1790) rows, 2227(1889) columns, 32289(-1415) entries. (0.000962s)
+SingletonPreprocessor                        : 325(-1790) rows, 2027(1689) columns, 32089(-1615) entries. (0.000741s)
+FreeConstraintPreprocessor                   : 324(-1791) rows, 2027(1689) columns, 32081(-1623) entries. (0.000077s)
+UnconstrainedVariablePreprocessor            : 324(-1791) rows, 2024(1686) columns, 32078(-1626) entries. (0.001906s)
+ScalingPreprocessor                          : 324(-1791) rows, 2024(1686) columns, 32078(-1626) entries. (0.001286s)
+
+Presolved problem: 324 rows, 2024 columns, 32078 entries with magnitude in [9.125060e-09, 1.000000e+00]
+Objective stats: 1850 non-zeros, range [-9.298434e+00, 9.298434e+00]
+Bounds stats: 450 non-zeros, range [-4.850608e+02, 1.511421e+00]
+
+The warm-start state contains 324 candidates for the basis (num_rows = 324).
+The initial basis did not use  BASIC columns from the initial state and used 164 slack variables that were not marked BASIC.
+164 of the FREE variables where moved to their bound.
+The primal residual of the initial basis is above the tolerance, 0.0333412 vs. 1e-08
+Starting basis: incremental solve.
+The matrix with slacks has 324 rows, 2348 columns, 32402 entries.
+Number of basic infeasible variables: 217
+Number of basic slack variables: 166
+Number of basic variables at bound: 0
+Number of basic fixed variables: 72
+Number of basic free variables: 0
+Number of super-basic variables: 0
+
+Primal feasibility phase, iteration # 0, sum_primal_infeasibilities = 9.039091543789402E+14 [norms]
+Primal feasibility phase, iteration # 65, sum_primal_infeasibilities = 9.404813399104978E+02
+Primal feasibility phase, iteration # 130, sum_primal_infeasibilities = 7.919893733041214E+01
+Primal feasibility phase, iteration # 195, sum_primal_infeasibilities = 6.342718315811370E+00
+Primal feasibility phase, iteration # 243, sum_primal_infeasibilities = 8.881784197001252E-15 [check]
+Current status: PRIMAL_FEASIBLE
+Primal infeasibility (bounds) = 5.32907e-15
+Primal residual |A.x - b| = 1.13687e-13
+Dual infeasibility (reduced costs) = 5583.4
+Dual residual |c_B - y.B| = 9.09495e-13
+
+Primal optimization phase, iteration # 0, objective = -1.749360009966219E+00
+Primal optimization phase, iteration # 65, objective = -1.047287929204902E+00
+Primal optimization phase, iteration # 105, objective = -8.134666544018908E-01 [small pivot]
+Primal optimization phase, iteration # 166, objective = -7.593099734672759E-01 [small pivot]
+Primal optimization phase, iteration # 167, objective = -7.585871380468582E-01 [small pivot]
+Primal optimization phase, iteration # 232, objective = -7.305570026018559E-01
+Primal optimization phase, iteration # 297, objective = -7.090140249288993E-01
+Primal optimization phase, iteration # 352, objective = -6.860517417336066E-01 [small pivot]
+Primal optimization phase, iteration # 353, objective = -6.839882438793653E-01 [small pivot]
+Primal optimization phase, iteration # 354, objective = -6.836118927303266E-01 [small pivot]
+Primal optimization phase, iteration # 355, objective = -6.828008655741329E-01 [small pivot]
+Primal optimization phase, iteration # 356, objective = -6.816934178790179E-01 [small pivot]
+Primal optimization phase, iteration # 362, objective = -6.778821445288874E-01 [small pivot]
+Primal optimization phase, iteration # 427, objective = -6.586071938589807E-01
+Primal optimization phase, iteration # 482, objective = -6.353697185455279E-01 [small pivot]
+Primal optimization phase, iteration # 484, objective = -6.343815801170214E-01 [small pivot]
+Primal optimization phase, iteration # 549, objective = -6.212104416810725E-01
+Primal optimization phase, iteration # 583, objective = -6.188889005151368E-01 [reduced costs]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 0.0354827
+Primal residual |A.x - b| = 1.96509e-14
+Dual infeasibility (reduced costs) = 1.07926e-11
+Dual residual |c_B - y.B| = 2.22045e-16
+
+Re-optimizing with dual simplex ... 
+Dual optimization phase, iteration # 583, objective = -6.189904232571152E-01 [norms]
+Dual optimization phase, iteration # 584, objective = -6.189904232571147E-01 [check]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 7.50622e-15
+Primal residual |A.x - b| = 5.68434e-14
+Dual infeasibility (reduced costs) = 1.07926e-11
+Dual residual |c_B - y.B| = 1.11022e-16
+
+Final unscaled solution:
+Primal objective (before moving primal/dual values) = 6.189904232574615E-01
+Dual objective (before moving primal/dual values) = 6.189904232574606E-01
+Max. primal values move = 8.88178e-15
+Max. dual values move = 6.35527e-16
+Primal objective (after moving primal/dual values) = 6.189904232574620E-01
+Max. rhs perturbation = 4.92661e-15
+Max. cost perturbation = 2.70617e-16
+Max. primal infeasibility = 4.92661e-15
+Max. dual infeasibility = 0
+Objective error <= 4e-06
+status: OPTIMAL
+objective: 0.61899
+iterations: 827
+time: 0.089429
+deterministic_time: 0.0844942
+
+(16699) 15:05:27 [INFO] (i=9, solver i=827) obj=0.618990423257462, # IC=1441, # border=504
+
+Initial problem: 2139 rows, 338 columns, 34017 entries with magnitude in [1.387779e-17, 2.000000e+00]
+Objective stats: 325 non-zeros, range [-1.388889e-02, 2.546296e-02]
+Bounds stats: 1036 non-zeros, range [1.000000e-10, 1.000000e+00]
+Parameters: use_preprocessing: true log_search_progress: true
+
+Starting presolve...
+SingletonPreprocessor                        : 2124(-15) rows, 338(0) columns, 34002(-15) entries. (0.000360s)
+ImpliedFreePreprocessor                      : 2124(-15) rows, 338(0) columns, 34002(-15) entries. (0.000371s)
+UnconstrainedVariablePreprocessor            : 2124(-15) rows, 325(-13) columns, 32538(-1479) entries. (0.000283s)
+SingletonPreprocessor                        : 2100(-39) rows, 325(-13) columns, 32514(-1503) entries. (0.000065s)
+Reached fixed point after presolve pass #2
+EmptyConstraintPreprocessor                  : 1931(-208) rows, 325(-13) columns, 32514(-1503) entries. (0.000089s)
+ProportionalRowPreprocessor                  : 1851(-288) rows, 325(-13) columns, 32198(-1819) entries. (0.000603s)
+DualizerPreprocessor                         : 325(-1814) rows, 2249(1911) columns, 32596(-1421) entries. (0.001062s)
+SingletonPreprocessor                        : 325(-1814) rows, 2049(1711) columns, 32396(-1621) entries. (0.000791s)
+FreeConstraintPreprocessor                   : 324(-1815) rows, 2049(1711) columns, 32388(-1629) entries. (0.000055s)
+UnconstrainedVariablePreprocessor            : 324(-1815) rows, 2046(1708) columns, 32385(-1632) entries. (0.001730s)
+ScalingPreprocessor                          : 324(-1815) rows, 2046(1708) columns, 32385(-1632) entries. (0.001072s)
+
+Presolved problem: 324 rows, 2046 columns, 32385 entries with magnitude in [9.125060e-09, 1.000000e+00]
+Objective stats: 1872 non-zeros, range [-9.298434e+00, 9.298434e+00]
+Bounds stats: 450 non-zeros, range [-4.850608e+02, 1.511421e+00]
+
+The warm-start state contains 324 candidates for the basis (num_rows = 324).
+The initial basis did not use  BASIC columns from the initial state and used 240 slack variables that were not marked BASIC.
+240 of the FREE variables where moved to their bound.
+Starting basis: incremental solve.
+The matrix with slacks has 324 rows, 2370 columns, 32709 entries.
+Number of basic infeasible variables: 197
+Number of basic slack variables: 240
+Number of basic variables at bound: 0
+Number of basic fixed variables: 100
+Number of basic free variables: 0
+Number of super-basic variables: 0
+
+Primal feasibility phase, iteration # 0, sum_primal_infeasibilities = 5.782795191714374E+02 [norms]
+Primal feasibility phase, iteration # 65, sum_primal_infeasibilities = 3.261698985820923E+02
+Primal feasibility phase, iteration # 130, sum_primal_infeasibilities = 2.328541202501070E+01
+Primal feasibility phase, iteration # 195, sum_primal_infeasibilities = 1.133540435262119E-04
+Primal feasibility phase, iteration # 217, sum_primal_infeasibilities = 5.609445200005503E-15 [check]
+Current status: PRIMAL_FEASIBLE
+Primal infeasibility (bounds) = 5.60663e-15
+Primal residual |A.x - b| = 7.10543e-15
+Dual infeasibility (reduced costs) = 2977.81
+Dual residual |c_B - y.B| = 1.11022e-16
+
+Primal optimization phase, iteration # 0, objective = -1.985685522761992E+00
+Primal optimization phase, iteration # 65, objective = -1.417818045944824E+00
+Primal optimization phase, iteration # 115, objective = -1.218898828623466E+00 [small pivot]
+Primal optimization phase, iteration # 116, objective = -1.209562408827646E+00 [small pivot]
+Primal optimization phase, iteration # 175, objective = -9.466119277545160E-01 [small pivot]
+Primal optimization phase, iteration # 240, objective = -7.745009995596074E-01
+Primal optimization phase, iteration # 299, objective = -7.296825991419864E-01 [small pivot]
+Primal optimization phase, iteration # 364, objective = -6.833995978403393E-01
+Primal optimization phase, iteration # 429, objective = -6.617518166865850E-01
+Primal optimization phase, iteration # 494, objective = -6.512088085427011E-01
+Primal optimization phase, iteration # 559, objective = -6.445292058982175E-01
+Primal optimization phase, iteration # 624, objective = -6.214735873497292E-01
+Primal optimization phase, iteration # 672, objective = -6.189250874268137E-01 [reduced costs]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 0.00126015
+Primal residual |A.x - b| = 1.42109e-14
+Dual infeasibility (reduced costs) = 7.96824e-12
+Dual residual |c_B - y.B| = 2.22045e-16
+
+Re-optimizing with dual simplex ... 
+Dual optimization phase, iteration # 672, objective = -6.189904232571148E-01 [norms]
+Dual optimization phase, iteration # 673, objective = -6.189904232571151E-01 [check]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 1.33247e-14
+Primal residual |A.x - b| = 5.68434e-14
+Dual infeasibility (reduced costs) = 3.49028e-12
+Dual residual |c_B - y.B| = 1.11022e-16
+
+Final unscaled solution:
+Primal objective (before moving primal/dual values) = 6.189904232574612E-01
+Dual objective (before moving primal/dual values) = 6.189904232574607E-01
+Max. primal values move = 3.26406e-14
+Max. dual values move = 5.5863e-16
+Primal objective (after moving primal/dual values) = 6.189904232574623E-01
+Max. rhs perturbation = 3.10862e-15
+Max. cost perturbation = 3.67761e-16
+Max. primal infeasibility = 3.10862e-15
+Max. dual infeasibility = 0
+Objective error <= 4e-06
+status: OPTIMAL
+objective: 0.61899
+iterations: 890
+time: 0.080908
+deterministic_time: 0.0802055
+
+(16699) 15:05:27 [INFO] (i=10, solver i=890) obj=0.6189904232574623, # IC=1441, # border=528
+
+Initial problem: 2163 rows, 338 columns, 34352 entries with magnitude in [1.387779e-17, 2.000000e+00]
+Objective stats: 325 non-zeros, range [-1.388889e-02, 2.546296e-02]
+Bounds stats: 1060 non-zeros, range [1.000000e-10, 1.000000e+00]
+Parameters: use_preprocessing: true log_search_progress: true
+
+Starting presolve...
+SingletonPreprocessor                        : 2148(-15) rows, 338(0) columns, 34337(-15) entries. (0.000493s)
+ImpliedFreePreprocessor                      : 2148(-15) rows, 338(0) columns, 34337(-15) entries. (0.000421s)
+UnconstrainedVariablePreprocessor            : 2148(-15) rows, 325(-13) columns, 32870(-1482) entries. (0.000309s)
+SingletonPreprocessor                        : 2124(-39) rows, 325(-13) columns, 32846(-1506) entries. (0.000073s)
+Reached fixed point after presolve pass #2
+EmptyConstraintPreprocessor                  : 1955(-208) rows, 325(-13) columns, 32846(-1506) entries. (0.000101s)
+ProportionalRowPreprocessor                  : 1874(-289) rows, 325(-13) columns, 32528(-1824) entries. (0.000673s)
+DualizerPreprocessor                         : 325(-1838) rows, 2272(1934) columns, 32926(-1426) entries. (0.000870s)
+SingletonPreprocessor                        : 325(-1838) rows, 2072(1734) columns, 32726(-1626) entries. (0.000687s)
+FreeConstraintPreprocessor                   : 324(-1839) rows, 2072(1734) columns, 32718(-1634) entries. (0.000062s)
+UnconstrainedVariablePreprocessor            : 324(-1839) rows, 2069(1731) columns, 32715(-1637) entries. (0.001818s)
+ScalingPreprocessor                          : 324(-1839) rows, 2069(1731) columns, 32715(-1637) entries. (0.001220s)
+
+Presolved problem: 324 rows, 2069 columns, 32715 entries with magnitude in [9.125060e-09, 1.000000e+00]
+Objective stats: 1895 non-zeros, range [-9.298434e+00, 9.298434e+00]
+Bounds stats: 450 non-zeros, range [-4.850608e+02, 1.511421e+00]
+
+The warm-start state contains 324 candidates for the basis (num_rows = 324).
+The initial basis did not use  BASIC columns from the initial state and used 237 slack variables that were not marked BASIC.
+237 of the FREE variables where moved to their bound.
+Starting basis: incremental solve.
+The matrix with slacks has 324 rows, 2393 columns, 33039 entries.
+Number of basic infeasible variables: 176
+Number of basic slack variables: 237
+Number of basic variables at bound: 0
+Number of basic fixed variables: 100
+Number of basic free variables: 0
+Number of super-basic variables: 0
+
+Primal feasibility phase, iteration # 0, sum_primal_infeasibilities = 5.971520391202509E+02 [norms]
+Primal feasibility phase, iteration # 65, sum_primal_infeasibilities = 4.706972911751287E+01
+Primal feasibility phase, iteration # 130, sum_primal_infeasibilities = 1.862616076421932E+01
+Primal feasibility phase, iteration # 178, sum_primal_infeasibilities = 3.108624468950438E-15 [check]
+Current status: PRIMAL_FEASIBLE
+Primal infeasibility (bounds) = 3.10862e-15
+Primal residual |A.x - b| = 7.10543e-15
+Dual infeasibility (reduced costs) = 13889.6
+Dual residual |c_B - y.B| = 2.08167e-16
+
+Primal optimization phase, iteration # 0, objective = -2.109751760223467E+00
+Primal optimization phase, iteration # 65, objective = -1.416185518743544E+00
+Primal optimization phase, iteration # 130, objective = -1.024997474696468E+00
+Primal optimization phase, iteration # 195, objective = -8.174293073077850E-01
+Primal optimization phase, iteration # 227, objective = -7.515461539782783E-01 [small pivot]
+Primal optimization phase, iteration # 292, objective = -6.995321719207754E-01
+Primal optimization phase, iteration # 357, objective = -6.703832193182503E-01
+Primal optimization phase, iteration # 422, objective = -6.611662390421775E-01
+Primal optimization phase, iteration # 487, objective = -6.563022338950154E-01
+Primal optimization phase, iteration # 552, objective = -6.493537008808529E-01
+Primal optimization phase, iteration # 592, objective = -6.263926291080263E-01 [small pivot]
+Primal optimization phase, iteration # 657, objective = -6.211154314356651E-01
+Primal optimization phase, iteration # 711, objective = -6.189904232063351E-01 [reduced costs]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 6.22764e-15
+Primal residual |A.x - b| = 5.68434e-14
+Dual infeasibility (reduced costs) = 1.01071e-11
+Dual residual |c_B - y.B| = 1.11022e-16
+
+Final unscaled solution:
+Primal objective (before moving primal/dual values) = 6.189904232574610E-01
+Dual objective (before moving primal/dual values) = 6.189904232574602E-01
+Max. primal values move = 1.19904e-14
+Max. dual values move = 2.62708e-16
+Primal objective (after moving primal/dual values) = 6.189904232574620E-01
+Max. rhs perturbation = 3.9968e-15
+Max. cost perturbation = 8.86444e-16
+Max. primal infeasibility = 3.9968e-15
+Max. dual infeasibility = 0
+Objective error <= 4e-06
+status: OPTIMAL
+objective: 0.61899
+iterations: 889
+time: 0.08267
+deterministic_time: 0.0841491
+
+(16699) 15:05:28 [INFO] (i=11, solver i=889) obj=0.618990423257462, # IC=1441, # border=552
+
+Initial problem: 2187 rows, 338 columns, 34663 entries with magnitude in [1.387779e-17, 2.000000e+00]
+Objective stats: 325 non-zeros, range [-1.388889e-02, 2.546296e-02]
+Bounds stats: 1084 non-zeros, range [1.000000e-10, 1.000000e+00]
+Parameters: use_preprocessing: true log_search_progress: true
+
+Starting presolve...
+SingletonPreprocessor                        : 2172(-15) rows, 338(0) columns, 34648(-15) entries. (0.000483s)
+ImpliedFreePreprocessor                      : 2172(-15) rows, 338(0) columns, 34648(-15) entries. (0.000490s)
+UnconstrainedVariablePreprocessor            : 2172(-15) rows, 325(-13) columns, 33159(-1504) entries. (0.000650s)
+SingletonPreprocessor                        : 2148(-39) rows, 325(-13) columns, 33135(-1528) entries. (0.000109s)
+Reached fixed point after presolve pass #2
+EmptyConstraintPreprocessor                  : 1979(-208) rows, 325(-13) columns, 33135(-1528) entries. (0.000113s)
+ProportionalRowPreprocessor                  : 1896(-291) rows, 325(-13) columns, 32813(-1850) entries. (0.000870s)
+DualizerPreprocessor                         : 325(-1862) rows, 2294(1956) columns, 33211(-1452) entries. (0.000992s)
+SingletonPreprocessor                        : 325(-1862) rows, 2094(1756) columns, 33011(-1652) entries. (0.000761s)
+FreeConstraintPreprocessor                   : 324(-1863) rows, 2094(1756) columns, 33003(-1660) entries. (0.000069s)
+UnconstrainedVariablePreprocessor            : 324(-1863) rows, 2091(1753) columns, 33000(-1663) entries. (0.001946s)
+ScalingPreprocessor                          : 324(-1863) rows, 2091(1753) columns, 33000(-1663) entries. (0.001421s)
+
+Presolved problem: 324 rows, 2091 columns, 33000 entries with magnitude in [9.125060e-09, 1.000000e+00]
+Objective stats: 1917 non-zeros, range [-9.298434e+00, 9.298434e+00]
+Bounds stats: 450 non-zeros, range [-4.850608e+02, 1.511421e+00]
+
+The warm-start state contains 324 candidates for the basis (num_rows = 324).
+The initial basis did not use  BASIC columns from the initial state and used 206 slack variables that were not marked BASIC.
+206 of the FREE variables where moved to their bound.
+Starting basis: incremental solve.
+The matrix with slacks has 324 rows, 2415 columns, 33324 entries.
+Number of basic infeasible variables: 195
+Number of basic slack variables: 207
+Number of basic variables at bound: 0
+Number of basic fixed variables: 82
+Number of basic free variables: 0
+Number of super-basic variables: 0
+
+Primal feasibility phase, iteration # 0, sum_primal_infeasibilities = 1.078267143573941E+03 [norms]
+Primal feasibility phase, iteration # 65, sum_primal_infeasibilities = 1.890049263573361E+02
+Primal feasibility phase, iteration # 130, sum_primal_infeasibilities = 1.509534871323605E+01
+Primal feasibility phase, iteration # 195, sum_primal_infeasibilities = 1.182871574825025E-04
+Primal feasibility phase, iteration # 215, sum_primal_infeasibilities = 1.110223024625157E-15 [check]
+Current status: PRIMAL_FEASIBLE
+Primal infeasibility (bounds) = 1.11022e-15
+Primal residual |A.x - b| = 5.68434e-14
+Dual infeasibility (reduced costs) = 4440.96
+Dual residual |c_B - y.B| = 2.27374e-13
+
+Primal optimization phase, iteration # 0, objective = -1.517361111110766E+00
+Primal optimization phase, iteration # 65, objective = -1.037901073897584E+00
+Primal optimization phase, iteration # 130, objective = -8.558123549426431E-01
+Primal optimization phase, iteration # 157, objective = -7.986449867953773E-01 [small pivot]
+Primal optimization phase, iteration # 158, objective = -7.974973841181662E-01 [small pivot]
+Primal optimization phase, iteration # 223, objective = -7.268590391909711E-01
+Primal optimization phase, iteration # 241, objective = -7.124469580854397E-01 [small pivot]
+Primal optimization phase, iteration # 306, objective = -6.859826519619465E-01
+Primal optimization phase, iteration # 371, objective = -6.755714147648884E-01
+Primal optimization phase, iteration # 420, objective = -6.665168593270040E-01 [small pivot]
+Primal optimization phase, iteration # 421, objective = -6.659679152669095E-01 [small pivot]
+Primal optimization phase, iteration # 422, objective = -6.659332459394701E-01 [small pivot]
+Primal optimization phase, iteration # 423, objective = -6.659179084192670E-01 [small pivot]
+Primal optimization phase, iteration # 424, objective = -6.656028083990068E-01 [small pivot]
+Primal optimization phase, iteration # 425, objective = -6.652360574586510E-01 [small pivot]
+Primal optimization phase, iteration # 430, objective = -6.649035119457000E-01 [small pivot]
+Primal optimization phase, iteration # 431, objective = -6.648493695658082E-01 [small pivot]
+Primal optimization phase, iteration # 435, objective = -6.644309404302160E-01 [small pivot]
+Primal optimization phase, iteration # 492, objective = -6.537385527257805E-01 [small pivot]
+Primal optimization phase, iteration # 521, objective = -6.432248008913901E-01 [small pivot]
+Primal optimization phase, iteration # 542, objective = -6.400421860705013E-01 [small pivot]
+Primal optimization phase, iteration # 607, objective = -6.305144182719405E-01
+Primal optimization phase, iteration # 672, objective = -6.236116975587261E-01
+Primal optimization phase, iteration # 737, objective = -6.188276519412502E-01
+Primal optimization phase, iteration # 742, objective = -6.187931262035472E-01 [check]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 5.99179e-15
+Primal residual |A.x - b| = 5.68434e-14
+Dual infeasibility (reduced costs) = 1.0048e-11
+Dual residual |c_B - y.B| = 1.38778e-16
+
+Final unscaled solution:
+Primal objective (before moving primal/dual values) = 6.189904232574611E-01
+Dual objective (before moving primal/dual values) = 6.189904232574607E-01
+Max. primal values move = 1.77636e-14
+Max. dual values move = 6.245e-16
+Primal objective (after moving primal/dual values) = 6.189904232574619E-01
+Max. rhs perturbation = 3.9968e-15
+Max. cost perturbation = 1.20043e-15
+Max. primal infeasibility = 3.9968e-15
+Max. dual infeasibility = 0
+Objective error <= 4e-06
+status: OPTIMAL
+objective: 0.61899
+iterations: 957
+time: 0.099648
+deterministic_time: 0.095174
+
+(16699) 15:05:28 [INFO] (i=12, solver i=957) obj=0.6189904232574619, # IC=1441, # border=576
+
+Initial problem: 2212 rows, 338 columns, 35000 entries with magnitude in [1.387779e-17, 2.000000e+00]
+Objective stats: 325 non-zeros, range [-1.388889e-02, 2.546296e-02]
+Bounds stats: 1109 non-zeros, range [1.000000e-10, 1.000000e+00]
+Parameters: use_preprocessing: true log_search_progress: true
+
+Starting presolve...
+SingletonPreprocessor                        : 2197(-15) rows, 338(0) columns, 34985(-15) entries. (0.000441s)
+ImpliedFreePreprocessor                      : 2197(-15) rows, 338(0) columns, 34985(-15) entries. (0.000437s)
+UnconstrainedVariablePreprocessor            : 2197(-15) rows, 325(-13) columns, 33476(-1524) entries. (0.000328s)
+SingletonPreprocessor                        : 2173(-39) rows, 325(-13) columns, 33452(-1548) entries. (0.000095s)
+Reached fixed point after presolve pass #2
+EmptyConstraintPreprocessor                  : 2004(-208) rows, 325(-13) columns, 33452(-1548) entries. (0.000106s)
+ProportionalRowPreprocessor                  : 1919(-293) rows, 325(-13) columns, 33126(-1874) entries. (0.000729s)
+DualizerPreprocessor                         : 325(-1887) rows, 2317(1979) columns, 33524(-1476) entries. (0.000987s)
+SingletonPreprocessor                        : 325(-1887) rows, 2117(1779) columns, 33324(-1676) entries. (0.000858s)
+FreeConstraintPreprocessor                   : 324(-1888) rows, 2117(1779) columns, 33316(-1684) entries. (0.000063s)
+UnconstrainedVariablePreprocessor            : 324(-1888) rows, 2114(1776) columns, 33313(-1687) entries. (0.002004s)
+ScalingPreprocessor                          : 324(-1888) rows, 2114(1776) columns, 33313(-1687) entries. (0.001272s)
+
+Presolved problem: 324 rows, 2114 columns, 33313 entries with magnitude in [9.125060e-09, 1.000000e+00]
+Objective stats: 1940 non-zeros, range [-9.298434e+00, 9.298434e+00]
+Bounds stats: 450 non-zeros, range [-4.850608e+02, 1.511421e+00]
+
+The warm-start state contains 324 candidates for the basis (num_rows = 324).
+The initial basis did not use  BASIC columns from the initial state and used 225 slack variables that were not marked BASIC.
+225 of the FREE variables where moved to their bound.
+Starting basis: incremental solve.
+The matrix with slacks has 324 rows, 2438 columns, 33637 entries.
+Number of basic infeasible variables: 186
+Number of basic slack variables: 226
+Number of basic variables at bound: 0
+Number of basic fixed variables: 97
+Number of basic free variables: 0
+Number of super-basic variables: 0
+
+Primal feasibility phase, iteration # 0, sum_primal_infeasibilities = 6.543813444363881E+02 [norms]
+Primal feasibility phase, iteration # 65, sum_primal_infeasibilities = 3.202209691684914E+02
+Primal feasibility phase, iteration # 130, sum_primal_infeasibilities = 3.783665354401496E+01
+Primal feasibility phase, iteration # 195, sum_primal_infeasibilities = 8.309956684705237E-05
+Primal feasibility phase, iteration # 215, sum_primal_infeasibilities = 1.110223024625157E-16 [check]
+Current status: PRIMAL_FEASIBLE
+Primal infeasibility (bounds) = 1.11022e-16
+Primal residual |A.x - b| = 7.10543e-15
+Dual infeasibility (reduced costs) = 2233.36
+Dual residual |c_B - y.B| = 1.11022e-16
+
+Primal optimization phase, iteration # 0, objective = -2.725769765092127E+00
+Primal optimization phase, iteration # 65, objective = -1.491854483773350E+00
+Primal optimization phase, iteration # 130, objective = -1.053695898389162E+00
+Primal optimization phase, iteration # 195, objective = -8.597665050611634E-01
+Primal optimization phase, iteration # 260, objective = -7.217291621318663E-01
+Primal optimization phase, iteration # 325, objective = -6.809813375277421E-01
+Primal optimization phase, iteration # 390, objective = -6.601892435064876E-01
+Primal optimization phase, iteration # 455, objective = -6.532306373940981E-01
+Primal optimization phase, iteration # 520, objective = -6.437194405702049E-01
+Primal optimization phase, iteration # 585, objective = -6.248639060516599E-01
+Primal optimization phase, iteration # 641, objective = -6.203452416039286E-01 [small pivot]
+Primal optimization phase, iteration # 700, objective = -6.189904232128539E-01 [reduced costs]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 1.27845e-14
+Primal residual |A.x - b| = 4.08562e-14
+Dual infeasibility (reduced costs) = 7.25489e-12
+Dual residual |c_B - y.B| = 2.21106e-16
+
+Final unscaled solution:
+Primal objective (before moving primal/dual values) = 6.189904232574610E-01
+Dual objective (before moving primal/dual values) = 6.189904232574606E-01
+Max. primal values move = 1.90958e-14
+Max. dual values move = 5.35985e-16
+Primal objective (after moving primal/dual values) = 6.189904232574625E-01
+Max. rhs perturbation = 4.66294e-15
+Max. cost perturbation = 5.0307e-16
+Max. primal infeasibility = 4.66294e-15
+Max. dual infeasibility = 0
+Objective error <= 4e-06
+status: OPTIMAL
+objective: 0.61899
+iterations: 915
+time: 0.091928
+deterministic_time: 0.0998695
+
+(16699) 15:05:28 [INFO] (i=13, solver i=915) obj=0.6189904232574625, # IC=1441, # border=601
+
+Initial problem: 2236 rows, 338 columns, 35337 entries with magnitude in [1.387779e-17, 2.000000e+00]
+Objective stats: 325 non-zeros, range [-1.388889e-02, 2.546296e-02]
+Bounds stats: 1133 non-zeros, range [1.000000e-10, 1.000000e+00]
+Parameters: use_preprocessing: true log_search_progress: true
+
+Starting presolve...
+SingletonPreprocessor                        : 2221(-15) rows, 338(0) columns, 35322(-15) entries. (0.000583s)
+ImpliedFreePreprocessor                      : 2221(-15) rows, 338(0) columns, 35322(-15) entries. (0.000479s)
+UnconstrainedVariablePreprocessor            : 2221(-15) rows, 325(-13) columns, 33806(-1531) entries. (0.000427s)
+SingletonPreprocessor                        : 2197(-39) rows, 325(-13) columns, 33782(-1555) entries. (0.000113s)
+Reached fixed point after presolve pass #2
+EmptyConstraintPreprocessor                  : 2028(-208) rows, 325(-13) columns, 33782(-1555) entries. (0.000123s)
+ProportionalRowPreprocessor                  : 1942(-294) rows, 325(-13) columns, 33452(-1885) entries. (0.000741s)
+DualizerPreprocessor                         : 325(-1911) rows, 2340(2002) columns, 33850(-1487) entries. (0.001035s)
+SingletonPreprocessor                        : 325(-1911) rows, 2140(1802) columns, 33650(-1687) entries. (0.000799s)
+FreeConstraintPreprocessor                   : 324(-1912) rows, 2140(1802) columns, 33642(-1695) entries. (0.000081s)
+UnconstrainedVariablePreprocessor            : 324(-1912) rows, 2137(1799) columns, 33639(-1698) entries. (0.002123s)
+ScalingPreprocessor                          : 324(-1912) rows, 2137(1799) columns, 33639(-1698) entries. (0.001344s)
+
+Presolved problem: 324 rows, 2137 columns, 33639 entries with magnitude in [9.125060e-09, 1.000000e+00]
+Objective stats: 1963 non-zeros, range [-9.298434e+00, 9.298434e+00]
+Bounds stats: 450 non-zeros, range [-4.850608e+02, 1.511421e+00]
+
+The warm-start state contains 324 candidates for the basis (num_rows = 324).
+The initial basis did not use  BASIC columns from the initial state and used 130 slack variables that were not marked BASIC.
+130 of the FREE variables where moved to their bound.
+RevisedSimplex is not using the warm start basis because it is not factorizable.
+Starting basis: create from scratch.
+Trying to remove 123 fixed variables from the initial basis.
+The matrix with slacks has 324 rows, 2461 columns, 33963 entries.
+Number of basic infeasible variables: 49
+Number of basic slack variables: 163
+Number of basic variables at bound: 0
+Number of basic fixed variables: 7
+Number of basic free variables: 0
+Number of super-basic variables: 0
+
+Primal feasibility phase, iteration # 0, sum_primal_infeasibilities = 4.539237706004305E+02 [norms]
+Primal feasibility phase, iteration # 62, sum_primal_infeasibilities = 0.000000000000000E+00 [check]
+Current status: PRIMAL_FEASIBLE
+Primal infeasibility (bounds) = 0
+Primal residual |A.x - b| = 1.46549e-14
+Dual infeasibility (reduced costs) = 2314.94
+Dual residual |c_B - y.B| = 6.93889e-18
+
+Primal optimization phase, iteration # 0, objective = -2.026038652584533E+00
+Primal optimization phase, iteration # 65, objective = -1.684281965326770E+00
+Primal optimization phase, iteration # 130, objective = -1.333665146695117E+00
+Primal optimization phase, iteration # 184, objective = -1.183661329978339E+00 [reduced costs]
+Primal optimization phase, iteration # 249, objective = -9.893265203341858E-01
+Primal optimization phase, iteration # 256, objective = -9.441845872466724E-01 [small pivot]
+Primal optimization phase, iteration # 284, objective = -8.701093613740309E-01 [small pivot]
+Primal optimization phase, iteration # 327, objective = -7.933347587768447E-01 [small pivot]
+Primal optimization phase, iteration # 328, objective = -7.875154624450604E-01 [small pivot]
+Primal optimization phase, iteration # 329, objective = -7.867423033620803E-01 [small pivot]
+Primal optimization phase, iteration # 338, objective = -7.729380522792481E-01 [small pivot]
+Primal optimization phase, iteration # 350, objective = -7.574388596301370E-01 [small pivot]
+Primal optimization phase, iteration # 415, objective = -7.072656412644496E-01
+Primal optimization phase, iteration # 480, objective = -6.800761717149912E-01
+Primal optimization phase, iteration # 513, objective = -6.707749028782803E-01 [small pivot]
+Primal optimization phase, iteration # 514, objective = -6.701869502170303E-01 [small pivot]
+Primal optimization phase, iteration # 515, objective = -6.701392930726309E-01 [small pivot]
+Primal optimization phase, iteration # 516, objective = -6.699286897834896E-01 [small pivot]
+Primal optimization phase, iteration # 517, objective = -6.696596501529858E-01 [small pivot]
+Primal optimization phase, iteration # 582, objective = -6.586620178749023E-01
+Primal optimization phase, iteration # 647, objective = -6.473806517560122E-01
+Primal optimization phase, iteration # 674, objective = -6.437347135544905E-01 [small pivot]
+Primal optimization phase, iteration # 739, objective = -6.190210964691879E-01
+Primal optimization phase, iteration # 741, objective = -6.189826549753233E-01 [reduced costs]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 4.80723e-15
+Primal residual |A.x - b| = 1.13687e-13
+Dual infeasibility (reduced costs) = 1.51604e-11
+Dual residual |c_B - y.B| = 2.22045e-16
+
+Final unscaled solution:
+Primal objective (before moving primal/dual values) = 6.189904232574610E-01
+Dual objective (before moving primal/dual values) = 6.189904232574607E-01
+Max. primal values move = 1.62093e-14
+Max. dual values move = 1.39049e-16
+Primal objective (after moving primal/dual values) = 6.189904232574617E-01
+Max. rhs perturbation = 3.71925e-15
+Max. cost perturbation = 6.73073e-16
+Max. primal infeasibility = 3.71925e-15
+Max. dual infeasibility = 0
+Objective error <= 4e-06
+status: OPTIMAL
+objective: 0.61899
+iterations: 803
+time: 0.087922
+deterministic_time: 0.0804869
+
+(16699) 15:05:28 [INFO] (i=14, solver i=803) obj=0.6189904232574617, # IC=1441, # border=625
+
+Initial problem: 2260 rows, 338 columns, 35654 entries with magnitude in [1.387779e-17, 2.000000e+00]
+Objective stats: 325 non-zeros, range [-1.388889e-02, 2.546296e-02]
+Bounds stats: 1157 non-zeros, range [1.000000e-10, 1.000000e+00]
+Parameters: use_preprocessing: true log_search_progress: true
+
+Starting presolve...
+SingletonPreprocessor                        : 2245(-15) rows, 338(0) columns, 35639(-15) entries. (0.000588s)
+ImpliedFreePreprocessor                      : 2245(-15) rows, 338(0) columns, 35639(-15) entries. (0.000459s)
+UnconstrainedVariablePreprocessor            : 2245(-15) rows, 325(-13) columns, 34100(-1554) entries. (0.000352s)
+SingletonPreprocessor                        : 2221(-39) rows, 325(-13) columns, 34076(-1578) entries. (0.000081s)
+Reached fixed point after presolve pass #2
+EmptyConstraintPreprocessor                  : 2052(-208) rows, 325(-13) columns, 34076(-1578) entries. (0.000136s)
+ProportionalRowPreprocessor                  : 1964(-296) rows, 325(-13) columns, 33739(-1915) entries. (0.000899s)
+DualizerPreprocessor                         : 325(-1935) rows, 2362(2024) columns, 34137(-1517) entries. (0.001264s)
+SingletonPreprocessor                        : 325(-1935) rows, 2162(1824) columns, 33937(-1717) entries. (0.001257s)
+FreeConstraintPreprocessor                   : 324(-1936) rows, 2162(1824) columns, 33929(-1725) entries. (0.000073s)
+UnconstrainedVariablePreprocessor            : 324(-1936) rows, 2159(1821) columns, 33926(-1728) entries. (0.002463s)
+ScalingPreprocessor                          : 324(-1936) rows, 2159(1821) columns, 33926(-1728) entries. (0.001665s)
+
+Presolved problem: 324 rows, 2159 columns, 33926 entries with magnitude in [9.125060e-09, 1.000000e+00]
+Objective stats: 1985 non-zeros, range [-9.298434e+00, 9.298434e+00]
+Bounds stats: 450 non-zeros, range [-4.850608e+02, 1.511421e+00]
+
+The warm-start state contains 324 candidates for the basis (num_rows = 324).
+The initial basis did not use  BASIC columns from the initial state and used 62 slack variables that were not marked BASIC.
+62 of the FREE variables where moved to their bound.
+Starting basis: incremental solve.
+The matrix with slacks has 324 rows, 2483 columns, 34250 entries.
+Number of basic infeasible variables: 157
+Number of basic slack variables: 64
+Number of basic variables at bound: 0
+Number of basic fixed variables: 14
+Number of basic free variables: 0
+Number of super-basic variables: 0
+
+Primal feasibility phase, iteration # 0, sum_primal_infeasibilities = 5.374867714005309E+03 [norms]
+Primal feasibility phase, iteration # 65, sum_primal_infeasibilities = 8.888593396555252E+02
+Primal feasibility phase, iteration # 130, sum_primal_infeasibilities = 5.376258435658788E+01
+Primal feasibility phase, iteration # 195, sum_primal_infeasibilities = 1.317867060632584E+00
+Primal feasibility phase, iteration # 230, sum_primal_infeasibilities = 2.646977960169689E-20 [check]
+Current status: PRIMAL_FEASIBLE
+Primal infeasibility (bounds) = 2.64698e-20
+Primal residual |A.x - b| = 4.39204e-13
+Dual infeasibility (reduced costs) = 3438.03
+Dual residual |c_B - y.B| = 3.33067e-16
+
+Primal optimization phase, iteration # 0, objective = -2.271304120350202E+00
+Primal optimization phase, iteration # 65, objective = -1.345417793459110E+00
+Primal optimization phase, iteration # 130, objective = -1.066805233399567E+00
+Primal optimization phase, iteration # 195, objective = -7.927722857443062E-01
+Primal optimization phase, iteration # 234, objective = -6.876920190938611E-01 [reduced costs]
+Primal optimization phase, iteration # 242, objective = -6.819787489498199E-01 [small pivot]
+Primal optimization phase, iteration # 298, objective = -6.522120323844399E-01 [small pivot]
+Primal optimization phase, iteration # 307, objective = -6.485880769219564E-01 [small pivot]
+Primal optimization phase, iteration # 372, objective = -6.359089914360723E-01
+Primal optimization phase, iteration # 437, objective = -6.288987140909832E-01
+Primal optimization phase, iteration # 502, objective = -6.233016178547786E-01
+Primal optimization phase, iteration # 553, objective = -6.189903618383192E-01 [reduced costs]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 6.75169e-15
+Primal residual |A.x - b| = 5.68434e-14
+Dual infeasibility (reduced costs) = 6.77652e-12
+Dual residual |c_B - y.B| = 1.11022e-16
+
+Final unscaled solution:
+Primal objective (before moving primal/dual values) = 6.189904232574605E-01
+Dual objective (before moving primal/dual values) = 6.189904232574606E-01
+Max. primal values move = 1.02141e-14
+Max. dual values move = 3.747e-16
+Primal objective (after moving primal/dual values) = 6.189904232574611E-01
+Max. rhs perturbation = 2.77556e-15
+Max. cost perturbation = 2.32453e-16
+Max. primal infeasibility = 2.77556e-15
+Max. dual infeasibility = 0
+Objective error <= 4e-06
+status: OPTIMAL
+objective: 0.61899
+iterations: 783
+time: 0.097049
+deterministic_time: 0.0863745
+
+(16699) 15:05:28 [INFO] (i=15, solver i=783) obj=0.6189904232574611, # IC=1441, # border=649
+
+Initial problem: 2283 rows, 338 columns, 35964 entries with magnitude in [1.387779e-17, 2.000000e+00]
+Objective stats: 325 non-zeros, range [-1.388889e-02, 2.546296e-02]
+Bounds stats: 1180 non-zeros, range [1.000000e-10, 1.000000e+00]
+Parameters: use_preprocessing: true log_search_progress: true
+
+Starting presolve...
+SingletonPreprocessor                        : 2268(-15) rows, 338(0) columns, 35949(-15) entries. (0.000479s)
+ImpliedFreePreprocessor                      : 2268(-15) rows, 338(0) columns, 35949(-15) entries. (0.000507s)
+UnconstrainedVariablePreprocessor            : 2268(-15) rows, 325(-13) columns, 34408(-1556) entries. (0.000446s)
+SingletonPreprocessor                        : 2244(-39) rows, 325(-13) columns, 34384(-1580) entries. (0.000118s)
+Reached fixed point after presolve pass #2
+EmptyConstraintPreprocessor                  : 2075(-208) rows, 325(-13) columns, 34384(-1580) entries. (0.000122s)
+ProportionalRowPreprocessor                  : 1987(-296) rows, 325(-13) columns, 34047(-1917) entries. (0.000834s)
+DualizerPreprocessor                         : 325(-1958) rows, 2385(2047) columns, 34445(-1519) entries. (0.001147s)
+SingletonPreprocessor                        : 325(-1958) rows, 2185(1847) columns, 34245(-1719) entries. (0.000786s)
+FreeConstraintPreprocessor                   : 324(-1959) rows, 2185(1847) columns, 34237(-1727) entries. (0.000070s)
+UnconstrainedVariablePreprocessor            : 324(-1959) rows, 2182(1844) columns, 34234(-1730) entries. (0.002121s)
+ScalingPreprocessor                          : 324(-1959) rows, 2182(1844) columns, 34234(-1730) entries. (0.001974s)
+
+Presolved problem: 324 rows, 2182 columns, 34234 entries with magnitude in [9.125060e-09, 1.000000e+00]
+Objective stats: 2008 non-zeros, range [-9.298434e+00, 9.298434e+00]
+Bounds stats: 450 non-zeros, range [-4.850608e+02, 1.511421e+00]
+
+The warm-start state contains 324 candidates for the basis (num_rows = 324).
+The initial basis did not use  BASIC columns from the initial state and used 226 slack variables that were not marked BASIC.
+226 of the FREE variables where moved to their bound.
+Starting basis: incremental solve.
+The matrix with slacks has 324 rows, 2506 columns, 34558 entries.
+Number of basic infeasible variables: 167
+Number of basic slack variables: 227
+Number of basic variables at bound: 1
+Number of basic fixed variables: 94
+Number of basic free variables: 0
+Number of super-basic variables: 0
+
+Primal feasibility phase, iteration # 0, sum_primal_infeasibilities = 8.278730833300234E+02 [norms]
+Primal feasibility phase, iteration # 65, sum_primal_infeasibilities = 6.916238535236592E+01
+Primal feasibility phase, iteration # 130, sum_primal_infeasibilities = 1.137596403075758E+01
+Primal feasibility phase, iteration # 178, sum_primal_infeasibilities = 0.000000000000000E+00 [check]
+Current status: PRIMAL_FEASIBLE
+Primal infeasibility (bounds) = 0
+Primal residual |A.x - b| = 5.32907e-15
+Dual infeasibility (reduced costs) = 17565.6
+Dual residual |c_B - y.B| = 1.11022e-16
+
+Primal optimization phase, iteration # 0, objective = -2.058839397665560E+00
+Primal optimization phase, iteration # 65, objective = -1.583948708340930E+00
+Primal optimization phase, iteration # 130, objective = -1.031353984800830E+00
+Primal optimization phase, iteration # 195, objective = -8.226124596868406E-01
+Primal optimization phase, iteration # 215, objective = -7.831853604444770E-01 [small pivot]
+Primal optimization phase, iteration # 217, objective = -7.815353050457278E-01 [small pivot]
+Primal optimization phase, iteration # 282, objective = -7.074592071949363E-01
+Primal optimization phase, iteration # 301, objective = -6.954871627770305E-01 [small pivot]
+Primal optimization phase, iteration # 302, objective = -6.953911800339160E-01 [small pivot]
+Primal optimization phase, iteration # 367, objective = -6.588835337997625E-01
+Primal optimization phase, iteration # 432, objective = -6.387028228634862E-01
+Primal optimization phase, iteration # 497, objective = -6.328375085514168E-01
+Primal optimization phase, iteration # 562, objective = -6.251559068065203E-01
+Primal optimization phase, iteration # 627, objective = -6.217428447118967E-01
+Primal optimization phase, iteration # 692, objective = -6.201221112570786E-01
+Primal optimization phase, iteration # 726, objective = -6.189904232136111E-01 [reduced costs]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 1.11592e-14
+Primal residual |A.x - b| = 7.10543e-15
+Dual infeasibility (reduced costs) = 5.93835e-12
+Dual residual |c_B - y.B| = 2.22045e-16
+
+Final unscaled solution:
+Primal objective (before moving primal/dual values) = 6.189904232574612E-01
+Dual objective (before moving primal/dual values) = 6.189904232574606E-01
+Max. primal values move = 2.55351e-14
+Max. dual values move = 8.1294e-16
+Primal objective (after moving primal/dual values) = 6.189904232574617E-01
+Max. rhs perturbation = 3.21965e-15
+Max. cost perturbation = 4.996e-16
+Max. primal infeasibility = 3.21965e-15
+Max. dual infeasibility = 0
+Objective error <= 4e-06
+status: OPTIMAL
+objective: 0.61899
+iterations: 904
+time: 0.097124
+deterministic_time: 0.0859134
+
+(16699) 15:05:28 [INFO] (i=16, solver i=904) obj=0.6189904232574617, # IC=1441, # border=672
+
+Initial problem: 2306 rows, 338 columns, 36251 entries with magnitude in [1.387779e-17, 2.000000e+00]
+Objective stats: 325 non-zeros, range [-1.388889e-02, 2.546296e-02]
+Bounds stats: 1203 non-zeros, range [1.000000e-10, 1.000000e+00]
+Parameters: use_preprocessing: true log_search_progress: true
+
+Starting presolve...
+SingletonPreprocessor                        : 2291(-15) rows, 338(0) columns, 36236(-15) entries. (0.000466s)
+ImpliedFreePreprocessor                      : 2291(-15) rows, 338(0) columns, 36236(-15) entries. (0.000576s)
+UnconstrainedVariablePreprocessor            : 2291(-15) rows, 325(-13) columns, 34695(-1556) entries. (0.000375s)
+SingletonPreprocessor                        : 2267(-39) rows, 325(-13) columns, 34671(-1580) entries. (0.000251s)
+Reached fixed point after presolve pass #2
+EmptyConstraintPreprocessor                  : 2098(-208) rows, 325(-13) columns, 34671(-1580) entries. (0.000111s)
+ProportionalRowPreprocessor                  : 2008(-298) rows, 325(-13) columns, 34330(-1921) entries. (0.000741s)
+DualizerPreprocessor                         : 325(-1981) rows, 2406(2068) columns, 34728(-1523) entries. (0.000964s)
+SingletonPreprocessor                        : 325(-1981) rows, 2206(1868) columns, 34528(-1723) entries. (0.000780s)
+FreeConstraintPreprocessor                   : 324(-1982) rows, 2206(1868) columns, 34520(-1731) entries. (0.000105s)
+UnconstrainedVariablePreprocessor            : 324(-1982) rows, 2203(1865) columns, 34517(-1734) entries. (0.001958s)
+ScalingPreprocessor                          : 324(-1982) rows, 2203(1865) columns, 34517(-1734) entries. (0.001311s)
+
+Presolved problem: 324 rows, 2203 columns, 34517 entries with magnitude in [9.125060e-09, 1.000000e+00]
+Objective stats: 2029 non-zeros, range [-9.298434e+00, 9.298434e+00]
+Bounds stats: 450 non-zeros, range [-4.850608e+02, 1.511421e+00]
+
+The warm-start state contains 324 candidates for the basis (num_rows = 324).
+The initial basis did not use  BASIC columns from the initial state and used 238 slack variables that were not marked BASIC.
+238 of the FREE variables where moved to their bound.
+The primal residual of the initial basis is above the tolerance, 2.38128e-06 vs. 1e-08
+Starting basis: incremental solve.
+The matrix with slacks has 324 rows, 2527 columns, 34841 entries.
+Number of basic infeasible variables: 202
+Number of basic slack variables: 238
+Number of basic variables at bound: 0
+Number of basic fixed variables: 100
+Number of basic free variables: 0
+Number of super-basic variables: 0
+
+Primal feasibility phase, iteration # 0, sum_primal_infeasibilities = 3.592184993871799E+14 [norms]
+Primal feasibility phase, iteration # 65, sum_primal_infeasibilities = 2.938417703606689E+02
+Primal feasibility phase, iteration # 130, sum_primal_infeasibilities = 7.561696883525579E+01
+Primal feasibility phase, iteration # 195, sum_primal_infeasibilities = 3.556292063817364E+01
+Primal feasibility phase, iteration # 241, sum_primal_infeasibilities = 3.552713678800501E-15 [check]
+Current status: PRIMAL_FEASIBLE
+Primal infeasibility (bounds) = 2.22045e-15
+Primal residual |A.x - b| = 5.68434e-14
+Dual infeasibility (reduced costs) = 3474.12
+Dual residual |c_B - y.B| = 9.09495e-13
+
+Primal optimization phase, iteration # 0, objective = -1.791619446051623E+00
+Primal optimization phase, iteration # 65, objective = -1.264247564305340E+00
+Primal optimization phase, iteration # 130, objective = -9.009954508369585E-01
+Primal optimization phase, iteration # 195, objective = -8.062862301679634E-01
+Primal optimization phase, iteration # 260, objective = -7.535591649636861E-01
+Primal optimization phase, iteration # 325, objective = -7.167812408540836E-01
+Primal optimization phase, iteration # 390, objective = -6.996784645590530E-01
+Primal optimization phase, iteration # 455, objective = -6.905811252662923E-01
+Primal optimization phase, iteration # 520, objective = -6.814345805599392E-01
+Primal optimization phase, iteration # 585, objective = -6.579998032552473E-01
+Primal optimization phase, iteration # 650, objective = -6.349862482148607E-01
+Primal optimization phase, iteration # 715, objective = -6.296409576622103E-01
+Primal optimization phase, iteration # 780, objective = -6.277396330403940E-01
+Primal optimization phase, iteration # 830, objective = -6.251213631286671E-01 [norms]
+Primal optimization phase, iteration # 836, objective = -6.226784999987767E-01 [small pivot]
+Primal optimization phase, iteration # 837, objective = -6.222036662524423E-01 [small pivot]
+Primal optimization phase, iteration # 851, objective = -6.189904231677754E-01 [reduced costs]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 24.139
+Primal residual |A.x - b| = 2.84217e-14
+Dual infeasibility (reduced costs) = 1.43212e-12
+Dual residual |c_B - y.B| = 1.38778e-16
+
+Re-optimizing with dual simplex ... 
+Dual optimization phase, iteration # 851, objective = -6.189904232571151E-01 [norms]
+Dual optimization phase, iteration # 853, objective = -6.189904232571147E-01 [check]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 1.13581e-14
+Primal residual |A.x - b| = 5.68434e-14
+Dual infeasibility (reduced costs) = 3.60367e-12
+Dual residual |c_B - y.B| = 1.56125e-16
+
+Final unscaled solution:
+Primal objective (before moving primal/dual values) = 6.189904232574617E-01
+Dual objective (before moving primal/dual values) = 6.189904232574605E-01
+Max. primal values move = 1.73195e-14
+Max. dual values move = 4.76183e-16
+Primal objective (after moving primal/dual values) = 6.189904232574630E-01
+Max. rhs perturbation = 4.10783e-15
+Max. cost perturbation = 4.23273e-16
+Max. primal infeasibility = 4.10783e-15
+Max. dual infeasibility = 0
+Objective error <= 4e-06
+status: OPTIMAL
+objective: 0.61899
+iterations: 1094
+time: 0.120181
+deterministic_time: 0.12856
+
+(16699) 15:05:29 [INFO] (i=17, solver i=1094) obj=0.618990423257463, # IC=1441, # border=695
+
+Initial problem: 2331 rows, 338 columns, 36588 entries with magnitude in [1.387779e-17, 2.000000e+00]
+Objective stats: 325 non-zeros, range [-1.388889e-02, 2.546296e-02]
+Bounds stats: 1228 non-zeros, range [1.000000e-10, 1.000000e+00]
+Parameters: use_preprocessing: true log_search_progress: true
+
+Starting presolve...
+SingletonPreprocessor                        : 2316(-15) rows, 338(0) columns, 36573(-15) entries. (0.000479s)
+ImpliedFreePreprocessor                      : 2316(-15) rows, 338(0) columns, 36573(-15) entries. (0.000490s)
+UnconstrainedVariablePreprocessor            : 2316(-15) rows, 325(-13) columns, 35019(-1569) entries. (0.000372s)
+SingletonPreprocessor                        : 2292(-39) rows, 325(-13) columns, 34995(-1593) entries. (0.000087s)
+Reached fixed point after presolve pass #2
+EmptyConstraintPreprocessor                  : 2123(-208) rows, 325(-13) columns, 34995(-1593) entries. (0.000148s)
+ProportionalRowPreprocessor                  : 2031(-300) rows, 325(-13) columns, 34650(-1938) entries. (0.000872s)
+DualizerPreprocessor                         : 325(-2006) rows, 2429(2091) columns, 35048(-1540) entries. (0.001076s)
+SingletonPreprocessor                        : 325(-2006) rows, 2229(1891) columns, 34848(-1740) entries. (0.000849s)
+FreeConstraintPreprocessor                   : 324(-2007) rows, 2229(1891) columns, 34840(-1748) entries. (0.000132s)
+UnconstrainedVariablePreprocessor            : 324(-2007) rows, 2226(1888) columns, 34837(-1751) entries. (0.002378s)
+ScalingPreprocessor                          : 324(-2007) rows, 2226(1888) columns, 34837(-1751) entries. (0.001520s)
+
+Presolved problem: 324 rows, 2226 columns, 34837 entries with magnitude in [9.125060e-09, 1.000000e+00]
+Objective stats: 2052 non-zeros, range [-9.298434e+00, 9.298434e+00]
+Bounds stats: 450 non-zeros, range [-4.850608e+02, 1.511421e+00]
+
+The warm-start state contains 324 candidates for the basis (num_rows = 324).
+The initial basis did not use  BASIC columns from the initial state and used 226 slack variables that were not marked BASIC.
+226 of the FREE variables where moved to their bound.
+Starting basis: incremental solve.
+The matrix with slacks has 324 rows, 2550 columns, 35161 entries.
+Number of basic infeasible variables: 175
+Number of basic slack variables: 226
+Number of basic variables at bound: 0
+Number of basic fixed variables: 91
+Number of basic free variables: 0
+Number of super-basic variables: 0
+
+Primal feasibility phase, iteration # 0, sum_primal_infeasibilities = 2.050875014826398E+03 [norms]
+Primal feasibility phase, iteration # 65, sum_primal_infeasibilities = 9.596360510486426E+01
+Primal feasibility phase, iteration # 130, sum_primal_infeasibilities = 2.546447988834633E+01
+Primal feasibility phase, iteration # 195, sum_primal_infeasibilities = 1.489388043019573E-04
+Primal feasibility phase, iteration # 223, sum_primal_infeasibilities = 4.821391972619438E-15 [check]
+Current status: PRIMAL_FEASIBLE
+Primal infeasibility (bounds) = 1.77636e-15
+Primal residual |A.x - b| = 5.68434e-14
+Dual infeasibility (reduced costs) = 14889.1
+Dual residual |c_B - y.B| = 1.11022e-16
+
+Primal optimization phase, iteration # 0, objective = -1.772283106673993E+00
+Primal optimization phase, iteration # 65, objective = -1.286027319352160E+00
+Primal optimization phase, iteration # 130, objective = -1.007920969017311E+00
+Primal optimization phase, iteration # 195, objective = -8.452885236085023E-01
+Primal optimization phase, iteration # 249, objective = -7.491090522497376E-01 [small pivot]
+Primal optimization phase, iteration # 250, objective = -7.475704349887734E-01 [small pivot]
+Primal optimization phase, iteration # 270, objective = -7.266714067827451E-01 [small pivot]
+Primal optimization phase, iteration # 282, objective = -7.180619259651740E-01 [small pivot]
+Primal optimization phase, iteration # 347, objective = -6.848256808117664E-01
+Primal optimization phase, iteration # 412, objective = -6.710624885914285E-01
+Primal optimization phase, iteration # 477, objective = -6.631575522589985E-01
+Primal optimization phase, iteration # 542, objective = -6.510496586773281E-01
+Primal optimization phase, iteration # 607, objective = -6.312900088658662E-01
+Primal optimization phase, iteration # 672, objective = -6.267636080812636E-01
+Primal optimization phase, iteration # 720, objective = -6.189467393084820E-01 [reduced costs]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 8.61582e-15
+Primal residual |A.x - b| = 5.68434e-14
+Dual infeasibility (reduced costs) = 1.96575e-11
+Dual residual |c_B - y.B| = 1.38778e-16
+
+Final unscaled solution:
+Primal objective (before moving primal/dual values) = 6.189904232574609E-01
+Dual objective (before moving primal/dual values) = 6.189904232574605E-01
+Max. primal values move = 1.4988e-14
+Max. dual values move = 5.32376e-16
+Primal objective (after moving primal/dual values) = 6.189904232574612E-01
+Max. rhs perturbation = 2.77556e-15
+Max. cost perturbation = 6.29705e-16
+Max. primal infeasibility = 2.77556e-15
+Max. dual infeasibility = 0
+Objective error <= 4e-06
+status: OPTIMAL
+objective: 0.61899
+iterations: 943
+time: 0.10215
+deterministic_time: 0.0918569
+
+(16699) 15:05:29 [INFO] (i=18, solver i=943) obj=0.6189904232574612, # IC=1441, # border=720
+
+Initial problem: 2356 rows, 338 columns, 36925 entries with magnitude in [1.387779e-17, 2.000000e+00]
+Objective stats: 325 non-zeros, range [-1.388889e-02, 2.546296e-02]
+Bounds stats: 1253 non-zeros, range [1.000000e-10, 1.000000e+00]
+Parameters: use_preprocessing: true log_search_progress: true
+
+Starting presolve...
+SingletonPreprocessor                        : 2341(-15) rows, 338(0) columns, 36910(-15) entries. (0.000405s)
+ImpliedFreePreprocessor                      : 2341(-15) rows, 338(0) columns, 36910(-15) entries. (0.000399s)
+UnconstrainedVariablePreprocessor            : 2341(-15) rows, 325(-13) columns, 35331(-1594) entries. (0.000298s)
+SingletonPreprocessor                        : 2315(-41) rows, 325(-13) columns, 35305(-1620) entries. (0.000070s)
+Reached fixed point after presolve pass #2
+EmptyConstraintPreprocessor                  : 2146(-210) rows, 325(-13) columns, 35305(-1620) entries. (0.000086s)
+ProportionalRowPreprocessor                  : 2054(-302) rows, 325(-13) columns, 34960(-1965) entries. (0.000684s)
+DualizerPreprocessor                         : 325(-2031) rows, 2452(2114) columns, 35358(-1567) entries. (0.000835s)
+SingletonPreprocessor                        : 325(-2031) rows, 2252(1914) columns, 35158(-1767) entries. (0.000685s)
+FreeConstraintPreprocessor                   : 324(-2032) rows, 2252(1914) columns, 35150(-1775) entries. (0.000060s)
+UnconstrainedVariablePreprocessor            : 324(-2032) rows, 2249(1911) columns, 35147(-1778) entries. (0.001496s)
+ScalingPreprocessor                          : 324(-2032) rows, 2249(1911) columns, 35147(-1778) entries. (0.001325s)
+
+Presolved problem: 324 rows, 2249 columns, 35147 entries with magnitude in [9.125060e-09, 1.000000e+00]
+Objective stats: 2075 non-zeros, range [-9.298434e+00, 9.298434e+00]
+Bounds stats: 450 non-zeros, range [-4.850608e+02, 1.511421e+00]
+
+The warm-start state contains 324 candidates for the basis (num_rows = 324).
+The initial basis did not use  BASIC columns from the initial state and used 228 slack variables that were not marked BASIC.
+228 of the FREE variables where moved to their bound.
+Starting basis: incremental solve.
+The matrix with slacks has 324 rows, 2573 columns, 35471 entries.
+Number of basic infeasible variables: 175
+Number of basic slack variables: 229
+Number of basic variables at bound: 0
+Number of basic fixed variables: 95
+Number of basic free variables: 0
+Number of super-basic variables: 0
+
+Primal feasibility phase, iteration # 0, sum_primal_infeasibilities = 8.353824817881681E+02 [norms]
+Primal feasibility phase, iteration # 65, sum_primal_infeasibilities = 9.210237853490283E+01
+Primal feasibility phase, iteration # 130, sum_primal_infeasibilities = 1.396881766954980E+01
+Primal feasibility phase, iteration # 191, sum_primal_infeasibilities = 2.986499936241671E-14 [check]
+Current status: PRIMAL_FEASIBLE
+Primal infeasibility (bounds) = 2.89768e-14
+Primal residual |A.x - b| = 2.84217e-14
+Dual infeasibility (reduced costs) = 4629.87
+Dual residual |c_B - y.B| = 9.09495e-13
+
+Primal optimization phase, iteration # 0, objective = -1.744549535429181E+00
+Primal optimization phase, iteration # 65, objective = -1.318043909173858E+00
+Primal optimization phase, iteration # 130, objective = -9.155726350965570E-01
+Primal optimization phase, iteration # 195, objective = -7.531872045096457E-01
+Primal optimization phase, iteration # 260, objective = -7.026798584717431E-01
+Primal optimization phase, iteration # 325, objective = -6.661256206967517E-01
+Primal optimization phase, iteration # 390, objective = -6.581684725772303E-01
+Primal optimization phase, iteration # 395, objective = -6.566631839327832E-01 [small pivot]
+Primal optimization phase, iteration # 460, objective = -6.456357622938843E-01
+Primal optimization phase, iteration # 525, objective = -6.358606805316550E-01
+Primal optimization phase, iteration # 590, objective = -6.205890499995439E-01
+Primal optimization phase, iteration # 634, objective = -6.189904232403716E-01 [reduced costs]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 1.97728e-14
+Primal residual |A.x - b| = 5.68434e-14
+Dual infeasibility (reduced costs) = 4.53534e-11
+Dual residual |c_B - y.B| = 2.22045e-16
+
+Final unscaled solution:
+Primal objective (before moving primal/dual values) = 6.189904232574612E-01
+Dual objective (before moving primal/dual values) = 6.189904232574605E-01
+Max. primal values move = 1.55431e-14
+Max. dual values move = 5.08608e-16
+Primal objective (after moving primal/dual values) = 6.189904232574626E-01
+Max. rhs perturbation = 4.55191e-15
+Max. cost perturbation = 5.41234e-16
+Max. primal infeasibility = 4.55191e-15
+Max. dual infeasibility = 0
+Objective error <= 4e-06
+status: OPTIMAL
+objective: 0.61899
+iterations: 825
+time: 0.080569
+deterministic_time: 0.0815864
+
+(16699) 15:05:29 [INFO] (i=19, solver i=825) obj=0.6189904232574626, # IC=1441, # border=745
+
+Initial problem: 2380 rows, 338 columns, 37261 entries with magnitude in [1.387779e-17, 2.000000e+00]
+Objective stats: 325 non-zeros, range [-1.388889e-02, 2.546296e-02]
+Bounds stats: 1277 non-zeros, range [1.000000e-10, 1.000000e+00]
+Parameters: use_preprocessing: true log_search_progress: true
+
+Starting presolve...
+SingletonPreprocessor                        : 2365(-15) rows, 338(0) columns, 37246(-15) entries. (0.000474s)
+ImpliedFreePreprocessor                      : 2365(-15) rows, 338(0) columns, 37246(-15) entries. (0.000424s)
+UnconstrainedVariablePreprocessor            : 2365(-15) rows, 325(-13) columns, 35655(-1606) entries. (0.000310s)
+SingletonPreprocessor                        : 2339(-41) rows, 325(-13) columns, 35629(-1632) entries. (0.000071s)
+Reached fixed point after presolve pass #2
+EmptyConstraintPreprocessor                  : 2170(-210) rows, 325(-13) columns, 35629(-1632) entries. (0.000103s)
+ProportionalRowPreprocessor                  : 2078(-302) rows, 325(-13) columns, 35284(-1977) entries. (0.000693s)
+DualizerPreprocessor                         : 325(-2055) rows, 2476(2138) columns, 35682(-1579) entries. (0.000958s)
+SingletonPreprocessor                        : 325(-2055) rows, 2276(1938) columns, 35482(-1779) entries. (0.000690s)
+FreeConstraintPreprocessor                   : 324(-2056) rows, 2276(1938) columns, 35474(-1787) entries. (0.000059s)
+UnconstrainedVariablePreprocessor            : 324(-2056) rows, 2273(1935) columns, 35471(-1790) entries. (0.001597s)
+ScalingPreprocessor                          : 324(-2056) rows, 2273(1935) columns, 35471(-1790) entries. (0.001223s)
+
+Presolved problem: 324 rows, 2273 columns, 35471 entries with magnitude in [9.125060e-09, 1.000000e+00]
+Objective stats: 2099 non-zeros, range [-9.298434e+00, 9.298434e+00]
+Bounds stats: 450 non-zeros, range [-4.850608e+02, 1.511421e+00]
+
+The warm-start state contains 324 candidates for the basis (num_rows = 324).
+The initial basis did not use  BASIC columns from the initial state and used 238 slack variables that were not marked BASIC.
+238 of the FREE variables where moved to their bound.
+Starting basis: incremental solve.
+The matrix with slacks has 324 rows, 2597 columns, 35795 entries.
+Number of basic infeasible variables: 175
+Number of basic slack variables: 238
+Number of basic variables at bound: 0
+Number of basic fixed variables: 103
+Number of basic free variables: 0
+Number of super-basic variables: 0
+
+Primal feasibility phase, iteration # 0, sum_primal_infeasibilities = 7.304190908349965E+02 [norms]
+Primal feasibility phase, iteration # 65, sum_primal_infeasibilities = 1.039920952542614E+02
+Primal feasibility phase, iteration # 130, sum_primal_infeasibilities = 6.347444717733122E+00
+Primal feasibility phase, iteration # 184, sum_primal_infeasibilities = 2.353344147323607E-14 [check]
+Current status: PRIMAL_FEASIBLE
+Primal infeasibility (bounds) = 9.32587e-15
+Primal residual |A.x - b| = 2.84217e-14
+Dual infeasibility (reduced costs) = 4622.53
+Dual residual |c_B - y.B| = 1.38778e-17
+
+Primal optimization phase, iteration # 0, objective = -1.482528372556236E+00
+Primal optimization phase, iteration # 65, objective = -1.052766190263438E+00
+Primal optimization phase, iteration # 130, objective = -9.038457672548150E-01
+Primal optimization phase, iteration # 195, objective = -7.494737169633998E-01
+Primal optimization phase, iteration # 260, objective = -6.906792756987322E-01
+Primal optimization phase, iteration # 325, objective = -6.622954658112076E-01
+Primal optimization phase, iteration # 390, objective = -6.528329303447558E-01
+Primal optimization phase, iteration # 455, objective = -6.415138366587660E-01
+Primal optimization phase, iteration # 494, objective = -6.382158649104055E-01 [small pivot]
+Primal optimization phase, iteration # 505, objective = -6.331494397063684E-01 [small pivot]
+Primal optimization phase, iteration # 506, objective = -6.322944220671713E-01 [small pivot]
+Primal optimization phase, iteration # 507, objective = -6.309455210723770E-01 [small pivot]
+Primal optimization phase, iteration # 547, objective = -6.211001315417818E-01 [imprecise pivot]
+Primal optimization phase, iteration # 557, objective = -6.206548175278814E-01 [reduced costs]
+Primal optimization phase, iteration # 622, objective = -6.191621171042022E-01
+Primal optimization phase, iteration # 638, objective = -6.189904232090477E-01 [check]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 1.60489e-14
+Primal residual |A.x - b| = 5.68434e-14
+Dual infeasibility (reduced costs) = 9.72868e-12
+Dual residual |c_B - y.B| = 2.22045e-16
+
+Final unscaled solution:
+Primal objective (before moving primal/dual values) = 6.189904232574617E-01
+Dual objective (before moving primal/dual values) = 6.189904232574606E-01
+Max. primal values move = 1.13243e-14
+Max. dual values move = 9.26992e-16
+Primal objective (after moving primal/dual values) = 6.189904232574623E-01
+Max. rhs perturbation = 3.77476e-15
+Max. cost perturbation = 6.53991e-16
+Max. primal infeasibility = 3.77476e-15
+Max. dual infeasibility = 0
+Objective error <= 4e-06
+status: OPTIMAL
+objective: 0.61899
+iterations: 822
+time: 0.083868
+deterministic_time: 0.0787586
+
+(16699) 15:05:29 [INFO] (i=20, solver i=822) obj=0.6189904232574623, # IC=1441, # border=769
+
+Initial problem: 2401 rows, 338 columns, 37544 entries with magnitude in [1.387779e-17, 2.000000e+00]
+Objective stats: 325 non-zeros, range [-1.388889e-02, 2.546296e-02]
+Bounds stats: 1298 non-zeros, range [1.000000e-10, 1.000000e+00]
+Parameters: use_preprocessing: true log_search_progress: true
+
+Starting presolve...
+SingletonPreprocessor                        : 2386(-15) rows, 338(0) columns, 37529(-15) entries. (0.000415s)
+ImpliedFreePreprocessor                      : 2386(-15) rows, 338(0) columns, 37529(-15) entries. (0.000417s)
+UnconstrainedVariablePreprocessor            : 2386(-15) rows, 325(-13) columns, 35917(-1627) entries. (0.000314s)
+SingletonPreprocessor                        : 2360(-41) rows, 325(-13) columns, 35891(-1653) entries. (0.000074s)
+Reached fixed point after presolve pass #2
+EmptyConstraintPreprocessor                  : 2191(-210) rows, 325(-13) columns, 35891(-1653) entries. (0.000093s)
+ProportionalRowPreprocessor                  : 2099(-302) rows, 325(-13) columns, 35546(-1998) entries. (0.000831s)
+DualizerPreprocessor                         : 325(-2076) rows, 2497(2159) columns, 35944(-1600) entries. (0.001020s)
+SingletonPreprocessor                        : 325(-2076) rows, 2297(1959) columns, 35744(-1800) entries. (0.000702s)
+FreeConstraintPreprocessor                   : 324(-2077) rows, 2297(1959) columns, 35736(-1808) entries. (0.000063s)
+UnconstrainedVariablePreprocessor            : 324(-2077) rows, 2294(1956) columns, 35733(-1811) entries. (0.001649s)
+ScalingPreprocessor                          : 324(-2077) rows, 2294(1956) columns, 35733(-1811) entries. (0.001398s)
+
+Presolved problem: 324 rows, 2294 columns, 35733 entries with magnitude in [9.125060e-09, 1.000000e+00]
+Objective stats: 2120 non-zeros, range [-9.298434e+00, 9.298434e+00]
+Bounds stats: 450 non-zeros, range [-4.850608e+02, 1.511421e+00]
+
+The warm-start state contains 324 candidates for the basis (num_rows = 324).
+The initial basis did not use  BASIC columns from the initial state and used 150 slack variables that were not marked BASIC.
+150 of the FREE variables where moved to their bound.
+The primal residual of the initial basis is above the tolerance, 0.415481 vs. 1e-08
+Starting basis: incremental solve.
+The matrix with slacks has 324 rows, 2618 columns, 36057 entries.
+Number of basic infeasible variables: 127
+Number of basic slack variables: 151
+Number of basic variables at bound: 0
+Number of basic fixed variables: 48
+Number of basic free variables: 0
+Number of super-basic variables: 0
+
+Primal feasibility phase, iteration # 0, sum_primal_infeasibilities = 1.862922956863417E+16 [norms]
+Primal feasibility phase, iteration # 3, sum_primal_infeasibilities = 4.928546258798008E+14 [reduced costs]
+Primal feasibility phase, iteration # 68, sum_primal_infeasibilities = 8.917333246206091E+01
+Primal feasibility phase, iteration # 133, sum_primal_infeasibilities = 4.308888162282996E-02
+Primal feasibility phase, iteration # 143, sum_primal_infeasibilities = 1.128299953353233E-13 [check]
+Current status: PRIMAL_FEASIBLE
+Primal infeasibility (bounds) = 3.20977e-14
+Primal residual |A.x - b| = 5.68434e-14
+Dual infeasibility (reduced costs) = 1488.91
+Dual residual |c_B - y.B| = 1.11022e-16
+
+Primal optimization phase, iteration # 0, objective = -1.671182263534910E+00
+Primal optimization phase, iteration # 65, objective = -1.127976740258672E+00
+Primal optimization phase, iteration # 130, objective = -8.539331758369807E-01
+Primal optimization phase, iteration # 195, objective = -7.515745560952058E-01
+Primal optimization phase, iteration # 235, objective = -7.146144703975067E-01 [small pivot]
+Primal optimization phase, iteration # 300, objective = -6.875398358122267E-01
+Primal optimization phase, iteration # 303, objective = -6.868534877444699E-01 [small pivot]
+Primal optimization phase, iteration # 304, objective = -6.866886513807064E-01 [small pivot]
+Primal optimization phase, iteration # 305, objective = -6.865978036700482E-01 [small pivot]
+Primal optimization phase, iteration # 370, objective = -6.744809860918597E-01
+Primal optimization phase, iteration # 435, objective = -6.468649367496043E-01
+Primal optimization phase, iteration # 500, objective = -6.273731340012896E-01
+Primal optimization phase, iteration # 565, objective = -6.199629035840690E-01
+Primal optimization phase, iteration # 596, objective = -6.191350655520137E-01 [norms]
+Primal optimization phase, iteration # 600, objective = -6.189629222691588E-01 [reduced costs]
+Current status: OPTIMAL
+Primal infeasibility (bounds) = 1.21399e-14
+Primal residual |A.x - b| = 5.68434e-14
+Dual infeasibility (reduced costs) = 1.36933e-11
+Dual residual |c_B - y.B| = 2.22045e-16
+
+Final unscaled solution:
+Primal objective (before moving primal/dual values) = 6.189904232574608E-01
+Dual objective (before moving primal/dual values) = 6.189904232574607E-01
+Max. primal values move = 1.5099e-14
+Max. dual values move = 2.32402e-15
+Primal objective (after moving primal/dual values) = 6.189904232574615E-01
+Max. rhs perturbation = 3.66374e-15
+Max. cost perturbation = 7.14706e-16
+Max. primal infeasibility = 3.66374e-15
+Max. dual infeasibility = 0
+Objective error <= 4e-06
+status: OPTIMAL
+objective: 0.61899
+iterations: 743
+time: 0.085321
+deterministic_time: 0.0733068
+
+(16699) 15:05:29 [INFO] (i=21, solver i=743) obj=0.6189904232574615, # IC=1441, # border=790
+
+Initial problem: 2422 rows, 338 columns, 37814 entries with magnitude in [1.387779e-17, 2.000000e+00]
+Objective stats: 325 non-zeros, range [-1.388889e-02, 2.546296e-02]
+Bounds stats: 1319 non-zeros, range [1.000000e-10, 1.000000e+00]
+Parameters: use_preprocessing: true log_search_progress: true
+
+Starting presolve...
+SingletonPreprocessor                        : 2407(-15) rows, 338(0) columns, 37799(-15) entries. (0.000480s)
+ImpliedFreePreprocessor                      : 2407(-15) rows, 338(0) columns, 37799(-15) entries. (0.000472s)
+UnconstrainedVariablePreprocessor            : 2407(-15) rows, 325(-13) columns, 36183(-1631) entries. (0.000352s)
+SingletonPreprocessor                        : 2381(-41) rows, 325(-13) columns, 36157(-1657) entries. (0.000129s)
+Reached fixed point after presolve pass #2
+EmptyConstraintPreprocessor                  : 2212(-210) rows, 325(-13) columns, 36157(-1657) entries. (0.000163s)
+ProportionalRowPreprocessor                  : 2119(-303) rows, 325(-13) columns, 35810(-2004) entries. (0.000809s)
+DualizerPreprocessor                         : 325(-2097) rows, 2517(2179) columns, 36208(-1606) entries. (0.001051s)
+SingletonPreprocessor                        : 325(-2097) rows, 2317(1979) columns, 36008(-1806) entries. (0.000783s)
+FreeConstraintPreprocessor                   : 324(-2098) rows, 2317(1979) columns, 36000(-1814) entries. (0.000072s)
+UnconstrainedVariablePreprocessor            : 324(-2098) rows, 2314(1976) columns, 35997(-1817) entries. (0.001921s)
+ScalingPreprocessor                          : 324(-2098) rows, 2314(1976) columns, 35997(-1817) entries. (0.001391s)
+
+Presolved problem: 324 rows, 2314 columns, 35997 entries with magnitude in [9.125060e-09, 1.000000e+00]
+Objective stats: 2140 non-zeros, range [-9.298434e+00, 9.298434e+00]
+Bounds stats: 450 non-zeros, range [-4.850608e+02, 1.511421e+00]
+
+The warm-start state contains 324 candidates for the basis (num_rows = 324).
+The initial basis did not use  BASIC columns from the initial state and used 125 slack variables that were not marked BASIC.
+125 of the FREE variables where moved to their bound.
+The primal residual of the initial basis is above the tolerance, 58.523 vs. 1e-08
+Starting basis: incremental solve.
+The matrix with slacks has 324 rows, 2638 columns, 36321 entries.
+Number of basic infeasible variables: 108
+Number of basic slack variables: 125
+Number of basic variables at bound: 0
+Number of basic fixed variables: 29
+Number of basic free variables: 0
+Number of super-basic variables: 0
+
+Primal feasibility phase, iteration # 0, sum_primal_infeasibilities = 6.960106650159555E+18 [norms]
+Error during the revised simplex algorithm.
+
+Final unscaled solution:
+Primal objective (before moving primal/dual values) = 1.423596040702170E+00
+Dual objective (before moving primal/dual values) = 1.920123818479948E+00
+Primal objective (after moving primal/dual values) = 1.423596040702170E+00
+Max. rhs perturbation = 2.67707
+Max. cost perturbation = 0.0138889
+Max. primal infeasibility = 2.67707
+Max. dual infeasibility = 0
+Objective error <= 4e-06
+status: ABNORMAL
+objective: 1.4236
+iterations: 0
+time: 0.015837
+deterministic_time: 0.000389556
+
+optimal solution not found! status=4

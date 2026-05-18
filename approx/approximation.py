@@ -29,6 +29,8 @@ def _standardize_log_level(log_level):
             log_level = logging.DEBUG
         elif log_level.lower() == 'warning':
             log_level = logging.WARNING
+        elif log_level.lower() == 'critical':
+            log_level = logging.CRITICAL
         else:
             raise ValueError("`log_level` '%s' not supported!" % log_level)
     return log_level
@@ -334,8 +336,10 @@ class OptimalAuctionApproximation:
             # make solver
             self.solver, self.Q_vars, self.U_vars = self._setup_solver(
                 self.con_names)
+            # self.solver.SetSolverSpecificParametersAsString(
+            #     "max_time_in_seconds:%s" % solver_max_time)
             self.solver.SetSolverSpecificParametersAsString(
-                "max_time_in_seconds:%s" % solver_max_time)
+                "use_dual_simplex:1")
             obj = self._make_obj(self.Q_vars, self.U_vars)
             self.solver.Maximize(obj)
 
@@ -358,10 +362,20 @@ class OptimalAuctionApproximation:
                         self.solver, self.Q_vars, self.U_vars = \
                             self._setup_solver(self.con_names)
                         self.solver.SetSolverSpecificParametersAsString(
-                            "max_time_in_seconds:%s" % solver_max_time)
+                            "use_dual_simplex:1")
+                        # self.solver.SetSolverSpecificParametersAsString(
+                        #     "max_time_in_seconds:%s" % solver_max_time)
                         obj = self._make_obj(self.Q_vars, self.U_vars)
                         self.solver.Maximize(obj)
                         continue
+                    self.solver, self.Q_vars, self.U_vars = \
+                        self._setup_solver(self.con_names)
+                    self.solver.SetSolverSpecificParametersAsString(
+                        "use_dual_simplex:1")
+                    obj = self._make_obj(self.Q_vars, self.U_vars)
+                    self.solver.Maximize(obj)
+                    self.solver.EnableOutput()
+                    self.solver_status = self.solver.Solve()
                     raise RuntimeError("solver failed with status=%s (#%s/5)"
                                        % (self.solver_status,
                                           n_consecutive_fails))

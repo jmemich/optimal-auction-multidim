@@ -5,32 +5,44 @@ from concurrent.futures import ProcessPoolExecutor
 
 from approx import OptimalAuctionApproximation as Approximation
 
-N_WORKERS = 10
+
+N_WORKERS = 2
 
 if __name__ == '__main__':
 
     res = dict()
 
-    for T in [20, 25, 30]:
+    for T in [20]:
 
         executor = ProcessPoolExecutor(max_workers=N_WORKERS)
 
         start = time()
         try:
+            print('running T=%s...' % T)
             approx = Approximation(
                 n_buyers=2,
                 V=[[0, 1], [0, 1]],
                 costs=[0, 0],
                 T=T,
                 executor=executor,
-                log_level='debug')
+                log_level='info')
             approx.run()
-        except:
-            x = 1
+        except RuntimeError as err:
+            print(err)
         elapsed = time() - start
         res[T] = (elapsed, approx)
 
         executor.shutdown()
 
     for k, v in res.items():
-        print('T=%s, success=%s, time=%s' % (k, v[1].converged, np.round(v[0], 5)))
+        print('T=%s, success=%s, time=%s' % 
+              (k, v[1].converged, np.round(v[0], 5)))
+
+    solver = approx.solver
+    constraints = [c.name() for c in solver.constraints()
+               if c.name().startswith('ic') or c.name().startswith('border')]
+    solver2, Q2, U2 = approx._setup_solver(constraints)
+    obj2 = approx._make_obj(Q2, U2)
+    solver2.Maximize(obj2)
+    status = solver2.Solve()
+    print(status)
