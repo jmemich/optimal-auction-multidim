@@ -1,38 +1,39 @@
+import itertools
+import logging
+import pickle
 import sys
 import time
-import pickle
-import logging
-import itertools
 
-from scipy.stats import uniform
 import numpy as np
-
 from ortools.linear_solver import pywraplp
+from scipy.stats import uniform
 
-from optimal_auctions.constraints import (Constraint, IC_PREFIX, BORDER_PREFIX,
-                                make_border_expr_from_name,
-                                make_ic_expr_from_name)
-from optimal_auctions.oracle import (separation_oracle, _check_border,
-                           _make_lower_left_quadrant)
+from optimal_auctions.constraints import (
+    BORDER_PREFIX,
+    IC_PREFIX,
+    Constraint,
+    make_border_expr_from_name,
+    make_ic_expr_from_name,
+)
 from optimal_auctions.discrete import discretize, f_hat
+from optimal_auctions.oracle import _check_border, _make_lower_left_quadrant, separation_oracle
 from optimal_auctions.util import symmetric_ix
 
-
-LOG_FMT = '(%(process)d) %(asctime)s [%(levelname)s] %(message)s'
+LOG_FMT = "(%(process)d) %(asctime)s [%(levelname)s] %(message)s"
 
 
 def _standardize_log_level(log_level):
     if type(log_level) is str:
-        if log_level.lower() == 'info':
+        if log_level.lower() == "info":
             log_level = logging.INFO
-        elif log_level.lower() == 'debug':
+        elif log_level.lower() == "debug":
             log_level = logging.DEBUG
-        elif log_level.lower() == 'warning':
+        elif log_level.lower() == "warning":
             log_level = logging.WARNING
-        elif log_level.lower() == 'critical':
+        elif log_level.lower() == "critical":
             log_level = logging.CRITICAL
         else:
-            raise ValueError("`log_level` '%s' not supported!" % log_level)
+            raise ValueError(f"`log_level` '{log_level}' not supported!")
     return log_level
 
 
@@ -122,19 +123,20 @@ class OptimalAuctionApproximation:
     """
 
     def __init__(
-            self,
-            n_buyers,
-            V,
-            costs,
-            T,
-            f=None,
-            corr=None,
-            solver_type='GLOP',
-            force_symmetric=True,
-            check_local_ic=True,
-            executor=None,
-            seed=12345,
-            log_level=logging.INFO):
+        self,
+        n_buyers,
+        V,
+        costs,
+        T,
+        f=None,
+        corr=None,
+        solver_type="GLOP",
+        force_symmetric=True,
+        check_local_ic=True,
+        executor=None,
+        seed=12345,
+        log_level=logging.INFO,
+    ):
         self.n_buyers = n_buyers
         self.n_grades = len(V)
         self.grades = list(range(self.n_grades))
@@ -160,30 +162,28 @@ class OptimalAuctionApproximation:
         self.executor = executor
         self.force_symmetric = force_symmetric
         if force_symmetric and self.n_grades > 2:
-            raise NotImplementedError(
-                "`force_symmetric`=True and `grades`>2 not supported!")
+            raise NotImplementedError("`force_symmetric`=True and `grades`>2 not supported!")
 
         self.solver_type = solver_type
         self.rng = np.random.RandomState(seed)
 
         self.log_level = _standardize_log_level(log_level)
-        logging.basicConfig(format=LOG_FMT, datefmt='%H:%M:%S',
-                            level=self.log_level, stream=sys.stdout)
-        problem_str = \
-            ('PROBLEM SETUP: n_buyers=%s, n_grades=%s, V=%s, costs=%s, T=%s, '
-             'solver=%s, force_symmetric=%s, ic_local=%s') % \
-            (n_buyers, self.n_grades, str(V), str(costs), T, solver_type,
-             force_symmetric, check_local_ic)
+        logging.basicConfig(
+            format=LOG_FMT, datefmt="%H:%M:%S", level=self.log_level, stream=sys.stdout
+        )
+        problem_str = (
+            f"PROBLEM SETUP: n_buyers={n_buyers}, n_grades={self.n_grades}, V={V!s}, costs={costs!s}, T={T}, "
+            f"solver={solver_type}, force_symmetric={force_symmetric}, ic_local={check_local_ic}"
+        )
         logging.info(problem_str)
 
-    def _create_or_warmstart_Q_U_vars(
-            self, solver, Q_values=None, U_values=None):
+    def _create_or_warmstart_Q_U_vars(self, solver, Q_values=None, U_values=None):
         Q_vars = []
         grades = self.grades if not self.force_symmetric else [0]
         for j in grades:
             Q_j = []
             for i, _ in enumerate(self.V_T):
-                var_name = 'Q_%s_%s' % (j, i)
+                var_name = f"Q_{j}_{i}"
                 var = solver.NumVar(0, 1, var_name)
                 Q_j.append(var)
             if Q_values is not None:
@@ -194,7 +194,7 @@ class OptimalAuctionApproximation:
 
         U_vars = []
         for i, _ in enumerate(self.V_T):
-            var_name = 'U_%s' % i
+            var_name = f"U_{i}"
             var = solver.NumVar(0, max_utility, var_name)
             U_vars.append(var)
         if U_values is not None:
@@ -231,7 +231,7 @@ class OptimalAuctionApproximation:
         # NOTE 0 <= U <= U_max (forall U) is defined when we create variables!
 
         # 1. IR constraint
-        ir_con = Constraint('ir', U_vars[0] <= 10 ** -10, None)
+        ir_con = Constraint("ir", U_vars[0] <= 10**-10, None)
 
         # 2. Q is valid probability distribution
         prob_cons = []
@@ -240,26 +240,22 @@ class OptimalAuctionApproximation:
                 Q_total_i = 0
                 for j in self.grades:
                     Q_total_i += Q_vars[j][i]
-                prob_con = Constraint(
-                    'prob_%s_%s' % (i, j), Q_total_i <= 1, None)
+                prob_con = Constraint(f"prob_{i}_{j}", Q_total_i <= 1, None)
                 prob_cons.append(prob_con)
             else:
                 j = symmetric_ix(i, self.T)
-                Q_total_i = \
-                    Q_vars[0][i] + Q_vars[0][j]
-                prob_con = Constraint(
-                    'prob_%s_%s' % (i, j), Q_total_i <= 1, None)
+                Q_total_i = Q_vars[0][i] + Q_vars[0][j]
+                prob_con = Constraint(f"prob_{i}_{j}", Q_total_i <= 1, None)
                 prob_cons.append(prob_con)
 
-        base_cons = [ir_con] + prob_cons
+        base_cons = [ir_con, *prob_cons]
         return base_cons
 
     def _setup_solver(self, con_names, Q_values=None, U_values=None):
         # 1. create solver, 2. create vars, 3. add base constraints
         solver = pywraplp.Solver.CreateSolver(self.solver_type)
 
-        Q_vars, U_vars = self._create_or_warmstart_Q_U_vars(
-            solver, Q_values, U_values)
+        Q_vars, U_vars = self._create_or_warmstart_Q_U_vars(solver, Q_values, U_values)
         base_cons = self._create_base_constraints(Q_vars, U_vars)
 
         for con in base_cons:
@@ -268,12 +264,19 @@ class OptimalAuctionApproximation:
         for name in con_names:
             if name.startswith(IC_PREFIX):
                 expr = make_ic_expr_from_name(
-                    name, Q_vars, U_vars, self.T, self.V_T, self.grades,
-                    self.force_symmetric)
+                    name, Q_vars, U_vars, self.T, self.V_T, self.grades, self.force_symmetric
+                )
             elif name.startswith(BORDER_PREFIX):
                 expr = make_border_expr_from_name(
-                    name, Q_vars, self.T, self.V_T, self.n_buyers,
-                    self.grades, self.f_hat, self.force_symmetric)
+                    name,
+                    Q_vars,
+                    self.T,
+                    self.V_T,
+                    self.n_buyers,
+                    self.grades,
+                    self.f_hat,
+                    self.force_symmetric,
+                )
             else:
                 raise RuntimeError("constraint prefix not recognised!")
             solver.Add(expr, name)
@@ -307,39 +310,36 @@ class OptimalAuctionApproximation:
         self.con_names = set()
         self.converged = False
         while not self.converged:
-
             # TODO cleanup this dupe code
             # define local region of typespace for IC constrait checks
-            for i, v_i in enumerate(self.V_T):
+            for i, _v_i in enumerate(self.V_T):
                 # NOTE also this creates dupes! (we de-dupe below)
                 # TODO this is wrong but it overcounts by only a small amount
-                star_ix = [i + self.T,      # above-left
-                           i + self.T + 1,  # above
-                           i + self.T + 2,  # above-right
-                           i - 1,           # left
-                           i + 1,           # right
-                           i - self.T - 2,  # below-left
-                           i - self.T - 1,  # below
-                           i - self.T]      # below-right
+                star_ix = [
+                    i + self.T,  # above-left
+                    i + self.T + 1,  # above
+                    i + self.T + 2,  # above-right
+                    i - 1,  # left
+                    i + 1,  # right
+                    i - self.T - 2,  # below-left
+                    i - self.T - 1,  # below
+                    i - self.T,
+                ]  # below-right
                 # deal with corners/edges:
-                star_ix = [ix for ix in star_ix
-                           if ix >= 0 and ix < len(self.V_T)]
-                quadrant_ix = _make_lower_left_quadrant(
-                    i, self.T, self.net_size)
+                star_ix = [ix for ix in star_ix if ix >= 0 and ix < len(self.V_T)]
+                quadrant_ix = _make_lower_left_quadrant(i, self.T, self.net_size)
                 all_ix = set(star_ix + quadrant_ix)
                 all_v_j = [self.V_T[ix] for ix in all_ix]
-                inner_loop = zip(star_ix, all_v_j)
-                for j, v_j in inner_loop:
-                    name = '%s_%s_%s' % (IC_PREFIX, i, j)
+                inner_loop = zip(star_ix, all_v_j, strict=False)
+                for j, _v_j in inner_loop:
+                    name = f"{IC_PREFIX}_{i}_{j}"
                     self.con_names.add(name)
 
             # make solver
-            self.solver, self.Q_vars, self.U_vars = self._setup_solver(
-                self.con_names)
+            self.solver, self.Q_vars, self.U_vars = self._setup_solver(self.con_names)
             # self.solver.SetSolverSpecificParametersAsString(
             #     "max_time_in_seconds:%s" % solver_max_time)
-            self.solver.SetSolverSpecificParametersAsString(
-                "use_dual_simplex:1")
+            self.solver.SetSolverSpecificParametersAsString("use_dual_simplex:1")
             obj = self._make_obj(self.Q_vars, self.U_vars)
             self.solver.Maximize(obj)
 
@@ -348,37 +348,32 @@ class OptimalAuctionApproximation:
             self.border_failing = True
             n_consecutive_fails = 0
             while self.border_failing:
-
                 # 4 = "abnormal" (from numerical fail due to re-running)
-                # https://github.com/google/or-tools/blob/stable/ortools/linear_solver/linear_solver.h#L464-L479  # NOQA
+                # https://github.com/google/or-tools/blob/stable/ortools/linear_solver/linear_solver.h#L464-L479
                 self.solver_status = self.solver.Solve()
 
                 if self.solver_status != 0:
                     if self.solver_status == 4 and n_consecutive_fails < 5:
                         n_consecutive_fails += 1
                         logging.warning(
-                            "solver status = %s! remaking solver... (#%s/5)" %
-                            (self.solver_status, n_consecutive_fails))
-                        self.solver, self.Q_vars, self.U_vars = \
-                            self._setup_solver(self.con_names)
-                        self.solver.SetSolverSpecificParametersAsString(
-                            "use_dual_simplex:1")
+                            f"solver status = {self.solver_status}! remaking solver... (#{n_consecutive_fails}/5)"
+                        )
+                        self.solver, self.Q_vars, self.U_vars = self._setup_solver(self.con_names)
+                        self.solver.SetSolverSpecificParametersAsString("use_dual_simplex:1")
                         # self.solver.SetSolverSpecificParametersAsString(
                         #     "max_time_in_seconds:%s" % solver_max_time)
                         obj = self._make_obj(self.Q_vars, self.U_vars)
                         self.solver.Maximize(obj)
                         continue
-                    self.solver, self.Q_vars, self.U_vars = \
-                        self._setup_solver(self.con_names)
-                    self.solver.SetSolverSpecificParametersAsString(
-                        "use_dual_simplex:1")
+                    self.solver, self.Q_vars, self.U_vars = self._setup_solver(self.con_names)
+                    self.solver.SetSolverSpecificParametersAsString("use_dual_simplex:1")
                     obj = self._make_obj(self.Q_vars, self.U_vars)
                     self.solver.Maximize(obj)
                     self.solver.EnableOutput()
                     self.solver_status = self.solver.Solve()
-                    raise RuntimeError("solver failed with status=%s (#%s/5)"
-                                       % (self.solver_status,
-                                          n_consecutive_fails))
+                    raise RuntimeError(
+                        f"solver failed with status={self.solver_status} (#{n_consecutive_fails}/5)"
+                    )
                 n_consecutive_fails = 0
 
                 solver_i = self.solver.iterations()
@@ -391,9 +386,7 @@ class OptimalAuctionApproximation:
                     if con.name().startswith(BORDER_PREFIX):
                         n_border += 1
 
-                msg = '(i=%s, j=%s, solver=%s) obj=%s, #IC=%s, #border=%s (%s)'\
-                    % (self.i, j, solver_i, self.opt, n_ic, n_border,
-                       n_violated)
+                msg = f"(i={self.i}, j={j}, solver={solver_i}) obj={self.opt}, #IC={n_ic}, #border={n_border} ({n_violated})"
                 logging.info(msg)
 
                 # convert solver vars to raw values
@@ -401,8 +394,7 @@ class OptimalAuctionApproximation:
                 if not self.force_symmetric:
                     self._Q_values = []
                     for j in self.grades:
-                        self._Q_values.append(
-                            [Q.solution_value() for Q in self.Q_vars[j]])
+                        self._Q_values.append([Q.solution_value() for Q in self.Q_vars[j]])
                 else:
                     # TODO keep this the same as `self.Q`...
                     _Q1 = [Q.solution_value() for Q in self.Q_vars[0]]
@@ -414,22 +406,21 @@ class OptimalAuctionApproximation:
 
                 # check border + add violations
                 border_cons = _check_border(
-                    self.V_T, self.T, self._Q_values, self.grades,
-                    self.n_buyers, self.f_hat)
+                    self.V_T, self.T, self._Q_values, self.grades, self.n_buyers, self.f_hat
+                )
 
                 n_violated = 0
                 to_add = set()
                 for con in border_cons:
-                    if con.status == 'VIOLATED':
+                    if con.status == "VIOLATED":
                         to_add.add(con)
                         n_violated += 1
-                    if con.status == 'BINDING':
+                    if con.status == "BINDING":
                         to_add.add(con)
 
                 if n_violated == 0:
                     self.border_failing = False
-                    logging.info("successfully run inner loop (net_size=%s)" %
-                                 self.net_size)
+                    logging.info(f"successfully run inner loop (net_size={self.net_size})")
                     break
 
                 j += 1
@@ -437,33 +428,47 @@ class OptimalAuctionApproximation:
                 for con in to_add.difference(self.con_names):
                     self.con_names.add(con.name)
                     expr = make_border_expr_from_name(
-                        con.name, self.Q_vars, self.T, self.V_T, self.n_buyers,
-                        self.grades, self.f_hat, self.force_symmetric)
+                        con.name,
+                        self.Q_vars,
+                        self.T,
+                        self.V_T,
+                        self.n_buyers,
+                        self.grades,
+                        self.f_hat,
+                        self.force_symmetric,
+                    )
                     self.solver.Add(expr, con.name)
 
             self.js.append(j)
             check_local = False
-            logging.info('checking full solution...')
-            _, A_ic, _, _, A_border, _ = \
-                separation_oracle(
-                    self._Q_values, self._U_values, self.V_T, self.T,
-                    self.grades, self.n_buyers, self.f_hat,
-                    self.force_symmetric, check_local, self.executor,
-                    self.net_size)
+            logging.info("checking full solution...")
+            _, A_ic, _, _, A_border, _ = separation_oracle(
+                self._Q_values,
+                self._U_values,
+                self.V_T,
+                self.T,
+                self.grades,
+                self.n_buyers,
+                self.f_hat,
+                self.force_symmetric,
+                check_local,
+                self.executor,
+                self.net_size,
+            )
             n_A_ic, n_A_border = len(A_ic), len(A_border)
 
             if n_A_ic + n_A_border > 0:
                 logging.warning(
                     "FAILURE: final solution to optimisation problem "
-                    "fails full separation oracle! # IC violated=%s, # "
-                    "Border violated=%s." % (n_A_ic, n_A_border))
+                    f"fails full separation oracle! # IC violated={n_A_ic}, # "
+                    f"Border violated={n_A_border}."
+                )
                 for con in A_ic:
-                    ixs_str = con.name.lstrip(IC_PREFIX + '_').split('_')
+                    ixs_str = con.name.lstrip(IC_PREFIX + "_").split("_")
                     ixs = [int(ix) for ix in ixs_str]
                     logging.debug(
-                        "FAILURE [IC]: v=%s (ix=%s), v'=%s (ix=%s)" %
-                        (np.round(self.V_T[ixs[0]], 4), ixs[0],
-                         np.round(self.V_T[ixs[1]], 4), ixs[1]))
+                        f"FAILURE [IC]: v={np.round(self.V_T[ixs[0]], 4)} (ix={ixs[0]}), v'={np.round(self.V_T[ixs[1]], 4)} (ix={ixs[1]})"
+                    )
                     self.con_names.add(con.name)
                 for con in A_border:
                     self.con_names.add(con.name)
@@ -471,9 +476,7 @@ class OptimalAuctionApproximation:
                 self.net_size += self.net_size_inc
                 if self.net_size > self.T:
                     break
-                logging.info(
-                    "Running again with previous failures and "
-                    "`net_size`=%s" % self.net_size)
+                logging.info(f"Running again with previous failures and `net_size`={self.net_size}")
                 self.i += 1
                 j = 1
             else:
@@ -483,63 +486,59 @@ class OptimalAuctionApproximation:
             logging.warning("algorithm did not converge!")
         self.elapsed = time.time() - begin
         minutes = np.round(self.elapsed / 60, 1)
-        logging.info('finished! total time: %s (mins), total iterations: %s' %
-                     (minutes, np.sum(self.js)))
+        logging.info(f"finished! total time: {minutes} (mins), total iterations: {np.sum(self.js)}")
 
     def __getstate__(self):
         init_params = {
-            'n_buyers': self.n_buyers,
-            'costs': self.costs,
-            'V': self.V,
-            'T': self.T,
-            'f': self.f,
-            'corr': self.corr,
-            'force_symmetric': self.force_symmetric,
-            'check_local_ic': self.check_local_ic,
-            'executor': self.executor,
-            'solver_type': self.solver_type,
-            'log_level': self.log_level
+            "n_buyers": self.n_buyers,
+            "costs": self.costs,
+            "V": self.V,
+            "T": self.T,
+            "f": self.f,
+            "corr": self.corr,
+            "force_symmetric": self.force_symmetric,
+            "check_local_ic": self.check_local_ic,
+            "executor": self.executor,
+            "solver_type": self.solver_type,
+            "log_level": self.log_level,
         }
         if hasattr(self, "i"):  # this indiciates it has been run!
             run_params = {
-                'i': self.i,
-                'js': self.js,
-                'elapsed': self.elapsed,
-                'opt': self.opt,
-                'converged': self.converged,
-                '_Q_values': self._Q_values,
-                '_U_values': self._U_values,
+                "i": self.i,
+                "js": self.js,
+                "elapsed": self.elapsed,
+                "opt": self.opt,
+                "converged": self.converged,
+                "_Q_values": self._Q_values,
+                "_U_values": self._U_values,
             }
         else:
             run_params = {}
-        return {
-            'init_params': init_params,
-            'run_params': run_params
-        }
+        return {"init_params": init_params, "run_params": run_params}
 
     def __setstate__(self, state):
-        init_params = state['init_params']
+        init_params = state["init_params"]
         approx = OptimalAuctionApproximation(**init_params)
-        run_params = state['run_params']
+        run_params = state["run_params"]
         for key in run_params:
             setattr(approx, key, run_params[key])
         self.__dict__ = approx.__dict__
 
     def to_file(self, path):
-        with open(path, 'wb') as fout:
+        with open(path, "wb") as fout:
             pickle.dump(self, fout)
 
     @staticmethod
     def from_file(path):
-        with open(path, 'rb') as fin:
+        with open(path, "rb") as fin:
             return pickle.load(fin)
 
     @property
     def Q(self):
         # make sure we use Q_vars from most recent iteration!
-        if not hasattr(self, '_Q_i'):
+        if not hasattr(self, "_Q_i"):
             self._Q_i = self.i
-        if not hasattr(self, '_Q') or self._Q_i != self.i:
+        if not hasattr(self, "_Q") or self._Q_i != self.i:
             _Q = []
             for i in range(len(self.V_T)):
                 _Q_v = []
@@ -552,9 +551,9 @@ class OptimalAuctionApproximation:
     @property
     def U(self):
         # make sure we use U_vars from most recent iteration!
-        if not hasattr(self, '_U_i'):
+        if not hasattr(self, "_U_i"):
             self._U_i = self.i
-        if not hasattr(self, '_U') or self._U_i != self.i:
+        if not hasattr(self, "_U") or self._U_i != self.i:
             _U = []
             for i in range(len(self.V_T)):
                 _U.append(self._U_values[i])

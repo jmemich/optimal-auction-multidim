@@ -4,14 +4,9 @@ from optimal_auctions import OptimalAuctionApproximation as Approximation
 
 
 def test_pickle_roundtrip():
-    test = Approximation(
-        n_buyers=2,
-        V=[[0, 1], [0, 1]],
-        costs=[0, 0],
-        T=2
-    )
+    test = Approximation(n_buyers=2, V=[[0, 1], [0, 1]], costs=[0, 0], T=2)
     test.run()
 
     test = pickle.loads(pickle.dumps(test))
-    test.Q  # check this works as intended
+    test.Q  # noqa: B018 — intentional property-access smoke test
     test.run()  # check we can run it again if we want

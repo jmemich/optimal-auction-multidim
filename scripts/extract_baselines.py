@@ -21,12 +21,13 @@ Exit codes:
     1 = setup error (missing pickle dir, etc.)
     2 = at least one mismatch or missing pickle (baselines.json still written)
 """
+
 from __future__ import annotations
 
 import json
 import pickle
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from types import ModuleType
 from typing import Any
@@ -83,6 +84,7 @@ TOLERANCE = 1e-4  # thesis reports 5-6 dp; 1e-4 catches typos without false alar
 
 def _make_stub(name: str, module: str) -> type:
     """Generic stub class that accepts any state dict from pickle."""
+
     def setstate(self, state):
         if isinstance(state, dict):
             self.__dict__.update(state)
@@ -92,11 +94,15 @@ def _make_stub(name: str, module: str) -> type:
     def init(self, *args, **kwargs):
         pass
 
-    return type(name, (object,), {
-        "__setstate__": setstate,
-        "__init__": init,
-        "__module__": module,
-    })
+    return type(
+        name,
+        (object,),
+        {
+            "__setstate__": setstate,
+            "__init__": init,
+            "__module__": module,
+        },
+    )
 
 
 class StubUnpickler(pickle.Unpickler):
@@ -106,6 +112,7 @@ class StubUnpickler(pickle.Unpickler):
     the parent class's lookup runs first and returns the real class — stubs are
     only used when import fails. This makes the script work either way.
     """
+
     def find_class(self, module: str, name: str) -> Any:
         if module == "auction" or module.startswith("auction."):
             try:
@@ -171,6 +178,7 @@ def _shape_of(obj: Any) -> list[int] | None:
         return None
     try:
         import numpy as np
+
         return list(np.asarray(obj, dtype=object).shape)
     except Exception:
         try:
@@ -220,7 +228,8 @@ def _extract(approx: Any) -> dict[str, Any]:
         ),
         "f": (
             [_describe_pdf(fi) for fi in f_attr]
-            if f_attr is not None and hasattr(f_attr, "__iter__") else _describe_pdf(f_attr)
+            if f_attr is not None and hasattr(f_attr, "__iter__")
+            else _describe_pdf(f_attr)
         ),
         "corr_repr": repr(s.get("corr")),
         "border_type": _jsonable(s.get("border_type")),
@@ -245,7 +254,7 @@ def main() -> int:
 
     output: dict[str, Any] = {
         "schema_version": 1,
-        "extracted_at": datetime.now(timezone.utc).isoformat(),
+        "extracted_at": datetime.now(UTC).isoformat(),
         "source_pickles_dir": str(PICKLE_DIR),
         "tolerance_used_for_match": TOLERANCE,
         "notes": (
@@ -300,7 +309,9 @@ def main() -> int:
                     else:
                         n_diverge += 1
                 else:
-                    print(f"  [LOADED ] {setting['id']:3s} T={T:2d}  rev={actual!r} (no expected to compare)")
+                    print(
+                        f"  [LOADED ] {setting['id']:3s} T={T:2d}  rev={actual!r} (no expected to compare)"
+                    )
                     entry["status"] = "loaded_no_compare"
             except Exception as e:
                 print(f"  [ERROR  ] {setting['id']:3s} T={T:2d}  {type(e).__name__}: {e}")

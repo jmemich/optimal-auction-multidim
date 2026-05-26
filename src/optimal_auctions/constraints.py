@@ -2,14 +2,12 @@ import numpy as np
 
 from optimal_auctions.util import symmetric_ix
 
-
-BORDER_PREFIX = 'border'
-IC_PREFIX = 'ic'
+BORDER_PREFIX = "border"
+IC_PREFIX = "ic"
 
 
 # we make a class to ensure we can use set-like operations on constraints
 class Constraint:
-
     def __init__(self, name, expr=None, status=None):
         self.name = name
         self.expr = expr
@@ -37,8 +35,7 @@ def ic_lhs_minus_rhs(Q, U, T, grades, i, v_i, j, v_j, force_symmetric):
     return lhs - rhs
 
 
-def border_lhs_minus_rhs(
-        T, V_T, V_T_subset, Q, n_buyers, grades, f_hat, force_symmetric):
+def border_lhs_minus_rhs(T, V_T, V_T_subset, Q, n_buyers, grades, f_hat, force_symmetric):
     lhs = 0
     if force_symmetric:
         for v_ix in V_T_subset:
@@ -65,18 +62,16 @@ def border_lhs_minus_rhs(
 
 
 def make_ic_expr_from_name(name, Q, U, T, V_T, grades, force_symmetric):
-    ixs = name.lstrip(IC_PREFIX + '_').split('_')  # we get 2 things
+    ixs = name.lstrip(IC_PREFIX + "_").split("_")  # we get 2 things
     i, j = int(ixs[0]), int(ixs[1])
     v_i, v_j = V_T[i], V_T[j]
     val = ic_lhs_minus_rhs(Q, U, T, grades, i, v_i, j, v_j, force_symmetric)
     return val >= 0
 
 
-def make_border_expr_from_name(
-        name, Q, T, V_T, n_buyers, grades, f_hat, force_symmetric):
-    str_V_T_subset = name.lstrip(BORDER_PREFIX + '_').split('_')
+def make_border_expr_from_name(name, Q, T, V_T, n_buyers, grades, f_hat, force_symmetric):
+    str_V_T_subset = name.lstrip(BORDER_PREFIX + "_").split("_")
     # sort indices to avoid adding dupes (e.g., [1,2,3] and [1,3,2])
     V_T_subset = np.sort([int(v_t) for v_t in str_V_T_subset])
-    val = border_lhs_minus_rhs(
-        T, V_T, V_T_subset, Q, n_buyers, grades, f_hat, force_symmetric)
+    val = border_lhs_minus_rhs(T, V_T, V_T_subset, Q, n_buyers, grades, f_hat, force_symmetric)
     return val <= 0

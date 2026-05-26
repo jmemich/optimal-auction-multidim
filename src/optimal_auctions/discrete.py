@@ -13,14 +13,12 @@ def discretize(V, T):
     assert eps < np.inf, "cannot discretize when `eps` is `np.inf`"
     V_T = []
     for v_j in V:
-        v_j_discretized = \
-            np.arange(v_j[0], v_j[1] - EPS, eps).tolist() + [v_j[1]]
+        v_j_discretized = [*np.arange(v_j[0], v_j[1] - EPS, eps).tolist(), v_j[1]]
         V_T.append(v_j_discretized)
     return V_T, eps
 
 
 class f_hat:
-
     def __init__(self, pdfs, V_T, corr, T, J):
         self.pdfs = pdfs
         self.V_T = V_T

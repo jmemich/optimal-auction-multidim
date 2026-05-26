@@ -1,10 +1,10 @@
 from ortools.linear_solver import pywraplp
 
-solver = pywraplp.Solver.CreateSolver('GLOP')
+solver = pywraplp.Solver.CreateSolver("GLOP")
 solver.SetTimeLimit(10)
 
-var1 = solver.NumVar(0, 1, 'a')
-var2 = solver.NumVar(0, solver.infinity(), 'b')
+var1 = solver.NumVar(0, 1, "a")
+var2 = solver.NumVar(0, solver.infinity(), "b")
 
 print("Number of variables =", solver.NumVariables())
 
@@ -21,9 +21,9 @@ solver.Add(con)
 solver.Maximize(obj)
 solver.Solve()
 
-print('[%s] obj: %s' % (20, solver.Objective().Value()))
-print('[%s] var1: %s' % (20, var1.solution_value()))
-print('[%s] var2: %s' % (20, var2.solution_value()))
+print(f"[{20}] obj: {solver.Objective().Value()}")
+print(f"[{20}] var1: {var1.solution_value()}")
+print(f"[{20}] var2: {var2.solution_value()}")
 
 r = list(range(20))[::-1]
 
@@ -33,6 +33,6 @@ for i in r:
 
     solver.Solve()
 
-    print('[%s] obj: %s' % (i, solver.Objective().Value()))
-    print('[%s] var1: %s' % (i, var1.solution_value()))
-    print('[%s] var2: %s' % (i, var2.solution_value()))
+    print(f"[{i}] obj: {solver.Objective().Value()}")
+    print(f"[{i}] var1: {var1.solution_value()}")
+    print(f"[{i}] var2: {var2.solution_value()}")
