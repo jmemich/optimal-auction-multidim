@@ -20,7 +20,7 @@ def test_basic_border():
     subsets = _powerset(ixs)
     for subset in subsets:
         # NOTE we re-formatted the structure of Q....
-        Q_ = [[val.solution_value() for val in Q_j] for Q_j in test.Q_vars]
+        Q_ = test._Q_values
         val = border_lhs_minus_rhs(
             test.T,
             test.V_T,

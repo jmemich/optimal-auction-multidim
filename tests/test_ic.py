@@ -12,8 +12,8 @@ def test_basic_ic(test_local):
     )
     test.run()
 
-    Q_ = [[var.solution_value() for var in Q_j] for Q_j in test.Q_vars]
-    U_ = [var.solution_value() for var in test.U_vars]
+    Q_ = test._Q_values
+    U_ = test._U_values
     for i, v_i in enumerate(test.V_T):
         for j, v_j in enumerate(test.V_T):
             val = ic_lhs_minus_rhs(

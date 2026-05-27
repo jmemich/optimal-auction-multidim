@@ -12,10 +12,7 @@ authors = [
 dependencies = [
     "numpy>=1.26",
     "scipy>=1.13",
-    # Solver dependencies. ortools is the legacy LP backend (used by current code);
-    # highspy is the target solver for the M1 rewrite. Both are present during the
-    # transition; ortools should be removed once the rewrite no longer imports it.
-    "ortools>=9.10",
+    # highspy is the LP backend for the auction approximation.
     "highspy>=1.7",
 ]
 

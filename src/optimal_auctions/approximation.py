@@ -4,16 +4,13 @@ import pickle
 import sys
 import time
 
+import highspy
 import numpy as np
-from ortools.linear_solver import pywraplp
 from scipy.stats import uniform
 
 from optimal_auctions.constraints import (
     BORDER_PREFIX,
     IC_PREFIX,
-    Constraint,
-    make_border_expr_from_name,
-    make_ic_expr_from_name,
 )
 from optimal_auctions.discrete import discretize, f_hat
 from optimal_auctions.oracle import _check_border, _make_lower_left_quadrant, separation_oracle
@@ -79,9 +76,6 @@ class OptimalAuctionApproximation:
         Arbitrary correlation structure across buyers' valuations. Default is
         assummed to be independence
 
-    solver_type : str, default='GLOP'
-        Argument passed to `ortools.linear_solver`
-
     force_symmetric : bool, default=True
         Allow the code to assume valuation symmetry such that Q(i,j) == Q(j,i)
 
@@ -94,7 +88,7 @@ class OptimalAuctionApproximation:
 
     seed : int, default=12345
         Seed which is used to randomly sample subsets of constraints at each
-        iteration. Note, this argument is NOT passed to `ortools.linear_solver`
+        iteration. Note, this argument is NOT passed to the LP solver.
 
     log_level : str, default=logging.INFO
         Controls logging level.
@@ -117,7 +111,7 @@ class OptimalAuctionApproximation:
 
     Examples
     --------
-    >>> from auction import OptimalAuctionApproximation as Approximation
+    >>> from optimal_auctions import OptimalAuctionApproximation as Approximation
     >>> approx = Approximation(n_buyers=2, V=[[0,1],[0,1]], costs=[0,0], T=10)
     >>> approx.run()
     """
@@ -130,7 +124,6 @@ class OptimalAuctionApproximation:
         T,
         f=None,
         corr=None,
-        solver_type="GLOP",
         force_symmetric=True,
         check_local_ic=True,
         executor=None,
@@ -164,7 +157,6 @@ class OptimalAuctionApproximation:
         if force_symmetric and self.n_grades > 2:
             raise NotImplementedError("`force_symmetric`=True and `grades`>2 not supported!")
 
-        self.solver_type = solver_type
         self.rng = np.random.RandomState(seed)
 
         self.log_level = _standardize_log_level(log_level)
@@ -173,115 +165,220 @@ class OptimalAuctionApproximation:
         )
         problem_str = (
             f"PROBLEM SETUP: n_buyers={n_buyers}, n_grades={self.n_grades}, V={V!s}, costs={costs!s}, T={T}, "
-            f"solver={solver_type}, force_symmetric={force_symmetric}, ic_local={check_local_ic}"
+            f"solver=HiGHS, force_symmetric={force_symmetric}, ic_local={check_local_ic}"
         )
         logging.info(problem_str)
 
-    def _create_or_warmstart_Q_U_vars(self, solver, Q_values=None, U_values=None):
-        Q_vars = []
-        grades = self.grades if not self.force_symmetric else [0]
-        for j in grades:
-            Q_j = []
-            for i, _ in enumerate(self.V_T):
-                var_name = f"Q_{j}_{i}"
-                var = solver.NumVar(0, 1, var_name)
-                Q_j.append(var)
-            if Q_values is not None:
-                solver.SetHint(Q_j, Q_values[j])
-            Q_vars.append(Q_j)
+    # ------------------------------------------------------------------
+    # column-index bookkeeping
+    # ------------------------------------------------------------------
+    def _q_col(self, j, v_ix):
+        # column index of the Q_j(v_ix) variable.
+        # symmetric -> a single grade-0 block of length len(V_T);
+        # asymmetric -> n_grades contiguous blocks.
+        if self.force_symmetric:
+            return self._q_col_start + v_ix
+        return self._q_col_start + j * len(self.V_T) + v_ix
 
+    def _u_col(self, v_ix):
+        return self._u_col_start + v_ix
+
+    def _create_columns(self):
+        """Add all Q and U columns to the HiGHS instance and record the column
+        start indices. Q columns are bounded [0, 1]; U columns [0, U_max] (with
+        column 0 -- the worst type's utility -- pinned to <= 1e-10 for IIR)."""
+        n_V_T = len(self.V_T)
+        n_grade_blocks = 1 if self.force_symmetric else self.n_grades
+
+        # Q columns
+        self._q_col_start = self.solver.getNumCol()
+        n_q = n_grade_blocks * n_V_T
+        self.solver.addVars(n_q, [0.0] * n_q, [1.0] * n_q)
+
+        # U columns
         max_utility = max([max(j) for j in self.V_T])
+        self._u_col_start = self.solver.getNumCol()
+        u_lb = [0.0] * n_V_T
+        u_ub = [max_utility] * n_V_T
+        self.solver.addVars(n_V_T, u_lb, u_ub)
 
-        U_vars = []
-        for i, _ in enumerate(self.V_T):
-            var_name = f"U_{i}"
-            var = solver.NumVar(0, max_utility, var_name)
-            U_vars.append(var)
-        if U_values is not None:
-            solver.SetHint(U_vars, U_values)
+        # IIR boundary: pin worst type's utility ~0 (U[0] <= 1e-10, with
+        # U[0] >= 0 from the bound). OR-Tools expressed this exact value.
+        self.solver.changeColBounds(self._u_col(0), 0.0, 10**-10)
 
-        return Q_vars, U_vars
+    def _set_objective(self):
+        """Set per-column objective coefficients for OPT*. HiGHS stores one cost
+        per column, so we accumulate per-column contributions before setting."""
+        n_cols = self.solver.getNumCol()
+        costs = np.zeros(n_cols)
 
-    def _make_obj(self, Q_vars, U_vars):
-        obj = 0
         if self.force_symmetric:
             for v_ix, v in enumerate(self.V_T):
-                inner = 0
-                inner += (v[0] - self.costs[0]) * Q_vars[0][v_ix]
+                f = self.f_hat[v_ix]
+                # (v[0]-c[0]) * Q[0][v_ix]
+                costs[self._q_col(0, v_ix)] += f * (v[0] - self.costs[0])
+                # (v[1]-c[1]) * Q[0][symmetric_ix(v_ix)] -- the symmetric partner
                 symm_v_ix = symmetric_ix(v_ix, self.T)
-                inner += (v[1] - self.costs[1]) * Q_vars[0][symm_v_ix]
-                inner -= U_vars[v_ix]
-                inner *= self.f_hat[v_ix]
-                obj += inner
-            obj *= self.n_buyers
+                costs[self._q_col(0, symm_v_ix)] += f * (v[1] - self.costs[1])
+                # - U[v_ix]
+                costs[self._u_col(v_ix)] += -f
         else:
             for v_ix, v in enumerate(self.V_T):
-                inner = 0
-                for j_ix in self.grades:
-                    inner += (v[j_ix] - self.costs[j_ix]) * Q_vars[j_ix][v_ix]
-                inner -= U_vars[v_ix]
-                inner *= self.f_hat[v_ix]
-                obj += inner
-            obj *= self.n_buyers
-        return obj
-
-    def _create_base_constraints(self, Q_vars, U_vars):
-        # NOTE here we define feasibility and IR constraints (IC come later)
-        # NOTE 0 <= Q <= 1 (forall Q) is defined when we create variables!
-        # NOTE 0 <= U <= U_max (forall U) is defined when we create variables!
-
-        # 1. IR constraint
-        ir_con = Constraint("ir", U_vars[0] <= 10**-10, None)
-
-        # 2. Q is valid probability distribution
-        prob_cons = []
-        for i in range(len(self.V_T)):
-            if not self.force_symmetric:
-                Q_total_i = 0
+                f = self.f_hat[v_ix]
                 for j in self.grades:
-                    Q_total_i += Q_vars[j][i]
-                prob_con = Constraint(f"prob_{i}_{j}", Q_total_i <= 1, None)
-                prob_cons.append(prob_con)
+                    costs[self._q_col(j, v_ix)] += f * (v[j] - self.costs[j])
+                costs[self._u_col(v_ix)] += -f
+
+        costs *= self.n_buyers
+
+        col_index = list(range(n_cols))
+        self.solver.changeColsCost(n_cols, col_index, costs.tolist())
+        self.solver.changeObjectiveSense(highspy.ObjSense.kMaximize)
+
+    @staticmethod
+    def _add_row(solver, lower, upper, coeffs):
+        """Add a single row to the HiGHS instance.
+
+        `coeffs` is a dict[col_index -> coefficient]. We aggregate per column
+        because HiGHS's `addRow` rejects rows that list a column index more than
+        once. Returns the new row's index.
+        """
+        cols = list(coeffs.keys())
+        vals = [coeffs[c] for c in cols]
+        row_ix = solver.getNumRow()
+        solver.addRow(lower, upper, len(cols), cols, vals)
+        return row_ix
+
+    def _add_base_constraints(self):
+        """Add the Border-feasibility ('probability') base rows once.
+
+        Per type index i:
+          symmetric  -> Q[0][i] + Q[0][symmetric_ix(i)] <= 1
+          asymmetric -> sum_j Q[j][i] <= 1
+        The IIR boundary is handled via column 0's bound in `_create_columns`.
+        """
+        inf = highspy.kHighsInf
+        for i in range(len(self.V_T)):
+            coeffs = {}
+            if not self.force_symmetric:
+                for j in self.grades:
+                    col = self._q_col(j, i)
+                    coeffs[col] = coeffs.get(col, 0.0) + 1.0
             else:
-                j = symmetric_ix(i, self.T)
-                Q_total_i = Q_vars[0][i] + Q_vars[0][j]
-                prob_con = Constraint(f"prob_{i}_{j}", Q_total_i <= 1, None)
-                prob_cons.append(prob_con)
+                # On the grid diagonal i == symmetric_ix(i) -> single column,
+                # coefficient 2.0 (HiGHS would otherwise reject the duplicate).
+                col_i = self._q_col(0, i)
+                coeffs[col_i] = coeffs.get(col_i, 0.0) + 1.0
+                col_s = self._q_col(0, symmetric_ix(i, self.T))
+                coeffs[col_s] = coeffs.get(col_s, 0.0) + 1.0
+            self._add_row(self.solver, -inf, 1.0, coeffs)
 
-        base_cons = [ir_con, *prob_cons]
-        return base_cons
+    # ------------------------------------------------------------------
+    # IIC / Border incremental rows
+    # ------------------------------------------------------------------
+    def _ic_coeffs(self, i, j):
+        """Coefficients for the discrete IIC row (true i, reported j):
+        U[i] - U[j] - sum_k Q_k(j)*(v_i[k]-v_j[k]) >= 0.
+        Mirrors `ic_lhs_minus_rhs`."""
+        v_i, v_j = self.V_T[i], self.V_T[j]
+        coeffs = {}
 
-    def _setup_solver(self, con_names, Q_values=None, U_values=None):
-        # 1. create solver, 2. create vars, 3. add base constraints
-        solver = pywraplp.Solver.CreateSolver(self.solver_type)
+        def acc(col, c):
+            coeffs[col] = coeffs.get(col, 0.0) + c
 
-        Q_vars, U_vars = self._create_or_warmstart_Q_U_vars(solver, Q_values, U_values)
-        base_cons = self._create_base_constraints(Q_vars, U_vars)
+        # lhs: U[i] - U[j]
+        acc(self._u_col(i), 1.0)
+        acc(self._u_col(j), -1.0)
 
-        for con in base_cons:
-            solver.Add(con.expr)
+        # -rhs
+        if self.force_symmetric:
+            acc(self._q_col(0, j), -(v_i[0] - v_j[0]))
+            acc(self._q_col(0, symmetric_ix(j, self.T)), -(v_i[1] - v_j[1]))
+        else:
+            for k in self.grades:
+                acc(self._q_col(k, j), -(v_i[k] - v_j[k]))
+        return coeffs
 
-        for name in con_names:
-            if name.startswith(IC_PREFIX):
-                expr = make_ic_expr_from_name(
-                    name, Q_vars, U_vars, self.T, self.V_T, self.grades, self.force_symmetric
-                )
-            elif name.startswith(BORDER_PREFIX):
-                expr = make_border_expr_from_name(
-                    name,
-                    Q_vars,
-                    self.T,
-                    self.V_T,
-                    self.n_buyers,
-                    self.grades,
-                    self.f_hat,
-                    self.force_symmetric,
-                )
+    def _add_ic_row(self, i, j):
+        if (i, j) in self._ic_rows:
+            return
+        inf = highspy.kHighsInf
+        coeffs = self._ic_coeffs(i, j)
+        # >= 0
+        row_ix = self._add_row(self.solver, 0.0, inf, coeffs)
+        self._ic_rows[(i, j)] = row_ix
+
+    def _add_border_row(self, subset):
+        """Add a Border subset row:
+        N*sum_{v in A} f_hat[v]*(sum_j Q_j(v)) <= 1 - (sum_{v notin A} f_hat[v])^N
+        i.e. lhs <= rhs, expressed as (lhs - rhs) <= 0 with rhs moved to bound.
+        `subset` is an iterable of type indices.
+        """
+        key = frozenset(int(v) for v in subset)
+        if key in self._border_rows:
+            return
+        inf = highspy.kHighsInf
+
+        coeffs = {}
+
+        def acc(col, c):
+            coeffs[col] = coeffs.get(col, 0.0) + c
+
+        for v_ix in key:
+            f = self.f_hat[v_ix]
+            if self.force_symmetric:
+                acc(self._q_col(0, v_ix), self.n_buyers * f)
+                acc(self._q_col(0, symmetric_ix(v_ix, self.T)), self.n_buyers * f)
             else:
-                raise RuntimeError("constraint prefix not recognised!")
-            solver.Add(expr, name)
+                for j in self.grades:
+                    acc(self._q_col(j, v_ix), self.n_buyers * f)
 
-        return solver, Q_vars, U_vars
+        # rhs = 1 - (sum_{v notin A} f_hat[v])^N
+        setdiff = np.setdiff1d(np.arange(0, len(self.V_T), 1), list(key))
+        outside = 0.0
+        for v_ix in setdiff:
+            outside += self.f_hat[v_ix]
+        rhs = 1.0 - np.power(outside, self.n_buyers)
+
+        row_ix = self._add_row(self.solver, -inf, float(rhs), coeffs)
+        self._border_rows[key] = row_ix
+
+    @staticmethod
+    def _ic_key_from_name(name):
+        ixs = name.lstrip(IC_PREFIX + "_").split("_")
+        return int(ixs[0]), int(ixs[1])
+
+    @staticmethod
+    def _border_subset_from_name(name):
+        str_subset = name.lstrip(BORDER_PREFIX + "_").split("_")
+        return [int(v_t) for v_t in str_subset]
+
+    # ------------------------------------------------------------------
+    # solve
+    # ------------------------------------------------------------------
+    def _solve(self):
+        """Run HiGHS and raise on any non-optimal terminal status."""
+        self.solver.run()
+        ms = self.solver.getModelStatus()
+        if ms != highspy.HighsModelStatus.kOptimal:
+            raise RuntimeError(f"solver failed with status={ms}")
+        self.opt = self.solver.getInfoValue("objective_function_value")[1]
+
+    def _read_solution(self):
+        """Read the column solution into `_Q_values` / `_U_values`."""
+        vals = list(self.solver.getSolution().col_value)
+        self._U_values = [vals[self._u_col(v_ix)] for v_ix in range(len(self.V_T))]
+        if not self.force_symmetric:
+            self._Q_values = []
+            for j in self.grades:
+                self._Q_values.append([vals[self._q_col(j, v_ix)] for v_ix in range(len(self.V_T))])
+        else:
+            _Q1 = [vals[self._q_col(0, v_ix)] for v_ix in range(len(self.V_T))]
+            _Q2 = np.zeros(len(_Q1))
+            for i, _ in enumerate(_Q1):
+                symm_i = symmetric_ix(i, self.T)
+                _Q2[symm_i] = _Q1[i]
+            self._Q_values = [_Q1, list(_Q2)]
 
     def run(self, warm_start=True, solver_max_time=300):
         """Run the approximation algorithm.
@@ -289,12 +386,13 @@ class OptimalAuctionApproximation:
         Parameters
         ----------
         warm_start : bool, default=True
-            Warm start the `ortools` solver with previous values at each
-            iteration. Note, user needs to check `ortools` documentation
-            for whether solver supports warmstarts.
+            Retained for compatibility. A single HiGHS instance is kept alive
+            across all solver iterations within a `run()`; constraint rows are
+            added incrementally so HiGHS warm-starts implicitly from the
+            retained basis.
 
         solver_max_time : int, default=300
-            Solver time limit in seconds.
+            Solver time limit in seconds (HiGHS `time_limit` option).
         """
         begin = time.time()
         self.opt = np.inf
@@ -307,7 +405,21 @@ class OptimalAuctionApproximation:
         self.net_size = 0  # start only considering each point
         self.net_size_inc = max(1, int(self.T / 10))  # scales for big problems
 
-        self.con_names = set()
+        # one HiGHS instance for the whole run; rows are added incrementally.
+        self.solver = highspy.Highs()
+        self.solver.setOptionValue("output_flag", False)
+        self.solver.setOptionValue("time_limit", float(solver_max_time))
+
+        self._create_columns()
+        self._set_objective()
+
+        # structured constraint identities (no string re-parsing)
+        self._ic_rows = {}  # (i, j) -> row_index
+        self._border_rows = {}  # frozenset[int] -> row_index
+
+        # base "probability" Border-feasibility rows, added once.
+        self._add_base_constraints()
+
         self.converged = False
         while not self.converged:
             # TODO cleanup this dupe code
@@ -332,77 +444,24 @@ class OptimalAuctionApproximation:
                 all_v_j = [self.V_T[ix] for ix in all_ix]
                 inner_loop = zip(star_ix, all_v_j, strict=False)
                 for j, _v_j in inner_loop:
-                    name = f"{IC_PREFIX}_{i}_{j}"
-                    self.con_names.add(name)
-
-            # make solver
-            self.solver, self.Q_vars, self.U_vars = self._setup_solver(self.con_names)
-            # self.solver.SetSolverSpecificParametersAsString(
-            #     "max_time_in_seconds:%s" % solver_max_time)
-            self.solver.SetSolverSpecificParametersAsString("use_dual_simplex:1")
-            obj = self._make_obj(self.Q_vars, self.U_vars)
-            self.solver.Maximize(obj)
+                    self._add_ic_row(i, j)
 
             j = 1
             n_violated = 0
             self.border_failing = True
-            n_consecutive_fails = 0
             while self.border_failing:
-                # 4 = "abnormal" (from numerical fail due to re-running)
-                # https://github.com/google/or-tools/blob/stable/ortools/linear_solver/linear_solver.h#L464-L479
-                self.solver_status = self.solver.Solve()
+                self._solve()
 
-                if self.solver_status != 0:
-                    if self.solver_status == 4 and n_consecutive_fails < 5:
-                        n_consecutive_fails += 1
-                        logging.warning(
-                            f"solver status = {self.solver_status}! remaking solver... (#{n_consecutive_fails}/5)"
-                        )
-                        self.solver, self.Q_vars, self.U_vars = self._setup_solver(self.con_names)
-                        self.solver.SetSolverSpecificParametersAsString("use_dual_simplex:1")
-                        # self.solver.SetSolverSpecificParametersAsString(
-                        #     "max_time_in_seconds:%s" % solver_max_time)
-                        obj = self._make_obj(self.Q_vars, self.U_vars)
-                        self.solver.Maximize(obj)
-                        continue
-                    self.solver, self.Q_vars, self.U_vars = self._setup_solver(self.con_names)
-                    self.solver.SetSolverSpecificParametersAsString("use_dual_simplex:1")
-                    obj = self._make_obj(self.Q_vars, self.U_vars)
-                    self.solver.Maximize(obj)
-                    self.solver.EnableOutput()
-                    self.solver_status = self.solver.Solve()
-                    raise RuntimeError(
-                        f"solver failed with status={self.solver_status} (#{n_consecutive_fails}/5)"
-                    )
-                n_consecutive_fails = 0
+                solver_i = self.solver.getInfoValue("simplex_iteration_count")[1]
 
-                solver_i = self.solver.iterations()
-                self.opt = self.solver.Objective().Value()
-
-                n_ic, n_border = 0, 0
-                for con in self.solver.constraints():
-                    if con.name().startswith(IC_PREFIX):
-                        n_ic += 1
-                    if con.name().startswith(BORDER_PREFIX):
-                        n_border += 1
+                n_ic = len(self._ic_rows)
+                n_border = len(self._border_rows)
 
                 msg = f"(i={self.i}, j={j}, solver={solver_i}) obj={self.opt}, #IC={n_ic}, #border={n_border} ({n_violated})"
                 logging.info(msg)
 
                 # convert solver vars to raw values
-                self._U_values = [U.solution_value() for U in self.U_vars]
-                if not self.force_symmetric:
-                    self._Q_values = []
-                    for j in self.grades:
-                        self._Q_values.append([Q.solution_value() for Q in self.Q_vars[j]])
-                else:
-                    # TODO keep this the same as `self.Q`...
-                    _Q1 = [Q.solution_value() for Q in self.Q_vars[0]]
-                    _Q2 = np.zeros(len(_Q1))
-                    for i, _ in enumerate(_Q1):
-                        symm_i = symmetric_ix(i, self.T)
-                        _Q2[symm_i] = _Q1[i]
-                    self._Q_values = [_Q1, list(_Q2)]
+                self._read_solution()
 
                 # check border + add violations
                 border_cons = _check_border(
@@ -425,19 +484,16 @@ class OptimalAuctionApproximation:
 
                 j += 1
 
-                for con in to_add.difference(self.con_names):
-                    self.con_names.add(con.name)
-                    expr = make_border_expr_from_name(
-                        con.name,
-                        self.Q_vars,
-                        self.T,
-                        self.V_T,
-                        self.n_buyers,
-                        self.grades,
-                        self.f_hat,
-                        self.force_symmetric,
-                    )
-                    self.solver.Add(expr, con.name)
+                n_border_before = len(self._border_rows)
+                for con in to_add:
+                    subset = self._border_subset_from_name(con.name)
+                    self._add_border_row(subset)
+                if len(self._border_rows) == n_border_before:
+                    # No new Border rows added but violations remain: the solver
+                    # already enforces these within its feasibility tolerance, so
+                    # re-solving cannot make progress. Stop rather than spin.
+                    self.border_failing = False
+                    break
 
             self.js.append(j)
             check_local = False
@@ -464,14 +520,14 @@ class OptimalAuctionApproximation:
                     f"Border violated={n_A_border}."
                 )
                 for con in A_ic:
-                    ixs_str = con.name.lstrip(IC_PREFIX + "_").split("_")
-                    ixs = [int(ix) for ix in ixs_str]
+                    i_ix, j_ix = self._ic_key_from_name(con.name)
                     logging.debug(
-                        f"FAILURE [IC]: v={np.round(self.V_T[ixs[0]], 4)} (ix={ixs[0]}), v'={np.round(self.V_T[ixs[1]], 4)} (ix={ixs[1]})"
+                        f"FAILURE [IC]: v={np.round(self.V_T[i_ix], 4)} (ix={i_ix}), v'={np.round(self.V_T[j_ix], 4)} (ix={j_ix})"
                     )
-                    self.con_names.add(con.name)
+                    self._add_ic_row(i_ix, j_ix)
                 for con in A_border:
-                    self.con_names.add(con.name)
+                    subset = self._border_subset_from_name(con.name)
+                    self._add_border_row(subset)
 
                 self.net_size += self.net_size_inc
                 if self.net_size > self.T:
@@ -499,7 +555,6 @@ class OptimalAuctionApproximation:
             "force_symmetric": self.force_symmetric,
             "check_local_ic": self.check_local_ic,
             "executor": self.executor,
-            "solver_type": self.solver_type,
             "log_level": self.log_level,
         }
         if hasattr(self, "i"):  # this indiciates it has been run!

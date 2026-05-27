@@ -13,6 +13,16 @@ from optimal_auctions.constraints import (
 
 BATCH_SIZE = 50_000
 
+# Cutting-plane separation tolerance. A constraint is only treated as VIOLATED
+# (worth adding as a new row) when violated by more than this; within it, the
+# constraint counts as satisfied (BINDING). This MUST be >= the LP solver's
+# feasibility tolerance (HiGHS default primal_feasibility_tolerance ~1e-7),
+# otherwise the oracle re-flags constraints the solver already considers
+# satisfied, the same already-present row is "re-added" (a no-op), and the inner
+# loop spins forever. 1e-6 keeps a 10x margin over the solver tolerance and sits
+# far below the 1e-4 revenue tolerance, so the optimum is unaffected.
+SEPARATION_TOL = 1e-6
+
 
 logger = logging.getLogger(__name__)
 
@@ -140,8 +150,10 @@ def _check_one_ic(Q, U, grades, i, v_i, j, v_j):
     val = ic_lhs_minus_rhs(Q, U, T, grades, i, v_i, j, v_j, force_symmetric)
 
     # NOTE becase we are comparing floating point numbers we eval
-    # `is_close` before we asses > / <
-    is_close = np.isclose(val, 0.0, rtol=0.0)
+    # `is_close` before we asses > / <. The threshold is the separation
+    # tolerance (>= solver feasibility tolerance) so we never try to separate a
+    # point the LP solver already considers feasible. See SEPARATION_TOL.
+    is_close = abs(val) <= SEPARATION_TOL
     if is_close:
         con = Constraint(name, None, "BINDING")
     elif val < 0:
@@ -204,8 +216,10 @@ def _check_one_border(T, V_T, V_T_subset, Q, n_buyers, grades, f_hat):
     )
 
     # NOTE becase we are comparing floating point numbers we eval
-    # `is_close` before we asses > / <
-    is_close = np.isclose(val, 0.0, rtol=0.0)
+    # `is_close` before we asses > / <. The threshold is the separation
+    # tolerance (>= solver feasibility tolerance) so we never try to separate a
+    # point the LP solver already considers feasible. See SEPARATION_TOL.
+    is_close = abs(val) <= SEPARATION_TOL
     if is_close:
         con = Constraint(name, None, "BINDING")
     elif val > 0:

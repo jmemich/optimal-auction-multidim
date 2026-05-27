@@ -39,3 +39,6 @@ Thumbs.db
 build/
 dist/
 *.whl
+
+# /build skill scratch (safe to delete)
+.build-skill/
