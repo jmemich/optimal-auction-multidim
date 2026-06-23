@@ -9,6 +9,7 @@ from optimal_auctions.constraints import (
     Constraint,
     border_lhs_minus_rhs,
     ic_lhs_minus_rhs,
+    local_ic_indices,
 )
 
 BATCH_SIZE = 50_000
@@ -25,28 +26,6 @@ SEPARATION_TOL = 1e-6
 
 
 logger = logging.getLogger(__name__)
-
-
-def _make_lower_left_quadrant(ix, T, net_size):
-    # NOTE this function generates the indexes for the local region of the
-    # typespace used to check IC constraints based on `net_size`
-    if net_size < 2:
-        return []
-
-    i = int(ix / (T + 1))  # row
-    j = ix % (T + 1)  # col
-
-    low_i = np.max([i - net_size, 0])
-    low_j = np.max([j - net_size, 0])
-
-    grid = np.zeros((T + 1, T + 1))
-    for x in range(low_i, i + 1):
-        for y in range(low_j, j + 1):
-            grid[x, y] = 1
-
-    # convert matrix to 1D array and pull values where = 1
-    ixs = np.where(grid.reshape(-1) > 0.5)[0]
-    return list(ixs)
 
 
 def _check_ic(Q, U, V_T, T, grades, check_local, force_symmetric, executor, net_size):
@@ -76,20 +55,7 @@ def _check_ic(Q, U, V_T, T, grades, check_local, force_symmetric, executor, net_
     start = time()
     if check_local:
         for i, v_i in enumerate(V_T):
-            star_ix = [
-                i + T,  # above-left
-                i + T + 1,  # above
-                i + T + 2,  # above-right
-                i - 1,  # left
-                i + 1,  # right
-                i - T - 2,  # below-left
-                i - T - 1,  # below
-                i - T,
-            ]  # below-right
-            # deal with corners/edges:
-            star_ix = [ix for ix in star_ix if ix >= 0 and ix < len(V_T)]
-            quadrant_ix = _make_lower_left_quadrant(i, T, net_size)
-            all_ix = set(star_ix + quadrant_ix)  # get unique
+            all_ix = local_ic_indices(i, T, net_size, len(V_T))
             all_v_j = [V_T[ix] for ix in all_ix]
             inner_loop = zip(all_ix, all_v_j, strict=False)
 

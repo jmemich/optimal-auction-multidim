@@ -11,9 +11,10 @@ from scipy.stats import uniform
 from optimal_auctions.constraints import (
     BORDER_PREFIX,
     IC_PREFIX,
+    star_indices,
 )
 from optimal_auctions.discrete import discretize, f_hat
-from optimal_auctions.oracle import _check_border, _make_lower_left_quadrant, separation_oracle
+from optimal_auctions.oracle import _check_border, separation_oracle
 from optimal_auctions.util import symmetric_ix
 
 LOG_FMT = "(%(process)d) %(asctime)s [%(levelname)s] %(message)s"
@@ -207,32 +208,45 @@ class OptimalAuctionApproximation:
         self.solver.changeColBounds(self._u_col(0), 0.0, 10**-10)
 
     def _set_objective(self):
-        """Set per-column objective coefficients for OPT*. HiGHS stores one cost
-        per column, so we accumulate per-column contributions before setting."""
+        """Set the per-column objective coefficients for OPT*:
+
+            OPT* = N * sum_v f_hat[v] * [ (v0-c0)Q0(v) + (v1-c1)Q1(v) - U(v) ].
+
+        HiGHS stores one coefficient per column, so we accumulate each column's
+        contribution into `obj_coeffs` and hand the whole vector to the solver.
+        Each line below writes a variable's *coefficient* -- the solver supplies
+        the variable itself when it evaluates the objective. (`self.costs` is the
+        per-grade production cost vector from __init__; `obj_coeffs` is unrelated
+        -- it is the LP objective row.)
+        """
         n_cols = self.solver.getNumCol()
-        costs = np.zeros(n_cols)
+        obj_coeffs = np.zeros(n_cols)
 
         if self.force_symmetric:
             for v_ix, v in enumerate(self.V_T):
                 f = self.f_hat[v_ix]
-                # (v[0]-c[0]) * Q[0][v_ix]
-                costs[self._q_col(0, v_ix)] += f * (v[0] - self.costs[0])
-                # (v[1]-c[1]) * Q[0][symmetric_ix(v_ix)] -- the symmetric partner
+                # coeff on Q0(v_ix): f * (v0 - cost0)
+                obj_coeffs[self._q_col(0, v_ix)] += f * (v[0] - self.costs[0])
+                # coeff on Q1(v_ix), which under symmetry is carried by Q0 at the
+                # swapped index symmetric_ix(v_ix): f * (v1 - cost1)
                 symm_v_ix = symmetric_ix(v_ix, self.T)
-                costs[self._q_col(0, symm_v_ix)] += f * (v[1] - self.costs[1])
-                # - U[v_ix]
-                costs[self._u_col(v_ix)] += -f
+                obj_coeffs[self._q_col(0, symm_v_ix)] += f * (v[1] - self.costs[1])
+                # coeff on U(v_ix): -f. Utility is per-type (indexed directly), so
+                # unlike Q it has no symmetric partner.
+                obj_coeffs[self._u_col(v_ix)] += -f
         else:
             for v_ix, v in enumerate(self.V_T):
                 f = self.f_hat[v_ix]
                 for j in self.grades:
-                    costs[self._q_col(j, v_ix)] += f * (v[j] - self.costs[j])
-                costs[self._u_col(v_ix)] += -f
+                    # coeff on Qj(v_ix): f * (vj - costj)
+                    obj_coeffs[self._q_col(j, v_ix)] += f * (v[j] - self.costs[j])
+                # coeff on U(v_ix): -f
+                obj_coeffs[self._u_col(v_ix)] += -f
 
-        costs *= self.n_buyers
+        obj_coeffs *= self.n_buyers
 
         col_index = list(range(n_cols))
-        self.solver.changeColsCost(n_cols, col_index, costs.tolist())
+        self.solver.changeColsCost(n_cols, col_index, obj_coeffs.tolist())
         self.solver.changeObjectiveSense(highspy.ObjSense.kMaximize)
 
     @staticmethod
@@ -277,20 +291,29 @@ class OptimalAuctionApproximation:
     # IIC / Border incremental rows
     # ------------------------------------------------------------------
     def _ic_coeffs(self, i, j):
-        """Coefficients for the discrete IIC row (true i, reported j):
-        U[i] - U[j] - sum_k Q_k(j)*(v_i[k]-v_j[k]) >= 0.
-        Mirrors `ic_lhs_minus_rhs`."""
+        """Column coefficients for the discrete IIC row (true type i, report j):
+
+            U[i] - U[j] - sum_k Q_k(j)*(v_i[k]-v_j[k]) >= 0   (mirrors `ic_lhs_minus_rhs`).
+
+        Returns {column -> coefficient}. The `*` in the formula (coefficient times
+        variable) is performed by the solver; here we only record coefficients.
+        """
         v_i, v_j = self.V_T[i], self.V_T[j]
         coeffs = {}
 
         def acc(col, c):
+            # Accumulate, don't overwrite: a single column can be hit by more than
+            # one term -- e.g. the sum_k landing twice on the grid diagonal. HiGHS
+            # rejects a row that lists the same column twice, so colliding
+            # coefficients must be summed into one entry (this is the sum_k, not
+            # the coefficient*variable product).
             coeffs[col] = coeffs.get(col, 0.0) + c
 
-        # lhs: U[i] - U[j]
+        # coeffs on U[i], U[j]: +1, -1
         acc(self._u_col(i), 1.0)
         acc(self._u_col(j), -1.0)
 
-        # -rhs
+        # coeffs on Q_k(j): -(v_i[k] - v_j[k])
         if self.force_symmetric:
             acc(self._q_col(0, j), -(v_i[0] - v_j[0]))
             acc(self._q_col(0, symmetric_ix(j, self.T)), -(v_i[1] - v_j[1]))
@@ -380,17 +403,16 @@ class OptimalAuctionApproximation:
                 _Q2[symm_i] = _Q1[i]
             self._Q_values = [_Q1, list(_Q2)]
 
-    def run(self, warm_start=True, solver_max_time=300):
+    def run(self, solver_max_time=300):
         """Run the approximation algorithm.
+
+        A single HiGHS instance is kept alive across all solver iterations within
+        a `run()`; constraint rows are added incrementally and the solver is
+        pinned to dual simplex (see below), so each re-solve warm-starts from the
+        retained basis.
 
         Parameters
         ----------
-        warm_start : bool, default=True
-            Retained for compatibility. A single HiGHS instance is kept alive
-            across all solver iterations within a `run()`; constraint rows are
-            added incrementally so HiGHS warm-starts implicitly from the
-            retained basis.
-
         solver_max_time : int, default=300
             Solver time limit in seconds (HiGHS `time_limit` option).
         """
@@ -409,6 +431,10 @@ class OptimalAuctionApproximation:
         self.solver = highspy.Highs()
         self.solver.setOptionValue("output_flag", False)
         self.solver.setOptionValue("time_limit", float(solver_max_time))
+        # Pin dual simplex: it warm-starts from the retained basis as rows are
+        # added incrementally (interior-point does not), and it makes the
+        # `simplex_iteration_count` logged in the inner loop meaningful.
+        self.solver.setOptionValue("solver", "simplex")
 
         self._create_columns()
         self._set_objective()
@@ -422,28 +448,12 @@ class OptimalAuctionApproximation:
 
         self.converged = False
         while not self.converged:
-            # TODO cleanup this dupe code
-            # define local region of typespace for IC constrait checks
-            for i, _v_i in enumerate(self.V_T):
-                # NOTE also this creates dupes! (we de-dupe below)
-                # TODO this is wrong but it overcounts by only a small amount
-                star_ix = [
-                    i + self.T,  # above-left
-                    i + self.T + 1,  # above
-                    i + self.T + 2,  # above-right
-                    i - 1,  # left
-                    i + 1,  # right
-                    i - self.T - 2,  # below-left
-                    i - self.T - 1,  # below
-                    i - self.T,
-                ]  # below-right
-                # deal with corners/edges:
-                star_ix = [ix for ix in star_ix if ix >= 0 and ix < len(self.V_T)]
-                quadrant_ix = _make_lower_left_quadrant(i, self.T, self.net_size)
-                all_ix = set(star_ix + quadrant_ix)
-                all_v_j = [self.V_T[ix] for ix in all_ix]
-                inner_loop = zip(star_ix, all_v_j, strict=False)
-                for j, _v_j in inner_loop:
+            # Pre-seed the local IC rows (the 8-neighbour star around each type).
+            # The full separation oracle below catches violations outside this
+            # region and widens it by growing `net_size`; `_add_ic_row` de-dupes
+            # rows already present.
+            for i in range(len(self.V_T)):
+                for j in star_indices(i, self.T, len(self.V_T)):
                     self._add_ic_row(i, j)
 
             j = 1
