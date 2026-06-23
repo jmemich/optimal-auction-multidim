@@ -65,9 +65,11 @@ class OptimalAuctionApproximation:
     costs : list[float]
         Costs for each quality level (good), for example, `[0,0]`
 
-    T : int
+    T : int, default=40
         Parameter controlling the discretization of the type space. For finer
-        discretizations, increase `T`.
+        discretizations, increase `T`. Default 40 is the largest grid that
+        solves in ~minutes for the symmetric U[0,1]^2 / N=2 baseline (~70s);
+        revenue is within ~0.01 of the T->inf limit and Richardson-extrapolable.
 
     f : list[function]
         The distriubtions used to represent the designer's uncertainty about
@@ -122,7 +124,7 @@ class OptimalAuctionApproximation:
         n_buyers,
         V,
         costs,
-        T,
+        T=40,
         f=None,
         corr=None,
         force_symmetric=True,
