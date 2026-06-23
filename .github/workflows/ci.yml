@@ -33,8 +33,7 @@ jobs:
 
       - name: Pyright type check
         run: uv run pyright
-        continue-on-error: true  # M0: tighten progressively; not a gate yet
+        continue-on-error: true  # informational; not a gate yet (tighten progressively)
 
       - name: Pytest
-        run: uv run pytest
-        continue-on-error: true  # M0: existing code is WIP; tests will go green during M1
+        run: uv run pytest  # gates: full suite incl. the 24-case baseline regression
