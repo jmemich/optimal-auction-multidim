@@ -6,7 +6,32 @@ Python package implementing the LP-based approximation algorithm for optimal mul
 
 ## Installation
 
-Requires Python 3.12+. Install [uv](https://docs.astral.sh/uv/) (one-time):
+Requires Python 3.12+. The package is distributed via GitHub (not PyPI).
+
+### As a library (use it in your own project)
+
+Install straight from GitHub into any environment — no uv required:
+
+```bash
+pip install git+https://github.com/jmemich/optimal-auction-multidim
+```
+
+Or clone first, then install (editable shown; drop `-e` for a fixed install):
+
+```bash
+git clone https://github.com/jmemich/optimal-auction-multidim
+pip install -e optimal-auction-multidim
+```
+
+Then import as usual:
+
+```python
+from optimal_auctions import OptimalAuctionApproximation
+```
+
+### For development (hacking on this repo)
+
+Install [uv](https://docs.astral.sh/uv/) (one-time):
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
