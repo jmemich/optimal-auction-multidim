@@ -3,7 +3,7 @@
 ## Branch: ai-performance-refactor
 
 - [ ] **Remove duplicate code** — refactor on this branch made previous functions obsolete; audit and delete dead code
-- [ ] **Fix CI** — get GitHub Actions (or equivalent) passing on this branch
+- [x] **Fix CI** — GitHub Actions runs ruff + full pytest suite (incl. 24-case baselines) on push/PR to this branch; pytest now gates (continue-on-error removed). Green as of 96b2f5b. Pyright still informational (non-gating) — tighten later.
 - [ ] **Drop lockfile** — gitignore `uv.lock` and tighten `pyproject.toml` dep bounds to tested versions; let CI resolve fresh (conventional library approach)
 - [ ] **Stress-test for large T** — verify the solver scales for much larger numbers of type profiles T
 - [ ] **Rip out multiprocessing** — revert to single-process implementation; multiprocessing may be a valid perf win but introduces complexity (pickling, process overhead, platform quirks) that isn't worth dealing with now; revisit after M3 profiling confirms it's the right lever
