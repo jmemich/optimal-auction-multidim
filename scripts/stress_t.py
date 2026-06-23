@@ -46,9 +46,7 @@ def save_results(rows):
 
 def run_one(T):
     n_types = (T + 1) ** 2
-    approx = Approximation(
-        n_buyers=2, V=[[0, 1], [0, 1]], costs=[0, 0], T=T, log_level="warning"
-    )
+    approx = Approximation(n_buyers=2, V=[[0, 1], [0, 1]], costs=[0, 0], T=T, log_level="warning")
     t0 = time.time()
     approx.run()
     elapsed = time.time() - t0
@@ -99,7 +97,9 @@ def main():
             print(f"# T={T} already recorded, skipping")
             continue
         if args.budget is not None and last_elapsed > args.budget:
-            print(f"# previous run {last_elapsed:.1f}s > budget {args.budget}s; stopping before T={T}")
+            print(
+                f"# previous run {last_elapsed:.1f}s > budget {args.budget}s; stopping before T={T}"
+            )
             break
         row = run_one(T)
         rows.append(row)
