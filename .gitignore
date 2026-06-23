@@ -10,6 +10,8 @@ __pycache__/
 # uv / venv
 .venv/
 .python-version
+# Library (not app): don't pin a lockfile; let installs resolve from pyproject bounds.
+uv.lock
 uv.lock.bak
 
 # Test / cache
