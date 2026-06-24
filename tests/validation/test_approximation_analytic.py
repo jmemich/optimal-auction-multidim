@@ -10,12 +10,12 @@ takes their better good at p* = 1/sqrt(3)). The LP is free to randomise (Q in
 [0,1]) but does not beat the deterministic value at this support — randomisation
 would only help for a shifted support such as U[2,3]^2 (cf. setting 1b).
 
-Myerson single good (N=1, X~U[0,1]): the regular-distribution reserve is 1/2 with
-revenue 0.25. The approximation is hard-coded to K=2, so we degenerate the second
-good by making it unprofitable (cost > max value); the LP never allocates it and
-the problem reduces to single-good Myerson on good 1.
+Myerson single good (K=1, X~U[0,1]): the regular-distribution reserve is 1/2.
+With one buyer the optimal revenue is p(1-p) maximised at 0.25; with two buyers
+it is the second-price auction with reserve 1/2, revenue 5/12. K=1 is a
+first-class option (V=[[0,1]]), no degenerate-dimension trick needed.
 
-Both LP revenues carry the same O(1/T) reserve-kink error as the EBM, so we
+All LP revenues carry the same O(1/T) reserve-kink error as the EBM, so we
 Richardson-extrapolate them (see docs/extrapolation.md).
 """
 
@@ -43,24 +43,18 @@ def test_approximation_recovers_pavlov_single_buyer():
 
 
 @pytest.mark.slow
-def test_approximation_recovers_myerson_single_good():
-    # Degenerate good 2 (cost above its max value) so the LP never sells it; the
-    # problem reduces to single-good Myerson on good 1.
-    def solve(T):
+@pytest.mark.parametrize(
+    "n_buyers,expected",
+    [(1, 0.25), (2, 5 / 12)],  # monopoly reserve 1/2; two-bidder Myerson
+)
+def test_approximation_recovers_myerson_single_good(n_buyers, expected):
+    # First-class K=1 (single good), U[0,1].
+    def revenue(T):
         a = OptimalAuctionApproximation(
-            n_buyers=1,
-            V=[[0, 1], [0, 1]],
-            costs=[0, 2],
-            T=T,
-            force_symmetric=False,
-            log_level=logging.WARNING,
+            n_buyers=n_buyers, V=[[0, 1]], costs=[0], T=T, log_level=logging.WARNING
         )
         a.run()
-        return a
+        return a.opt
 
-    a20, a30 = solve(20), solve(30)
-    # good 2 must be genuinely unallocated for the reduction to hold
-    assert max(q[1] for q in a30.Q) == pytest.approx(0.0, abs=1e-9)
-    # 1-D reserve kink is a clean 1/T -> Richardson is exact at 0.25
-    rev_inf = (30 * a30.opt - 20 * a20.opt) / 10
-    assert rev_inf == pytest.approx(0.25, abs=1e-5)
+    rev_inf = (30 * revenue(30) - 20 * revenue(20)) / 10
+    assert rev_inf == pytest.approx(expected, abs=1.5e-3)

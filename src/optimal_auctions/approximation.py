@@ -56,13 +56,13 @@ class OptimalAuctionApproximation:
         The number of buyers (bidders) in the auction
 
     V : list[list[float]]
-        Buyers' types. Expected in form `[[a,b], [c,d], ...]` where `[a,b]`
-        corresponds to the buyers' valuations for the first quality level
-        (good) and `[c,d]` to the buyers' valuations for the second quality
-        level, etc.
+        Buyers' type supports, one `[lo, hi]` per quality level (good). One or
+        two goods are supported: `[[a,b]]` for a single good (K=1), or
+        `[[a,b], [c,d]]` for two (K=2).
 
     costs : list[float]
-        Costs for each quality level (good), for example, `[0,0]`
+        Costs for each quality level (good), for example, `[0,0]` (or `[0]` for
+        a single good).
 
     T : int, default=40
         Parameter controlling the discretization of the type space. For finer
@@ -80,6 +80,8 @@ class OptimalAuctionApproximation:
 
     force_symmetric : bool, default=True
         Allow the code to assume valuation symmetry such that Q(i,j) == Q(j,i)
+        (two goods only). Ignored / coerced to False for a single good (K=1),
+        where there is no good-swap symmetry to exploit.
 
     check_local_ic : bool, default=True
         Toggles consideration of only local incentive-compatibility constraints
@@ -133,16 +135,16 @@ class OptimalAuctionApproximation:
         self.grades = list(range(self.n_grades))
         self.costs = costs
 
-        if len(V) != 2:
-            raise NotImplementedError("Code doesn't support len(V) > 2!")
+        if self.n_grades not in (1, 2):
+            raise NotImplementedError("Code supports 1 or 2 quality grades (len(V) in {1, 2})!")
         self.V = V
 
         self.T = T
         self.V_T_list, self.eps = discretize(V, T)
         self.V_T = list(itertools.product(*self.V_T_list))  # x-product vt_i
 
-        if f is None:  # assume uniform
-            f = [uniform(*V[0]).pdf, uniform(*V[1]).pdf]
+        if f is None:  # assume uniform on each grade's support
+            f = [uniform(*V[j]).pdf for j in range(self.n_grades)]
         self.f = f
         if corr is None:  # assume independent
             corr = _independent
@@ -150,6 +152,10 @@ class OptimalAuctionApproximation:
         self.f_hat = f_hat(self.f, self.V_T, self.corr, self.T, self.n_grades)
 
         self.check_local_ic = check_local_ic  # TODO remove
+        # `force_symmetric` exploits the two-good value swap Q(i,j)==Q(j,i); it is
+        # meaningless with a single good, so coerce it off for K=1.
+        if self.n_grades == 1:
+            force_symmetric = False
         self.force_symmetric = force_symmetric
         if force_symmetric and self.n_grades > 2:
             raise NotImplementedError("`force_symmetric`=True and `grades`>2 not supported!")
@@ -444,12 +450,12 @@ class OptimalAuctionApproximation:
 
         self.converged = False
         while not self.converged:
-            # Pre-seed the local IC rows (the 8-neighbour star around each type).
-            # The full separation oracle below catches violations outside this
-            # region and widens it by growing `net_size`; `_add_ic_row` de-dupes
-            # rows already present.
+            # Pre-seed the local IC rows (the immediate-neighbour star around each
+            # type — 8 neighbours for K=2, {i-1,i+1} for K=1). The full separation
+            # oracle below catches violations outside this region and widens it by
+            # growing `net_size`; `_add_ic_row` de-dupes rows already present.
             for i in range(len(self.V_T)):
-                for j in star_indices(i, self.T, len(self.V_T)):
+                for j in star_indices(i, self.T, len(self.V_T), self.n_grades):
                     self._add_ic_row(i, j)
 
             j = 1

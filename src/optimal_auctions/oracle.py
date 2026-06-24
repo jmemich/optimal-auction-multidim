@@ -53,7 +53,7 @@ def _check_ic(Q, U, V_T, T, grades, check_local, force_symmetric, net_size):
     start = time()
     if check_local:
         for i, v_i in enumerate(V_T):
-            all_ix = local_ic_indices(i, T, net_size, len(V_T))
+            all_ix = local_ic_indices(i, T, net_size, len(V_T), len(grades))
             all_v_j = [V_T[ix] for ix in all_ix]
             inner_loop = zip(all_ix, all_v_j, strict=False)
 

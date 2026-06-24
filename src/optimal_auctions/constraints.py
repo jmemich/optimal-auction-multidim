@@ -23,11 +23,15 @@ class Constraint:
         return self.name
 
 
-def lower_left_quadrant(ix, T, net_size):
+def lower_left_quadrant(ix, T, net_size, n_dims=2):
     # Indices of the lower-left quadrant of the type grid anchored at `ix`, used
     # to widen the local IC region as `net_size` grows (empty until net_size >= 2).
     if net_size < 2:
         return []
+
+    if n_dims == 1:
+        # 1-D type grid: the "quadrant" is just the window below ix.
+        return list(range(max(0, ix - net_size), ix + 1))
 
     i = int(ix / (T + 1))  # row
     j = ix % (T + 1)  # col
@@ -45,36 +49,44 @@ def lower_left_quadrant(ix, T, net_size):
     return list(ixs)
 
 
-def star_indices(i, T, n_V_T):
-    """The 8-neighbour 'star' pattern around flat index `i` on the (T+1)x(T+1)
-    type grid, clipped to valid in-range indices:
+def star_indices(i, T, n_V_T, n_dims=2):
+    """The immediate-neighbour 'star' around flat index `i`, clipped in-range.
+
+    For a 1-D type grid (``n_dims == 1``) this is just ``{i-1, i+1}``. For the
+    2-D ``(T+1)x(T+1)`` grid it is the 8-neighbour pattern
 
         x x x
         x i x
         x x x
 
-    Offsets assume a row stride of (T+1): e.g. below-right is -(T+1)+1 == -T.
+    with offsets assuming a row stride of (T+1): e.g. below-right is -(T+1)+1 == -T.
     """
-    star = [
-        i + T,  # above-left
-        i + T + 1,  # above
-        i + T + 2,  # above-right
-        i - 1,  # left
-        i + 1,  # right
-        i - T - 2,  # below-left
-        i - T - 1,  # below
-        i - T,  # below-right
-    ]
+    if n_dims == 1:
+        star = [i - 1, i + 1]
+    else:
+        star = [
+            i + T,  # above-left
+            i + T + 1,  # above
+            i + T + 2,  # above-right
+            i - 1,  # left
+            i + 1,  # right
+            i - T - 2,  # below-left
+            i - T - 1,  # below
+            i - T,  # below-right
+        ]
     return [ix for ix in star if 0 <= ix < n_V_T]
 
 
-def local_ic_indices(i, T, net_size, n_V_T):
+def local_ic_indices(i, T, net_size, n_V_T, n_dims=2):
     """Indices of the local IC region around type `i`: the star pattern (always)
     plus the lower-left quadrant (once net_size >= 2). Returns sorted, unique,
     in-range indices. Single source of truth shared by the separation oracle and
-    the incremental-row pre-seed in `OptimalAuctionApproximation.run`.
+    the incremental-row pre-seed in `OptimalAuctionApproximation.run`. `n_dims` is
+    the number of quality grades (1 or 2).
     """
-    return sorted(set(star_indices(i, T, n_V_T) + lower_left_quadrant(i, T, net_size)))
+    return sorted(
+        set(star_indices(i, T, n_V_T, n_dims) + lower_left_quadrant(i, T, net_size, n_dims))
+    )
 
 
 def ic_lhs_minus_rhs(Q, U, T, grades, i, v_i, j, v_j, force_symmetric):
