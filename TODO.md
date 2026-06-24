@@ -23,6 +23,7 @@
 - [ ] **Pavlov closed-form test** — K=2, N=1, X~U[0,1]²: reserve p\*=1/√3, revenue≈0.3849
 - [ ] **Myerson reserve test** — K=1 degenerate-dimension sanity check against closed-form regular-distribution reserve
 - [ ] **Hypothesis property tests** — IIC (full, not just local), monotonicity of Q, Border (B) for arbitrary subsets
+- [ ] **Kink-aware EBM integration** — the EBM revenue is a trapezoidal integral of a *kinked* integrand (the Vickrey payment is discontinuous across the reserve boundary and the tie-line β₁=β₂), so its discretisation error is **not** a clean power series in 1/T. Richardson therefore does not super-converge the EBM (its extrapolated limit drifts with order), capping approximation↔EBM agreement at ~1e-3 — which is why `test_convergence.py` uses tol 3e-3, not tighter. To reach a publication-grade sub-1e-3 (~1e-5) convergence claim, split the EBM integral along the discontinuity lines so each piece is smooth (then trapezoid/Richardson super-converge) or integrate analytically. See `docs/extrapolation.md` §4.
 
 ---
 
