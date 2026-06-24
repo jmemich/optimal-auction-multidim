@@ -6,7 +6,7 @@
 - [x] **Fix CI** — GitHub Actions runs ruff + full pytest suite (incl. 24-case baselines) on push/PR to this branch; pytest now gates (continue-on-error removed). Green as of 96b2f5b. Pyright still informational (non-gating) — tighten later.
 - [x] **Drop lockfile** — `uv.lock` untracked + gitignored; CI/installs resolve fresh from `pyproject.toml` bounds (conventional library approach). (Dep-bound tightening to tested versions still optional/open.)
 - [x] **Stress-test for large T** — verify the solver scales for much larger numbers of type profiles T
-- [ ] **Rip out multiprocessing** — revert to single-process implementation; multiprocessing may be a valid perf win but introduces complexity (pickling, process overhead, platform quirks) that isn't worth dealing with now; revisit after M3 profiling confirms it's the right lever
+- [x] **Rip out multiprocessing** — removed the `executor`/`ProcessPoolExecutor` plumbing (oracle: `_check_ic` MP branch, `_check_n_ic`, `BATCH_SIZE`, `n_workers`; approximation: `executor` ctor param + state + `__getstate__`). Single-process now; 43/43 tests unchanged. Future revisit tracked under M3.
 
 ---
 
@@ -22,15 +22,16 @@
 - [x] **Convergence test** — `tests/validation/test_convergence.py` Richardson-extrapolates BOTH the approximation and the (reserve-optimised) EBM from T=20,30 and asserts a common T→∞ limit for settings 1a/2/3 (agree to <1e-3; tol 3e-3). Key insight: both are grid-dependent and converge from above to the same limit (~0.585 for 1a), so we compare limits, not approx(T) vs a single EBM(T=50) point.
 - [x] **Pavlov closed-form test** — `tests/validation/test_closed_forms.py`: EBM oracle at N=1, U[0,1]² recovers reserve p\*=1/√3 and revenue 2/(3√3)≈0.38490 (Richardson-extrapolated; L-shaped reserve kink → O(1/T)).
 - [x] **Myerson reserve test** — `tests/validation/test_closed_forms.py`: EBM oracle at N=1, single good (J=1), U[0,1] recovers reserve 1/2 and revenue 0.25 (1-D reserve kink is a clean 1/T → Richardson exact).
-- [x] **Direct analytic test of the *approximation* (N=1)** — `tests/validation/test_approximation_analytic.py`: the LP (not the oracle) at N=1, U[0,1]² Richardson-extrapolates to the Pavlov closed form 2/(3√3)≈0.38490. Non-circular — an analytic target, not the LP's own stored output. **Correction:** randomisation does *not* help at U[0,1]²; the LP converges to the *deterministic* optimum here (it would beat it for shifted supports such as U[2,3]², setting 1b). Worth extending to: a shifted support where the LP should strictly exceed the deterministic EBM (asserting the stochasticity gain), and a single-good Myerson target.
-- [ ] **Hypothesis property tests** — *recommend DROP (low value).* IIC/Border feasibility is already the algorithm's own termination criterion (`run()` converges iff the full separation oracle reports zero IIC/Border violations), so every converged solution provably satisfies them — a property test would mostly re-assert the runtime self-check. Monotonicity of Q is *not* LP-enforced, so testing it probes a conjecture about optimal-mechanism structure (research, may not hold universally), not a regression invariant. Only marginal gain (input-space fuzzing for silent non-convergence) on top of the baseline + analytic + convergence coverage.
+- [x] **Direct analytic test of the *approximation* (N=1)** — `tests/validation/test_approximation_analytic.py`: the LP (not the oracle) at N=1, U[0,1]² Richardson-extrapolates to the Pavlov closed form 2/(3√3)≈0.38490. Non-circular — an analytic target, not the LP's own stored output. **Correction:** randomisation does *not* help at U[0,1]²; the LP converges to the *deterministic* optimum here (it would beat it for shifted supports such as U[2,3]², setting 1b).
+- [x] **Property tests (monotonicity / full IIC / Border)** — already covered by concrete tests, ported from the old code: `test_ic.py::test_Q_monotone` (Q monotone in each dimension), `test_ic.py::test_basic_ic[False]` (full IIC, all i×j), `test_border.py::test_basic_border` (Border over the full powerset). Hypothesis-style *fuzzing* on top is **dropped** as low-value: IIC/Border feasibility is the algorithm's own convergence criterion (self-verified every solve), and monotonicity now has a direct test. (EBM-side monotonicity not added — the oracle is revenue-only by design and the Vickrey allocation is monotone by construction.)
 - [ ] **Kink-aware EBM integration** — the EBM revenue is a trapezoidal integral of a *kinked* integrand (the Vickrey payment is discontinuous across the reserve boundary and the tie-line β₁=β₂), so its discretisation error is **not** a clean power series in 1/T. Richardson therefore does not super-converge the EBM (its extrapolated limit drifts with order), capping approximation↔EBM agreement at ~1e-3 — which is why `test_convergence.py` uses tol 3e-3, not tighter. To reach a publication-grade sub-1e-3 (~1e-5) convergence claim, split the EBM integral along the discontinuity lines so each piece is smooth (then trapezoid/Richardson super-converge) or integrate analytically. See `docs/extrapolation.md` §4.
 
 ---
 
 ## M3: Profiling
 
-- [ ] **Collaborative profiling walkthrough** — exhaust simple wins first; maintain `docs/perf_backlog.md` of suggestions
+- [ ] **Collaborative profiling walkthrough** — exhaust simple wins first; maintain `docs/perf_backlog.md` of suggestions. Prime suspect: the O(T⁴) Border separation sweep (`oracle._check_border`, see `docs/extrapolation.md` §2).
+- [ ] **Revisit parallelism (future)** — multiprocessing was removed (single-process is plenty for current T). Only reconsider MP / a vectorised global separation oracle if profiling shows the oracle is the bottleneck and vectorisation/algorithmic wins aren't enough.
 
 ---
 

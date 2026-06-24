@@ -36,8 +36,7 @@ def _standardize_log_level(log_level):
 
 
 def _independent(v, fs):
-    # evaluation bidder PDFs independently (f1 * f2 * ...)
-    # this exists because we can't pickle a lambda function
+    # evaluate bidder PDFs independently (f1 * f2 * ...); the default `corr`
     val = 1
     for i, f in enumerate(fs):
         val *= f(v[i])
@@ -86,9 +85,6 @@ class OptimalAuctionApproximation:
         Toggles consideration of only local incentive-compatibility constraints
         on each iteration.
 
-    executor : concurrent.futures.ProcessPoolExecutor, default=None
-        For multiprocessing.
-
     seed : int, default=12345
         Seed which is used to randomly sample subsets of constraints at each
         iteration. Note, this argument is NOT passed to the LP solver.
@@ -129,7 +125,6 @@ class OptimalAuctionApproximation:
         corr=None,
         force_symmetric=True,
         check_local_ic=True,
-        executor=None,
         seed=12345,
         log_level=logging.INFO,
     ):
@@ -155,7 +150,6 @@ class OptimalAuctionApproximation:
         self.f_hat = f_hat(self.f, self.V_T, self.corr, self.T, self.n_grades)
 
         self.check_local_ic = check_local_ic  # TODO remove
-        self.executor = executor
         self.force_symmetric = force_symmetric
         if force_symmetric and self.n_grades > 2:
             raise NotImplementedError("`force_symmetric`=True and `grades`>2 not supported!")
@@ -520,7 +514,6 @@ class OptimalAuctionApproximation:
                 self.f_hat,
                 self.force_symmetric,
                 check_local,
-                self.executor,
                 self.net_size,
             )
             n_A_ic, n_A_border = len(A_ic), len(A_border)
@@ -566,7 +559,6 @@ class OptimalAuctionApproximation:
             "corr": self.corr,
             "force_symmetric": self.force_symmetric,
             "check_local_ic": self.check_local_ic,
-            "executor": self.executor,
             "log_level": self.log_level,
         }
         if hasattr(self, "i"):  # this indiciates it has been run!

@@ -12,8 +12,6 @@ from optimal_auctions.constraints import (
     local_ic_indices,
 )
 
-BATCH_SIZE = 50_000
-
 # Cutting-plane separation tolerance. A constraint is only treated as VIOLATED
 # (worth adding as a new row) when violated by more than this; within it, the
 # constraint counts as satisfied (BINDING). This MUST be >= the LP solver's
@@ -28,7 +26,7 @@ SEPARATION_TOL = 1e-6
 logger = logging.getLogger(__name__)
 
 
-def _check_ic(Q, U, V_T, T, grades, check_local, force_symmetric, executor, net_size):
+def _check_ic(Q, U, V_T, T, grades, check_local, force_symmetric, net_size):
     # the way we check for local IC violations is as follows:
     #
     #         | x x x
@@ -64,28 +62,9 @@ def _check_ic(Q, U, V_T, T, grades, check_local, force_symmetric, executor, net_
                 ic_cons.append(con)
 
     else:
-        args = []
         for i, v_i in enumerate(V_T):
-            inner_loop = enumerate(V_T)
-            for j, v_j in inner_loop:
-                args.append((Q, U, grades, i, v_i, j, v_j))
-
-        if executor is not None:
-            logger.debug(
-                "multiprocessing global separation oracle "
-                f"across {executor._max_workers} workers..."
-            )
-
-            futures = []
-            for i in range(0, len(args), BATCH_SIZE):
-                f = executor.submit(_check_n_ic, args[i : i + BATCH_SIZE])
-                futures.append(f)
-
-            for f in futures:
-                ic_cons.extend(f.result())  # blocking
-        else:
-            for a in args:
-                ic_cons.append(_check_one_ic(*a))
+            for j, v_j in enumerate(V_T):
+                ic_cons.append(_check_one_ic(Q, U, grades, i, v_i, j, v_j))
 
     logger.debug("ic constraint checks completed!")
     end = time()
@@ -127,14 +106,6 @@ def _check_one_ic(Q, U, grades, i, v_i, j, v_j):
     else:  # lhs_minus_rhs > 0:
         con = Constraint(name, None, "INACTIVE")
     return con
-
-
-def _check_n_ic(args):
-    # NOTE this is specifically used for multiprocessing batches of IC checks
-    res = []
-    for a in args:
-        res.append(_check_one_ic(*a))
-    return res
 
 
 def _check_border(V_T, T, Q, grades, n_buyers, f_hat):
@@ -197,11 +168,11 @@ def _check_one_border(T, V_T, V_T_subset, Q, n_buyers, grades, f_hat):
 
 
 def separation_oracle(
-    Q, U, V_T, T, grades, n_buyers, f_hat, force_symmetric, check_local_ic, n_workers, net_size
+    Q, U, V_T, T, grades, n_buyers, f_hat, force_symmetric, check_local_ic, net_size
 ):
     logger.debug("starting separation oracle...")
     I_ic, A_ic, B_ic = [], [], []
-    ic_cons = _check_ic(Q, U, V_T, T, grades, check_local_ic, force_symmetric, n_workers, net_size)
+    ic_cons = _check_ic(Q, U, V_T, T, grades, check_local_ic, force_symmetric, net_size)
     for ic_con in ic_cons:
         if ic_con.status == "INACTIVE":
             I_ic.append(ic_con)
