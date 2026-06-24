@@ -199,7 +199,7 @@ Identifiers below are in the current `approx/` package; the refactor renames the
 ## References
 
 - **PhD thesis chapter (canonical)**: [auctions.tex](../../phd/sections/auctions.tex). Included as Chapter 3 of [thesis.tex](../../phd/thesis.tex).
-- **Working paper (publication form)**: Kushnir & Michelson 2022, "On the Asymptotic Optimality of the Exclusive Buyer Mechanism." [arXiv:2207.01664](https://arxiv.org/abs/2207.01664).
+- **Working paper (publication form)**: Kushnir & Michelson, "Optimal Multi-Dimensional Auctions: Conjectures and Simulations." [arXiv:2207.01664](https://arxiv.org/abs/2207.01664).
 - **Belloni, Lopomo, Wang 2010** — the foundational discretized-LP separation-oracle algorithm this work extends. [PDF](https://faculty.fuqua.duke.edu/~abn5/MMD.pdf).
 - **Border 1991** — the feasibility characterization that makes (B) polynomial in $|X_T|$. *Implementation of Bayesian Equilibrium and the Separation of Market Functions*, Cambridge University Press.
 - **Pavlov 2011** — closed-form optimal mechanism for the $K=2, N=1$ symmetric uniform case (Setting 1a's $N=1$ degenerate case). *"Optimal Mechanism for Selling Two Goods,"* The B.E. Journal of Theoretical Economics.
