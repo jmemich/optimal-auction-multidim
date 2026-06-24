@@ -38,5 +38,8 @@ jobs:
         run: uv run pyright
         continue-on-error: true  # informational; not a gate yet (tighten progressively)
 
-      - name: Pytest
-        run: uv run pytest  # gates: full suite incl. the 24-case baseline regression
+      - name: Pytest (fast)
+        run: uv run pytest  # default deselects slow; the quick correctness gate
+
+      - name: Pytest (slow — baseline regression + EBM convergence)
+        run: uv run pytest -m slow

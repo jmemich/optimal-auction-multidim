@@ -75,8 +75,11 @@ reportMissingTypeStubs = false
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = ["-ra", "--strict-markers"]
+# Default run excludes slow tests so the local dev loop stays ~1-2s. The slow
+# suite (baseline regression + EBM convergence, which run the LP at large T)
+# runs in CI and on demand: `pytest -m slow`, or everything: `pytest -m ""`.
+addopts = ["-ra", "--strict-markers", "-m", "not slow"]
 markers = [
-    "slow: tests that take more than a few seconds (deselect with '-m \"not slow\"')",
+    "slow: tests that take more than a few seconds (deselect by default; run with '-m slow')",
     "benchmark: regression benchmarks driven by docs/baselines.json",
 ]
