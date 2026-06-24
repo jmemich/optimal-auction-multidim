@@ -38,7 +38,12 @@ import numpy as np
 
 
 class ExclusiveBuyerMechanism:
-    """Numerical EBM (second-price-with-reserve) revenue oracle for N=2, J<=2.
+    """Numerical EBM (second-price-with-reserve) revenue oracle for N in {1, 2},
+    J in {1, 2}.
+
+    ``N = 2`` (the thesis settings) is the two-buyer Vickrey auction. ``N = 1``
+    (the degenerate, no-competition case) is a single buyer facing posted reserve
+    prices -- used for the Pavlov (J=2) and Myerson (J=1) closed-form checks.
 
     Parameters
     ----------
@@ -53,18 +58,18 @@ class ExclusiveBuyerMechanism:
         Joint type density ``f(x) -> float`` over a length-J point. For
         independent ``U[0,1]**2`` this is the constant ``1.0``.
     N : int, default=2
-        Number of buyers. Only ``N == 2`` is supported.
+        Number of buyers; supported values are 1 and 2.
     """
 
     def __init__(self, X, c, T, f, N=2):
         self.N = int(N)
-        if self.N != 2:
-            raise NotImplementedError("EBM revenue oracle is implemented for N=2 only")
+        if self.N not in (1, 2):
+            raise NotImplementedError("EBM revenue oracle is implemented for N in {1, 2}")
 
         self.X = list(X)
         self.J = len(self.X)
-        if self.J != 2:
-            raise NotImplementedError("EBM oracle supports exactly J=2 quality grades")
+        if self.J not in (1, 2):
+            raise NotImplementedError("EBM oracle supports J in {1, 2} quality grades")
         self.c = list(c)
         assert len(self.c) == self.J, "len(c) != J"
         self.T = int(T)
@@ -91,11 +96,12 @@ class ExclusiveBuyerMechanism:
         n = self.T + 1
         w = np.empty(len(self.X_iter))
         for i, x in enumerate(self.X_iter):
+            # half-weight each grid coordinate that lies on a boundary (0 or T),
+            # for any number of dimensions (itertools.product is C-order)
             adj = 1.0
-            if (i // n) in (0, self.T):  # first grid coordinate on a boundary
-                adj *= 0.5
-            if (i % n) in (0, self.T):  # second grid coordinate on a boundary
-                adj *= 0.5
+            for coord in np.unravel_index(i, (n,) * self.J):
+                if coord in (0, self.T):
+                    adj *= 0.5
             w[i] = self.f(tuple(x)) * adj
         return w / w.sum()
 
@@ -114,6 +120,13 @@ class ExclusiveBuyerMechanism:
         grade = beta.argmax(axis=1)  # preferred grade per type
         price_at = p[grade]  # reserve the buyer would pay
         cost_at = np.asarray(self.c)[grade]  # cost of that grade
+
+        if self.N == 1:
+            # Single buyer, no competition: serve iff best surplus >= 0, buyer
+            # pays their grade's reserve net of cost.
+            served = best >= -1e-10
+            per_type = np.where(served, price_at - cost_at, 0.0)
+            return float((w * per_type).sum())
 
         # Pairwise over (buyer i, buyer k): higher best-surplus wins (ties -> i).
         bi, bk = best[:, None], best[None, :]
