@@ -18,8 +18,8 @@
 
 ## M2: Validation
 
-- [ ] **EBM validation oracle** — port `phd/ch_auctions_simulations/ebm_code/ebm.py` into `src/optimal_auctions/validation/`
-- [ ] **Convergence test** — verify revenue converges to EBM as T→∞ for Settings 1a, 2, 3 (see `docs/benchmarks.md` revenue-gap table)
+- [x] **EBM validation oracle** — ported as the `ebm_revenue` second-price (Vickrey) simulation in `src/optimal_auctions/validation/ebm.py` (NOT `ebm.py`'s posted-price `obj`). All 6 settings pinned in `tests/validation/test_ebm.py`; 1a–4 reproduce `benchmarks.md` exactly, setting 5 pinned to the corrected normalised value (2.7011591; published 2.57921 is unnormalised — see ⚠³).
+- [ ] **Convergence test** *(in progress)* — verify revenue converges to EBM as T→∞ for Settings 1a, 2, 3 via 1/T Richardson extrapolation (see `docs/extrapolation.md`). Open decision: grid-optimise the EBM reserve (`optimal_revenue`) rather than reuse the eyeballed thesis `p`.
 - [ ] **Pavlov closed-form test** — K=2, N=1, X~U[0,1]²: reserve p\*=1/√3, revenue≈0.3849
 - [ ] **Myerson reserve test** — K=1 degenerate-dimension sanity check against closed-form regular-distribution reserve
 - [ ] **Hypothesis property tests** — IIC (full, not just local), monotonicity of Q, Border (B) for arbitrary subsets
