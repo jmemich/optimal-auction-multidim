@@ -1,2 +1,0 @@
-from auction.approximation import OptimalAuctionApproximation
-from auction.examples import make_examples
